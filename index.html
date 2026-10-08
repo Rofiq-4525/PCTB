@@ -12,15 +12,29 @@
 body{margin:0;font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
 h1,h2,h3{font-family:'Noto Serif Bengali',serif;line-height:1.35;margin:0 0 .5em}
 a{color:var(--g2)}
-header{background:#fff;color:var(--ink);border-bottom:4px solid var(--g);box-shadow:0 2px 0 var(--gold)}
-.bar{max-width:1050px;margin:auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header{background:#e3f0e8;color:var(--ink);border-bottom:4px solid var(--g);box-shadow:0 2px 0 var(--gold)}
+.bar{max-width:1240px;margin:auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--g);margin-right:auto}
 .hlogo{height:96px;width:auto;display:block}
 .logo b{font-family:'Noto Serif Bengali';font-size:1.05rem;display:block;line-height:1.2}
 .logo small{opacity:.8;font-size:.78rem}
-nav{display:flex;flex-wrap:wrap;gap:2px}
-nav a{color:var(--g);text-decoration:none;padding:6px 11px;border-radius:6px;font-size:.93rem}
-nav a:hover{background:#e8f0eb}nav a.on{background:var(--g);color:#fff}
+.ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;transition:transform .2s,color .2s}
+nav{display:flex;align-items:center;gap:2px}
+.ni{position:relative}
+.ni>a,.nb{display:flex;align-items:center;gap:7px;color:var(--g);text-decoration:none;font:500 .92rem 'Hind Siliguri',sans-serif;padding:8px 10px;border-radius:9px;background:none;border:0;margin:0;cursor:pointer;transition:background .18s,transform .18s,box-shadow .18s}
+.ni>a:hover,.nb:hover,.ni:hover>.nb,.ni:focus-within>.nb{background:#fff;box-shadow:0 3px 8px rgba(13,74,58,.14);transform:translateY(-1px)}
+.ni>a:hover .ic,.nb:hover .ic{color:var(--gold)}
+.ni.on>a,.ni.on>.nb{background:var(--g);color:#fff;box-shadow:none}
+.ni.on>a:hover .ic,.ni.on>.nb:hover .ic{color:#fff}
+.chev{width:15px;height:15px}.ni:hover .chev,.ni.open .chev{transform:rotate(180deg)}
+.dd{position:absolute;top:100%;left:0;min-width:230px;background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:0 0 12px 12px;box-shadow:0 14px 28px rgba(13,74,58,.18);padding:6px;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .18s,transform .18s,visibility .18s;z-index:50}
+.ni:hover>.dd,.ni:focus-within>.dd,.ni.open>.dd{opacity:1;visibility:visible;transform:none}
+.dd a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--ink);text-decoration:none;transition:background .15s,padding .15s,color .15s}
+.dd a:hover{background:#e8f0eb;color:var(--g);padding-left:17px}.dd a:hover .ic{color:var(--gold)}
+.dd a.cur{background:#e8f0eb;color:var(--g);font-weight:600}
+.mbtn:hover{background:#e8f0eb}
+.mbtn{display:none;align-items:center;background:#fff;color:var(--g);border:1px solid var(--line);margin:0;padding:8px 10px}
+@media(max-width:900px){.mbtn{display:flex}nav{display:none;width:100%;flex-direction:column;align-items:stretch}header.menu-open nav{display:flex}.ni>a,.nb{width:100%}.nb .chev{margin-left:auto}.dd{position:static;display:none;opacity:1;visibility:visible;transform:none;box-shadow:none;border:0;border-left:3px solid var(--gold);border-radius:0;margin:2px 0 6px 16px;padding:2px}.ni.open>.dd{display:block}.ni:hover>.nb{transform:none}}
 main{max-width:1050px;margin:auto;padding:26px 18px 60px}
 .hero{background:var(--g);color:#fff;border-radius:14px;padding:38px 30px;margin-bottom:26px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center;background-image:radial-gradient(circle at 100% 0,#1b6d57 0,transparent 55%)}
 .hero h1{font-size:2rem}.hero p{opacity:.88;margin:0}
@@ -56,7 +70,8 @@ function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.datas
 <body>
 <header><div class="bar">
 <a class="logo" href="#/"><img class="hlogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="96"></a>
-<nav id="nav"></nav></div></header>
+<button class="mbtn" id="mb" aria-label="মেনু" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+<nav id="nav" aria-label="মূল মেনু"></nav></div></header>
 <div id="demoB" hidden style="background:#fff3cd;color:#5c4a00;text-align:center;padding:6px 12px;font-size:.88rem">ডেমো মোড: ডেটা শুধু এই ব্রাউজারে সেভ হচ্ছে। শিক্ষক লগইন: admin@pctb.demo / 123456</div>
 <main id="app"></main>
 <footer><img class="fseal" src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="" width="36" height="36" style="border-radius:50%;display:block;margin:0 auto 6px">© PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</footer>
@@ -167,7 +182,7 @@ async home(){
   <div class="box"><h3>ফলাফল দেখুন</h3><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" placeholder="233001"><button id="hb">ফলাফল দেখুন</button></div></section>
   <h2>সর্বশেষ নোটিশ</h2>${ns.length?ns.map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`},
 async about(){const t=await site('about',DEF_ABOUT);return `<h2>পরিচিতি</h2><div class="card"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো" style="display:block;margin:0 auto 14px;max-width:260px;width:100%">${esc(t).replace(/\n/g,'<br>')}</div>`},
-async board(){const b=await site('board',BOARD);return `<h2>বোর্ড সদস্য</h2><div class="grid">${b.map(x=>`<div class="card"><h3>${esc(x[1]||'—')}</h3><span class="pill">${esc(x[0])}</span></div>`).join('')}</div>`},
+async board(){const b=await site('board',BOARD);return `<h2>পরিচালনা পরিষদ</h2><div class="grid">${b.map(x=>`<div class="card"><h3>${esc(x[1]||'—')}</h3><span class="pill">${esc(x[0])}</span></div>`).join('')}</div>`},
 async textbook(){
   const l=await all('books');
   return `<h2>পাঠ্যপুস্তক</h2>${l.length?`<div class="grid">${l.map(b=>`<div class="card"><h3>${esc(b.title)}</h3><span class="pill">${esc(b.cls)} শ্রেণি</span><p><a href="${esc(b.url)}" target="_blank" rel="noopener">বই খুলুন / ডাউনলোড</a></p></div>`).join('')}</div>`:empty('এখনও কোনো বই আপলোড হয়নি।')}`},
@@ -176,7 +191,7 @@ async notice(){
   return `<h2>নোটিশ</h2>${l.length?l.map(n=>`<div class="card"><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p><span class="muted">${new Date(n.t).toLocaleDateString('bn-BD')}</span></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`},
 async institution(){
   const l=await all('institutions');
-  return `<h2>প্রতিষ্ঠান</h2>${l.length?`<div class="grid">${l.map(i=>`<div class="card"><h3>${esc(i.name)}</h3><div class="muted">${esc(i.address)}</div>${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div>`:empty('এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।')}`},
+  return `<h2>শিক্ষা প্রতিষ্ঠান</h2>${l.length?`<div class="grid">${l.map(i=>`<div class="card"><h3>${esc(i.name)}</h3><div class="muted">${esc(i.address)}</div>${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div>`:empty('এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।')}`},
 result:()=>`<h2>ফলাফল</h2><div class="card" style="max-width:520px"><label for="rr">রেজিস্ট্রেশন নম্বর</label><input id="rr" placeholder="233001"><button id="rb">ফলাফল দেখুন</button></div><div id="rout"></div>`,
 student:()=>`<h2>শিক্ষার্থী প্যানেল</h2><div class="tabs"><button class="on" data-s="reg">নতুন রেজিস্ট্রেশন</button><button data-s="res">ফলাফল দেখুন</button><button data-s="find">নম্বর হারিয়ে ফেলেছি</button></div>
   <div class="card" style="max-width:520px" id="sbox"></div><div id="srout"></div>`,
@@ -361,11 +376,33 @@ async function loadList(){
 }
 function bindTextbook(){document.querySelectorAll('a[href^="data:"]').forEach(a=>a.onclick=async e=>{e.preventDefault();const b=await (await fetch(a.href)).blob();open(URL.createObjectURL(b))})}
 
+const ICONS={
+home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14c2.2.6 3.5 2.6 3.5 5"/>',
+book:'<path d="M4 4.5A2.5 2.5 0 016.5 2H20v17H6.5A2.5 2.5 0 004 21.5z"/><path d="M4 21.5V4.5"/><path d="M9 7h7"/>',
+school:'<path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/><path d="M12 5V2"/>',
+result:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3h6v3H9z"/><path d="M9 13l2 2 4-4"/>',
+bell:'<path d="M6 16v-5a6 6 0 0112 0v5l2 2H4z"/><path d="M10 21a2 2 0 004 0"/>',
+teacher:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 9h6M7 12h4"/>',
+student:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/><path d="M22 9v6"/>',
+shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+chev:'<path d="M6 9l6 6 6-6"/>'};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
+const NAV=[
+ {p:'',t:'হোম',i:'home'},{p:'about',t:'পরিচিতি',i:'info'},{p:'board',t:'পরিচালনা পরিষদ',i:'users'},
+ {p:'textbook',t:'পাঠ্যপুস্তক',i:'book'},{p:'institution',t:'শিক্ষা প্রতিষ্ঠান',i:'school'},{p:'notice',t:'নোটিশ',i:'bell'},
+ {p:'result',t:'ফলাফল',i:'result'},{p:'student',t:'শিক্ষার্থী প্যানেল',i:'student'},{p:'teacher',t:'শিক্ষক প্যানেল',i:'teacher'},{p:'admin',t:'অ্যাডমিন প্যানেল',i:'shield'}];
+const navHTML=k=>NAV.map(n=>n.c?`<div class="ni${n.c.some(c=>c.p==k)?' on':''}"><button class="nb" aria-haspopup="true">${ic(n.i)}${n.t}${ic('chev','chev')}</button><div class="dd">${n.c.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`:`<div class="ni${n.p==k?' on':''}"><a href="#/${n.p}">${ic(n.i)}${n.t}</a></div>`).join('');
+$('#nav').onclick=e=>{const b=e.target.closest('.nb');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
+document.addEventListener('click',e=>{if(!e.target.closest('.ni'))document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'))});
+$('#mb').onclick=()=>{const h=document.querySelector('header'),o=h.classList.toggle('menu-open');$('#mb').setAttribute('aria-expanded',o)};
+
 /* ---------- রাউটার ---------- */
 async function route(){
   const p=(location.hash.replace(/^#\/?/,'').split('?')[0])||'';
   const k=pages.some(x=>x[0]==p)?p:'';
-  $('#demoB').hidden=!DEMO;$('#nav').innerHTML=pages.map(x=>`<a href="#/${x[0]}" class="${x[0]==k?'on':''}">${x[1]}</a>`).join('');
+  $('#demoB').hidden=!DEMO;$('#nav').innerHTML=navHTML(k);document.querySelector('header').classList.remove('menu-open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));
   const app=$('#app');app.innerHTML='<p class="muted">লোড হচ্ছে…</p>';
   try{app.innerHTML=await V[k||'home']()}catch(e){app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;return}
   ({'':bindHome,result:bindResult,student:bindStudent,teacher:bindTeacher,admin:bindAdmin,textbook:bindTextbook}[k]||(()=>{}))();if((k=='teacher'||k=='admin')&&user)loadList();
