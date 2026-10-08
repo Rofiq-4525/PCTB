@@ -15,7 +15,8 @@ a{color:var(--g2)}
 header{background:#e3f0e8;color:var(--ink);border-bottom:4px solid var(--g);box-shadow:0 2px 0 var(--gold)}
 .bar{max-width:1240px;margin:auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--g);margin-right:auto}
-.hlogo{height:96px;width:auto;display:block}
+.hlogo,.fseal{mix-blend-mode:multiply}
+.hlogo{height:64px;width:auto;display:block}
 .logo b{font-family:'Noto Serif Bengali';font-size:1.05rem;display:block;line-height:1.2}
 .logo small{opacity:.8;font-size:.78rem}
 .ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;transition:transform .2s,color .2s}
@@ -69,7 +70,7 @@ function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.datas
 </head>
 <body>
 <header><div class="bar">
-<a class="logo" href="#/"><img class="hlogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="96"></a>
+<a class="logo" href="#/"><img class="hlogo" src="logo%20short.png" data-f="logo short" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="64"></a>
 <button class="mbtn" id="mb" aria-label="মেনু" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 <nav id="nav" aria-label="মূল মেনু"></nav></div></header>
 <div id="demoB" hidden style="background:#fff3cd;color:#5c4a00;text-align:center;padding:6px 12px;font-size:.88rem">ডেমো মোড: ডেটা শুধু এই ব্রাউজারে সেভ হচ্ছে। শিক্ষক লগইন: admin@pctb.demo / 123456</div>
