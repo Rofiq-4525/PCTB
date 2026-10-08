@@ -97,7 +97,7 @@ const $=s=>document.querySelector(s);
 const norm=x=>String(x).trim().replace(/[০-৯]/g,d=>'০১২৩৪৫৬৭৮৯'.indexOf(d)).toUpperCase();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const say=(el,t,ok)=>{el.className='msg '+(ok?'ok':'bad');el.textContent=t};
-let user=null,tTab='result',authMode='login',tstat=null;
+let user=null,tTab='result',authMode='login',tstat=null,gBusy=false;
 async function calcStat(u){
   if(!u)return null;
   if(DEMO&&u.email==='admin@pctb.demo')return 'admin';
@@ -244,9 +244,12 @@ function bindTeacher(){
   if(!user){
     const sw=$('#sw');if(sw)sw.onclick=()=>{authMode=authMode=='reg'?'login':'reg';route()};
     const gl=$('#gl');if(gl)gl.onclick=async()=>{
+      if(gBusy)return;gBusy=true;gl.disabled=true;
       try{const u=(await signInWithPopup(auth,new GoogleAuthProvider())).user;
         if(!location.hash.includes('admin')&&(u.email||'').toLowerCase()!==ADMIN_EMAIL.toLowerCase()){const d=await getDoc(doc(db,'teachers',u.uid));if(!d.exists())await setDoc(doc(db,'teachers',u.uid),{name:u.displayName||'',mobile:'',inst:'',email:(u.email||'').toLowerCase(),approved:false,t:Date.now()})}
-      }catch(e){if(e.code!=='auth/popup-closed-by-user')say($('#lm'),'Google লগইন হয়নি: '+(e.code==='auth/unauthorized-domain'?'এই ডোমেইন Firebase-এর Authorized domains-এ যোগ করুন।':e.message))}};
+      }catch(e){const m={'auth/unauthorized-domain':'এই ডোমেইন Firebase-এর Authorized domains-এ যোগ করুন।','auth/popup-blocked':'ব্রাউজার পপআপ ব্লক করেছে। পপআপের অনুমতি দিয়ে আবার চেষ্টা করুন।','auth/cancelled-popup-request':'আগের Google উইন্ডোটি বন্ধ করে বাটনটি একবার চেপে আবার চেষ্টা করুন।','auth/popup-closed-by-user':'','auth/operation-not-allowed':'Firebase-এ Google সাইন-ইন চালু করা নেই।'}[e.code];
+        if(m!=='')say($('#lm'),'Google লগইন হয়নি: '+(m||e.message))}
+      finally{gBusy=false;if(gl)gl.disabled=false}};
     if(authMode=='reg'&&$('#rs')){
       $('#rs').onclick=async()=>{
         const m=$('#rmsg'),d={name:$('#rn').value.trim(),mobile:$('#rm').value.trim(),inst:$('#ri').value.trim(),email:$('#re').value.trim().toLowerCase()},p=$('#rp').value;
