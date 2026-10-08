@@ -63,8 +63,10 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 const firebaseConfig={apiKey:"AIzaSyDEAW6EwiPe4dKJMsmsca6j-dsVqtgtBHA",authDomain:"pctb-30f46.firebaseapp.com",projectId:"pctb-30f46",storageBucket:"pctb-30f46.firebasestorage.app",messagingSenderId:"477559830219",appId:"1:477559830219:web:798f7ef48a51b38d810d4e"};
 /* ============================================= */
 
+/* অ্যাডমিন ইমেইল: Firebase Authentication-এ যে ইমেইল দিয়ে অ্যাডমিন ইউজার বানিয়েছেন সেটা লিখুন (firestore.rules-এও একই ইমেইল দিন) */
+const ADMIN_EMAIL='a.rofiq4525@gmail.com';
 const DEMO=firebaseConfig.apiKey==="YOUR_API_KEY";
-let initializeApp,getFirestore,collection,doc,getDoc,setDoc,addDoc,getDocs,query,where,runTransaction,deleteDoc,getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut,getStorage,ref,uploadBytes,getDownloadURL;
+let initializeApp,getFirestore,collection,doc,getDoc,setDoc,addDoc,getDocs,query,where,runTransaction,deleteDoc,getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut,GoogleAuthProvider,signInWithPopup,getStorage,ref,uploadBytes,getDownloadURL;
 if(DEMO){
   const K='pctb_demo',ld=()=>{try{return JSON.parse(localStorage.getItem(K))||{}}catch{return{}}},sv=d=>localStorage.setItem(K,JSON.stringify(d));
   initializeApp=getFirestore=getAuth=getStorage=()=>({});
@@ -78,6 +80,8 @@ if(DEMO){
   let au=sessionStorage.getItem('pctb_t')?{email:'admin@pctb.demo'}:null;const subs=[];
   onAuthStateChanged=(_,cb)=>{subs.push(cb);setTimeout(()=>cb(au),0)};
   signInWithEmailAndPassword=async(_,e,p)=>{if(e==='admin@pctb.demo'&&p==='123456'){au={email:e};sessionStorage.setItem('pctb_t','1');subs.forEach(f=>f(au))}else throw new Error('bad')};
+  createUserWithEmailAndPassword=async(_,e)=>{au={email:e,uid:'u'+Date.now()};subs.forEach(f=>f(au));return{user:au}};
+  GoogleAuthProvider=function(){};signInWithPopup=async()=>{au={email:ADMIN_EMAIL,uid:'g1',emailVerified:true,displayName:'Admin'};subs.forEach(f=>f(au));return{user:au}};
   signOut=async()=>{au=null;sessionStorage.removeItem('pctb_t');subs.forEach(f=>f(null))};
   ref=(_,p)=>({p});
   uploadBytes=async(r,f)=>{if(f.size>3e6)throw new Error('ডেমোতে ৩ এমবির বেশি ফাইল চলবে না, লিংক দিন।');r.f=f};
@@ -86,15 +90,22 @@ if(DEMO){
   const G="https://www.gstatic.com/firebasejs/10.12.2/";
   const [A,F,U,S]=await Promise.all([import(G+"firebase-app.js"),import(G+"firebase-firestore.js"),import(G+"firebase-auth.js"),import(G+"firebase-storage.js")]);
   ({initializeApp}=A);({getFirestore,collection,doc,getDoc,setDoc,addDoc,getDocs,query,where,runTransaction,deleteDoc}=F);
-  ({getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}=U);({getStorage,ref,uploadBytes,getDownloadURL}=S);
+  ({getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut,GoogleAuthProvider,signInWithPopup}=U);({getStorage,ref,uploadBytes,getDownloadURL}=S);
 }
 const fa=initializeApp(firebaseConfig),db=getFirestore(fa),auth=getAuth(fa),st=getStorage(fa);
 const $=s=>document.querySelector(s);
 const norm=x=>String(x).trim().replace(/[০-৯]/g,d=>'০১২৩৪৫৬৭৮৯'.indexOf(d)).toUpperCase();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const say=(el,t,ok)=>{el.className='msg '+(ok?'ok':'bad');el.textContent=t};
-let user=null,tTab='result';
-onAuthStateChanged(auth,u=>{user=u;route()});
+let user=null,tTab='result',authMode='login',tstat=null;
+async function calcStat(u){
+  if(!u)return null;
+  if(DEMO&&u.email==='admin@pctb.demo')return 'admin';
+  if((u.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase()&&(u.emailVerified||DEMO))return 'admin';
+  try{const d=await getDoc(doc(db,'teachers',u.uid));return d.exists()&&d.data().approved?'ok':'pending'}catch{return 'pending'}
+}
+const authErr=e=>({'auth/email-already-in-use':'এই ইমেইল আগেই ব্যবহার করা হয়েছে।','auth/weak-password':'পাসওয়ার্ড অন্তত ৬ অক্ষরের দিন।','auth/invalid-email':'ইমেইলটি সঠিক নয়।','auth/operation-not-allowed':'Firebase-এ Email/Password সাইন-ইন চালু করা নেই।'}[e.code]||'নিবন্ধন হয়নি: '+e.message);
+onAuthStateChanged(auth,async u=>{const x=await calcStat(u);user=u;tstat=x;route()});
 
 const pages=[['','হোম'],['about','পরিচিতি'],['board','পর্ষদ'],['textbook','পাঠ্যপুস্তক'],['notice','নোটিশ'],['institution','প্রতিষ্ঠান'],['result','ফলাফল'],['student','শিক্ষার্থী'],['teacher','শিক্ষক']];
 const BOARD=[['চেয়ারম্যান','নাম এখানে লিখুন'],['সদস্য সচিব','নাম এখানে লিখুন'],['সদস্য (শিক্ষাক্রম)','নাম এখানে লিখুন'],['সদস্য (পাঠ্যপুস্তক)','নাম এখানে লিখুন'],['সদস্য (পরীক্ষা)','নাম এখানে লিখুন']];
@@ -166,8 +177,10 @@ result:()=>`<h2>ফলাফল</h2><div class="card" style="max-width:520px"><l
 student:()=>`<h2>শিক্ষার্থী প্যানেল</h2><div class="tabs"><button class="on" data-s="reg">নতুন রেজিস্ট্রেশন</button><button data-s="find">নম্বর হারিয়ে ফেলেছি</button></div>
   <div class="card" style="max-width:520px" id="sbox"></div>`,
 teacher(){
-  if(!user)return `<h2>শিক্ষক প্যানেল</h2><div class="card" style="max-width:420px"><label for="em">ইমেইল</label><input id="em" type="email" autocomplete="username"><label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password"><button id="lg">লগইন</button><div id="lm"></div>${DEMO?'<p class="muted">ডেমো লগইন: admin@pctb.demo / 123456</p>':''}</div>`;
-  const T=[['result','ফলাফল তৈরি'],['book','বই আপলোড'],['notice','নোটিশ'],['inst','প্রতিষ্ঠান'],['add','ছাত্র যোগ'],['stu','শিক্ষার্থী তালিকা'],['site','সাইট তথ্য']];
+  if(!user)return authMode=='reg'?`<h2>শিক্ষক নিবন্ধন</h2><div class="card" style="max-width:460px"><label for="rn">নাম *</label><input id="rn" autocomplete="name"><label for="rm">মোবাইল নম্বর *</label><input id="rm" inputmode="numeric" placeholder="01XXXXXXXXX"><label for="ri">প্রতিষ্ঠান / বিষয় (ঐচ্ছিক)</label><input id="ri"><label for="re">ইমেইল *</label><input id="re" type="email" autocomplete="username"><label for="rp">পাসওয়ার্ড * (অন্তত ৬ অক্ষর)</label><input id="rp" type="password" autocomplete="new-password"><button id="rs">নিবন্ধন করুন</button> <button class="alt" id="sw">লগইনে ফিরুন</button><div id="rmsg"></div><p class="muted">নিবন্ধনের পর অ্যাডমিন অনুমোদন দিলে তবেই প্যানেল ব্যবহার করতে পারবেন।</p></div>`
+  :`<h2>শিক্ষক প্যানেল</h2><div class="card" style="max-width:420px"><button id="gl" class="alt" style="width:100%;margin:0">Google দিয়ে লগইন</button><p class="muted" style="text-align:center;margin:8px 0 0">অথবা ইমেইল দিয়ে</p><label for="em">ইমেইল</label><input id="em" type="email" autocomplete="username"><label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password"><button id="lg">লগইন</button> <button class="alt" id="sw">নতুন শিক্ষক? নিবন্ধন করুন</button><div id="lm"></div>${DEMO?'<p class="muted">ডেমো লগইন: admin@pctb.demo / 123456</p>':''}</div>`;
+  if(tstat!=='admin'&&tstat!=='ok')return `<h2>শিক্ষক প্যানেল</h2><div class="card" style="max-width:460px"><p><b>আপনার নিবন্ধন সম্পন্ন হয়েছে।</b> অ্যাডমিনের অনুমোদনের অপেক্ষায় আছে। অনুমোদন হলে নিচের বাটনে চাপ দিন।</p><button id="rc">আবার যাচাই করুন</button> <button class="alt" id="lo">লগআউট</button><div id="pm"></div></div>`;
+  const T=[['result','ফলাফল তৈরি'],['book','বই আপলোড'],['notice','নোটিশ'],['inst','প্রতিষ্ঠান'],['add','ছাত্র যোগ'],['stu','শিক্ষার্থী তালিকা'],['site','সাইট তথ্য'],...(tstat=='admin'?[['tch','শিক্ষক ব্যবস্থাপনা']]:[])];
   return `<h2>শিক্ষক প্যানেল</h2><div class="tabs">${T.map(t=>`<button data-t="${t[0]}" class="${tTab==t[0]?'on':''}">${t[1]}</button>`).join('')}<button class="alt" id="lo" style="margin-left:auto">লগআউট</button></div><div class="card" id="tbox"></div><div id="ml" style="margin-top:14px"></div>`}
 };
 
@@ -214,7 +227,26 @@ function bindStudent(){
   document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>draw(b.dataset.s));draw('reg');
 }
 function bindTeacher(){
+  if(user&&tstat!=='admin'&&tstat!=='ok'){
+    $('#lo').onclick=()=>signOut(auth);
+    $('#rc').onclick=async()=>{tstat=await calcStat(user);tstat==='ok'||tstat==='admin'?route():say($('#pm'),'এখনও অনুমোদন হয়নি।')};return}
   if(!user){
+    $('#sw').onclick=()=>{authMode=authMode=='reg'?'login':'reg';route()};
+    const gl=$('#gl');if(gl)gl.onclick=async()=>{
+      try{const u=(await signInWithPopup(auth,new GoogleAuthProvider())).user;
+        if((u.email||'').toLowerCase()!==ADMIN_EMAIL.toLowerCase()){const d=await getDoc(doc(db,'teachers',u.uid));if(!d.exists())await setDoc(doc(db,'teachers',u.uid),{name:u.displayName||'',mobile:'',inst:'',email:(u.email||'').toLowerCase(),approved:false,t:Date.now()})}
+      }catch(e){if(e.code!=='auth/popup-closed-by-user')say($('#lm'),'Google লগইন হয়নি: '+(e.code==='auth/unauthorized-domain'?'এই ডোমেইন Firebase-এর Authorized domains-এ যোগ করুন।':e.message))}};
+    if(authMode=='reg'){
+      $('#rs').onclick=async()=>{
+        const m=$('#rmsg'),d={name:$('#rn').value.trim(),mobile:$('#rm').value.trim(),inst:$('#ri').value.trim(),email:$('#re').value.trim().toLowerCase()},p=$('#rp').value;
+        if(d.name.length<2)return say(m,'নাম লিখুন।');
+        if(!/^01[3-9]\d{8}$/.test(d.mobile))return say(m,'সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।');
+        if(!d.email)return say(m,'ইমেইল দিন।');
+        if(p.length<6)return say(m,'পাসওয়ার্ড অন্তত ৬ অক্ষরের দিন।');
+        say(m,'অপেক্ষা করুন…',1);
+        try{const c=await createUserWithEmailAndPassword(auth,d.email,p);await setDoc(doc(db,'teachers',c.user.uid),{...d,approved:false,t:Date.now()})}
+        catch(e){say(m,authErr(e))}
+      };return}
     $('#lg').onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){say($('#lm'),'লগইন হয়নি। ইমেইল ও পাসওয়ার্ড দেখুন।')}};return}
   $('#lo').onclick=()=>signOut(auth);
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{tTab=b.dataset.t;route()});
@@ -265,6 +297,13 @@ function bindTeacher(){
         if(!r.existing)['an','ad','ai','ag','am'].forEach(i=>$('#'+i).value='')
       }catch(e){say(tm,'যোগ করা যায়নি: '+e.message)}
     };
+  }else if(tTab=='tch'){
+    box.innerHTML='<h3>শিক্ষক ব্যবস্থাপনা</h3><div id="tl" class="muted">লোড হচ্ছে…</div>';
+    const load=async()=>{const l=await all('teachers');$('#tl').className='';
+      $('#tl').innerHTML=l.length?`<div style="overflow-x:auto"><table><tr><th>নাম</th><th>মোবাইল</th><th>ইমেইল</th><th>প্রতিষ্ঠান</th><th>অবস্থা</th><th></th></tr>${l.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.mobile)}</td><td>${esc(x.email)}</td><td>${esc(x.inst)}</td><td>${x.approved?'<span class="pill">অনুমোদিত</span>':'<b style="color:var(--err)">অপেক্ষমান</b>'}</td><td style="white-space:nowrap"><button data-ap="${esc(x.id)}" style="margin:0 4px 0 0">${x.approved?'স্থগিত':'অনুমোদন'}</button><button class="alt" data-rm="${esc(x.id)}" style="margin:0">মুছুন</button></td></tr>`).join('')}</table></div>`:'<p>এখনও কোনো শিক্ষক নিবন্ধন করেননি।</p>';
+      document.querySelectorAll('[data-ap]').forEach(b=>b.onclick=async()=>{const x=l.find(y=>y.id==b.dataset.ap),{id,...rest}=x;await setDoc(doc(db,'teachers',id),{...rest,approved:!x.approved});load()});
+      document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{if(confirm('এই শিক্ষককে মুছে ফেলবেন?')){await deleteDoc(doc(db,'teachers',b.dataset.rm));load()}})};
+    load().catch(e=>say($('#tl'),'তালিকা আনা যায়নি: '+e.message));
   }else if(tTab=='stu'){
     box.innerHTML=`<h3>নিবন্ধিত শিক্ষার্থী</h3><input id="sq" placeholder="নাম, মোবাইল বা রেজিস্ট্রেশন নম্বর দিয়ে খুঁজুন" aria-label="শিক্ষার্থী খুঁজুন"><div id="sl" class="muted">লোড হচ্ছে…</div>`;
     all('students').then(l=>{
