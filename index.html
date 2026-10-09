@@ -13,20 +13,25 @@ body{margin:0;font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:
 h1,h2,h3{font-family:'Noto Serif Bengali',serif;line-height:1.35;margin:0 0 .5em}
 a{color:var(--g2)}
 header{background:#e3f0e8;color:var(--ink);border-bottom:4px solid var(--g);box-shadow:0 2px 0 var(--gold)}
-.bar{max-width:1240px;margin:auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--g);margin-right:auto}
+.bar{max-width:1240px;margin:auto;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;gap:0;flex-wrap:nowrap}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--g);margin:0 0 0 -2px;flex:0 0 auto;padding-left:0;padding-right:0}
 .hlogo,.fseal{mix-blend-mode:multiply}
-.hlogo{height:96px;width:auto;display:block}
-.logo b{font-family:'Noto Serif Bengali';font-size:1.05rem;display:block;line-height:1.2}
-.logo small{opacity:.8;font-size:.78rem}
+.hlogo{height:96px;width:auto;display:block;transform:none}
+.logo span{display:flex;flex-direction:row;align-items:center;gap:6px;line-height:1}
+.logo b{font-family:'Noto Serif Bengali';font-size:1.1rem;display:block;line-height:1.2}
+.logo small{opacity:.8;font-size:.72rem;display:block;line-height:1.2}
 .ic{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;transition:transform .2s,color .2s}
-nav{display:flex;align-items:center;gap:2px}
+nav{display:flex;align-items:center;gap:2px;justify-content:flex-end;flex:0 0 auto}
 .ni{position:relative}
-.ni>a,.nb{display:flex;align-items:center;gap:7px;color:var(--g);text-decoration:none;font:500 .92rem 'Hind Siliguri',sans-serif;padding:8px 10px;border-radius:9px;background:none;border:0;margin:0;cursor:pointer;transition:background .18s,transform .18s,box-shadow .18s}
+.ni>a,.nb{display:flex;align-items:center;gap:6px;color:var(--g);text-decoration:none;font:500 .88rem 'Hind Siliguri',sans-serif;padding:6px 8px;border-radius:9px;background:none;border:0;margin:0;cursor:pointer;transition:background .18s,transform .18s,box-shadow .18s;min-height:32px}
 .ni>a:hover,.nb:hover,.ni:hover>.nb,.ni:focus-within>.nb{background:#fff;box-shadow:0 3px 8px rgba(13,74,58,.14);transform:translateY(-1px)}
 .ni>a:hover .ic,.nb:hover .ic{color:var(--gold)}
-.ni.on>a,.ni.on>.nb{background:var(--g);color:#fff;box-shadow:none}
-.ni.on>a:hover .ic,.ni.on>.nb:hover .ic{color:#fff}
+.ni.on>a,.ni.on>.nb{background:#d1e9d5;color:var(--g);box-shadow:0 2px 8px rgba(13,74,58,.09);border:1px solid #a9d0af}
+.ni.on>a:hover .ic,.ni.on>.nb:hover .ic{color:var(--g)}
+.ni:first-child>a,.ni:first-child>.nb{background:transparent;color:var(--g);border:0}
+.ni:first-child>a:hover,.ni:first-child>.nb:hover{background:#fff;box-shadow:0 3px 8px rgba(13,74,58,.14);transform:translateY(-1px)}
+.ni:first-child.on>a,.ni:first-child.on>.nb{background:#edf5ef;color:var(--g);box-shadow:0 2px 8px rgba(13,74,58,.08);border:1px solid #d9e7dd}
+.ni:first-child.on>a:hover .ic,.ni:first-child.on>.nb:hover .ic{color:var(--g)}
 .chev{width:15px;height:15px}.ni:hover .chev,.ni.open .chev{transform:rotate(180deg)}
 .dd{position:absolute;top:100%;left:0;min-width:230px;background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:0 0 12px 12px;box-shadow:0 14px 28px rgba(13,74,58,.18);padding:6px;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .18s,transform .18s,visibility .18s;z-index:50}
 .ni:hover>.dd,.ni:focus-within>.dd,.ni.open>.dd{opacity:1;visibility:visible;transform:none}
@@ -34,18 +39,20 @@ nav{display:flex;align-items:center;gap:2px}
 .dd a:hover{background:#e8f0eb;color:var(--g);padding-left:17px}.dd a:hover .ic{color:var(--gold)}
 .dd a.cur{background:#e8f0eb;color:var(--g);font-weight:600}
 .mbtn:hover{background:#e8f0eb}
-.mbtn{display:none;align-items:center;background:#fff;color:var(--g);border:1px solid var(--line);margin:0;padding:8px 10px}
+.mbtn{display:none;align-items:center;background:#fff;color:var(--g);border:1px solid var(--line);margin:0;padding:8px 10px;min-height:38px}
 @media(max-width:900px){.mbtn{display:flex}nav{display:none;width:100%;flex-direction:column;align-items:stretch}header.menu-open nav{display:flex}.ni>a,.nb{width:100%}.nb .chev{margin-left:auto}.dd{position:static;display:none;opacity:1;visibility:visible;transform:none;box-shadow:none;border:0;border-left:3px solid var(--gold);border-radius:0;margin:2px 0 6px 16px;padding:2px}.ni.open>.dd{display:block}.ni:hover>.nb{transform:none}}
 .mnav{display:none;align-items:center;gap:6px}
 .mi{position:relative}
-.mb{display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;margin:0;border-radius:10px;background:#fff;color:var(--g);border:1px solid var(--line);text-decoration:none;cursor:pointer}
-.mb .ic{width:22px;height:22px}
-.mb:hover{background:#e8f0eb}.mb.on,.mb.on:hover{background:var(--g);color:#fff}
+.mb{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;margin:0;border-radius:10px;background:#fff;color:var(--g);border:1px solid var(--line);text-decoration:none;cursor:pointer}
+.mb .ic{width:20px;height:20px}
+.mb.pctb{width:auto;min-width:50px;height:36px;padding:0 8px;border-radius:9px;font:700 .8rem 'Hind Siliguri',sans-serif;letter-spacing:.04em}
+.mb:hover{background:#e8f0eb}.mb.on,.mb.on:hover{background:#d1e9d5;color:var(--g);border-color:#a9d0af}
+.mnav > .mb:first-child.on,.mnav > .mb:first-child.on:hover{background:#edf5ef;color:var(--g);border-color:#d9e7dd}
 .md{position:absolute;top:calc(100% + 6px);right:0;min-width:210px;background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:0 0 12px 12px;box-shadow:0 14px 28px rgba(13,74,58,.18);padding:6px;display:none;z-index:60}
 .mi.open>.md{display:block}
 .md a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--ink);text-decoration:none}
 .md a:hover,.md a.cur{background:#e8f0eb;color:var(--g)}.md a.cur{font-weight:600}
-@media(max-width:900px){.mbtn,nav,header.menu-open nav{display:none!important}.mnav{display:flex}.bar{flex-wrap:nowrap}.logo{min-width:0;flex:1}.hlogo{max-width:100%;object-fit:contain;object-position:left}}
+@media(max-width:900px){.mbtn,nav,header.menu-open nav{display:none!important}.mnav{display:flex}.bar{flex-wrap:nowrap;padding:6px 10px}.logo{min-width:0;flex:1;margin-left:0}.hlogo{max-width:100%;height:82px;object-fit:contain;object-position:left}.mnav .md a{font-size:.9rem;justify-content:flex-start;padding:10px 12px;gap:10px}.mnav .md .ic{width:18px;height:18px}}
 main{max-width:1050px;margin:auto;padding:26px 18px 60px}
 .hero{background:var(--g);color:#fff;border-radius:14px;padding:38px 30px;margin-bottom:26px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center;background-image:radial-gradient(circle at 100% 0,#1b6d57 0,transparent 55%)}
 .hero h1{font-size:2rem}.hero p{opacity:.88;margin:0}
@@ -80,7 +87,9 @@ function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.datas
 </head>
 <body>
 <header><div class="bar">
-<a class="logo" href="#/"><img class="hlogo" src="logo%20short.png" data-f="logo short" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="96"></a>
+<a class="logo" href="#/">
+  <img class="hlogo" src="logo%20short.png" data-f="logo short" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="96">
+</a>
 <button class="mbtn" id="mb" aria-label="মেনু" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 <nav id="nav" aria-label="মূল মেনু"></nav><div class="mnav" id="mnav"></div></div></header>
 <div id="demoB" hidden style="background:#fff3cd;color:#5c4a00;text-align:center;padding:6px 12px;font-size:.88rem">ডেমো মোড: ডেটা শুধু এই ব্রাউজারে সেভ হচ্ছে। শিক্ষক লগইন: admin@pctb.demo / 123456</div>
@@ -398,7 +407,7 @@ bell:'<path d="M6 16v-5a6 6 0 0112 0v5l2 2H4z"/><path d="M10 21a2 2 0 004 0"/>',
 teacher:'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8M7 9h6M7 12h4"/>',
 student:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5"/><path d="M22 9v6"/>',
 shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
-login:'<path d="M15 4h4a1 1 0 011 1v14a1 1 0 01-1 1h-4"/><path d="M10 8l4 4-4 4M14 12H3"/>',
+login:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1.8-3 4.6-4.5 8-4.5s6.2 1.5 8 4.5"/>',
 chev:'<path d="M6 9l6 6 6-6"/>',
 logo:'<path d="M12 6.5v13M12 6.5C10 4.9 6.5 4.5 3 5v13c3.5-.5 7-.1 9 1.5 2-1.6 5.5-2 9-1.5V5c-3.5-.5-7-.1-9 1.5z"/>'};
 const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
@@ -408,7 +417,7 @@ const NAV=[
  {p:'result',t:'ফলাফল',i:'result'},{p:'student',t:'শিক্ষার্থী',i:'student'},{p:'teacher',t:'শিক্ষক',i:'users'}];
 const navHTML=k=>NAV.map(n=>n.c?`<div class="ni${n.c.some(c=>c.p==k)?' on':''}"><button class="nb" aria-haspopup="true">${ic(n.i)}${n.t}${ic('chev','chev')}</button><div class="dd">${n.c.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`:`<div class="ni${n.p==k?' on':''}"><a href="#/${n.p}">${ic(n.i)}${n.t}</a></div>`).join('');
 const MP=[{p:'about',t:'বোর্ড পরিচিতি',i:'info'},{p:'board',t:'পরিচালনা পরিষদ',i:'users'},{p:'textbook',t:'পাঠ্যপুস্তক',i:'book'},{p:'notice',t:'নোটিশ',i:'bell'},{p:'institution',t:'শিক্ষা প্রতিষ্ঠান সমূহ',i:'school'},{p:'result',t:'ফলাফল',i:'result'}],ML=[{p:'student',t:'শিক্ষার্থী লগইন',i:'student'},{p:'teacher',t:'শিক্ষক লগইন',i:'users'},{p:'admin',t:'অ্যাডমিন লগইন',i:'shield'}];
-const mdd=(l,k,ico,lbl)=>`<div class="mi"><button class="mb${l.some(c=>c.p==k)?' on':''}" aria-haspopup="true" aria-label="${lbl}">${ic(ico)}</button><div class="md">${l.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`;
+const mdd=(l,k,ico,lbl)=>`<div class="mi"><button class="mb${l.some(c=>c.p==k)?' on':''}${ico==='logo'?' pctb':''}" aria-haspopup="true" aria-label="${lbl}">${ico==='logo'?'<span>PCTB</span>':ic(ico)}</button><div class="md">${l.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`;
 const mnavHTML=k=>`<a class="mb${k==''?' on':''}" href="#/" aria-label="হোম">${ic('home')}</a>`+mdd(MP,k,'logo','পিসিটিবি')+mdd(ML,k,'login','লগইন');
 $('#mnav').onclick=e=>{const b=e.target.closest('.mb[aria-haspopup]');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.mi.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
 $('#nav').onclick=e=>{const b=e.target.closest('.nb');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
