@@ -176,6 +176,10 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 
 .nb img.nimg{width:auto;height:20px;max-width:none;object-fit:contain;flex:none}
 header nav#nav .nb img.nimg{width:auto;height:25px}
+.hlw{text-align:center;padding:0;margin:-16px 0 0;line-height:0}
+.hlw .homelogo{display:block;margin:0 auto}
+.hlw + .shd{margin-top:8px}
+@media(max-width:900px){.hlw{margin-top:-12px}}
 main{max-width:1050px;margin:auto;padding:26px 18px 60px}
 .hero{background:linear-gradient(150deg,#f4f9f5 0%,#dcebe0 100%);border:1px solid #c5d9cb;box-shadow:0 8px 24px rgba(13,74,58,.08);color:var(--ink);border-radius:14px;padding:38px 30px;margin-bottom:26px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center}
 .hero h1{font-size:2rem}.hero p{color:var(--mut);margin:0}
@@ -451,7 +455,7 @@ async home(){
   const [ab,bk,ns]=await Promise.all([site('about',DEF_ABOUT),all('books').catch(()=>[]),all('notices').catch(()=>[])]);
   const head=(t,p)=>`<div class="shd"><h2>${t}</h2>${p?`<a href="#/${p}">সব দেখুন →</a>`:''}</div>`;
   const {dlOf,bkGroups}=bookUI(bk);
-  return `<div style="text-align:center;padding:4px 0 10px"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div>
+  return `<div class="hlw"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div>
   ${head('আমাদের পরিচিতি','about')}<div class="card">${esc(ab).replace(/\n/g,'<br>')}</div>
   <section class="hero" style="margin-top:30px"><div><h2>পরীক্ষার ফলাফল</h2><p>রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন।</p></div>
   <div class="box"><h3>ফলাফল দেখুন</h3><label for="hd">বিভাগ</label><select id="hd" required><option value="" selected disabled hidden>বিভাগ নির্বাচন করুন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="233001"><button id="hb">ফলাফল দেখুন</button></div></section>
