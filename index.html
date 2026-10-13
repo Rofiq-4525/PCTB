@@ -169,6 +169,9 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 .mnav>.mb .ic,.mnav .mi>.mb .ic{width:22px;height:22px;stroke-width:2.4}
 .mnav>.mb:first-child,.mnav .mi:last-child>.mb,.mnav .mb.loggedin{width:34px}
 .mnav .mb.pctb{padding:0 6px}
+.mb.pctb img{height:32px;width:auto;display:block;transition:transform .15s}
+.mnav .mb.pctb:hover img{transform:translateY(-1px) scale(1.06)}
+.mnav .mb.pctb.on img{filter:drop-shadow(0 0 3px rgba(184,146,58,.9))}
 .mnav .mb.pctb:hover{color:#b8923a}
 .mnav .mb.pctb.on{color:#0d4a3a;text-shadow:0 0 7px rgba(184,146,58,.85)}
 main{max-width:1050px;margin:auto;padding:26px 18px 60px}
@@ -722,7 +725,7 @@ const NAV=[
  {p:'result',t:'ফলাফল',i:'result'},{p:'student',t:'শিক্ষার্থী',i:'student'},{p:'teacher',t:'শিক্ষক',i:'users'}];
 const navHTML=k=>NAV.map(n=>n.c?`<div class="ni${n.c.some(c=>c.p==k)?' on':''}"><button class="nb" aria-haspopup="true">${ic(n.i)}${n.t}${ic('chev','chev')}</button><div class="dd">${n.c.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`:`<div class="ni${n.p==k?' on':''}"><a href="#/${n.p}">${ic(n.i)}${n.t}</a></div>`).join('');
 const MP=[{p:'about',t:'বোর্ড পরিচিতি',i:'info'},{p:'board',t:'পরিচালনা পরিষদ',i:'users'},{p:'textbook',t:'পাঠ্যপুস্তক',i:'book'},{p:'notice',t:'নোটিশ',i:'bell'},{p:'institution',t:'শিক্ষা প্রতিষ্ঠান সমূহ',i:'school'},{p:'result',t:'ফলাফল',i:'result'}],ML=[{p:'student',t:'শিক্ষার্থী লগইন',i:'student'},{p:'teacher',t:'শিক্ষক লগইন',i:'users'},{p:'admin',t:'অ্যাডমিন লগইন',i:'shield'}];
-const mdd=(l,k,ico,lbl)=>`<div class="mi"><button class="mb${l.some(c=>c.p==k)?' on':''}${ico==='logo'?' pctb':''}" aria-haspopup="true" aria-label="${lbl}">${ico==='logo'?'<span>PCTB</span>':ic(ico)}</button><div class="md">${l.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`;
+const mdd=(l,k,ico,lbl)=>`<div class="mi"><button class="mb${l.some(c=>c.p==k)?' on':''}${ico==='logo'?' pctb':''}" aria-haspopup="true" aria-label="${lbl}">${ico==='logo'?'<img src="logo-icon.png" data-f="logo-icon" data-i="1" onerror="pick(this)" alt="PCTB">':ic(ico)}</button><div class="md">${l.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`;
 const mnavHTML=k=>`<a class="mb${k=='notice'?' on':''}" href="#/notice" aria-label="নোটিশ">${ic('bell')}</a>`+mdd(MP,k,'logo','পিসিটিবি')+(user?(()=>{const d=tstat==='admin'?'admin':'teacher';return `<a class="mb loggedin${k==d?' on':''}" href="#/${d}" aria-label="ড্যাশবোর্ড" title="ড্যাশবোর্ড">${ic('login')}</a>`})():mdd(ML,k,'login','লগইন'));
 $('#mnav').onclick=e=>{const b=e.target.closest('.mb[aria-haspopup]');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.mi.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
 $('#nav').onclick=e=>{const b=e.target.closest('.nb');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
