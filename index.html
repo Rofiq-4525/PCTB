@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</title>
 <link rel="icon" href="logo%20short.png">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
@@ -53,6 +53,20 @@ nav{display:flex;align-items:center;gap:2px;justify-content:flex-end;flex:0 0 au
 .md a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:var(--ink);text-decoration:none}
 .md a:hover,.md a.cur{background:#e8f0eb;color:var(--g)}.md a.cur{font-weight:600}
 @media(max-width:900px){.mbtn,nav,header.menu-open nav{display:none!important}.mnav{display:flex}.bar{flex-wrap:nowrap;padding:4px 10px}.logo{min-width:0;flex:1;margin-left:0}.hlogo{max-width:100%;height:60px;object-fit:contain;object-position:left}.mnav .md a{font-size:.9rem;justify-content:flex-start;padding:10px 12px;gap:10px}.mnav .md .ic{width:18px;height:18px}}
+/* মোবাইল: পেজের নিচে স্থির (sticky) অ্যাপ-স্টাইল মেনু */
+@media(max-width:900px){
+body{padding-bottom:calc(74px + env(safe-area-inset-bottom))}
+.logo{flex:1 1 100%}
+.mnav{display:none!important}
+header .bar nav#nav{display:flex!important;position:fixed;left:0;right:0;bottom:0;z-index:100;width:100%;flex-direction:row;align-items:stretch;justify-content:space-around;gap:2px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(13,74,58,.12)}
+header nav#nav .ni{flex:1 1 0;min-width:0;position:relative}
+header nav#nav .ni>a,header nav#nav .nb{flex-direction:column;justify-content:center;gap:2px;width:100%;min-height:52px;padding:6px 2px;font-size:.74rem;text-align:center;line-height:1.25}
+header nav#nav .ni>a .ic,header nav#nav .nb .ic{width:21px;height:21px}
+header nav#nav .nb .chev{display:none}
+header nav#nav .dd{position:absolute;display:none;top:auto;bottom:calc(100% + 8px);left:0;right:auto;min-width:240px;margin:0;padding:8px;border:1px solid var(--line);border-bottom:3px solid var(--gold);border-radius:14px 14px 0 0;box-shadow:0 -14px 28px rgba(13,74,58,.18);opacity:1;visibility:visible;transform:none;z-index:110}
+header nav#nav .ni.open>.dd{display:block}
+header nav#nav .ni:last-child .dd,header nav#nav .ni:nth-last-child(2) .dd{left:auto;right:0}
+}
 /* ড্রপডাউন মেনুর সাজসজ্জা */
 .md,.dd{border-radius:14px;padding:8px;min-width:250px;box-shadow:0 18px 40px rgba(13,74,58,.2)}
 .md{animation:ddIn .18s ease}
