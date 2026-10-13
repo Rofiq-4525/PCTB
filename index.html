@@ -63,6 +63,12 @@ header nav#nav .ni>a .ic,header nav#nav .nb .ic{width:21px;height:21px}
 header nav#nav .nb .chev{display:none}
 header nav#nav .dd{position:absolute;display:none;top:auto;bottom:calc(100% + 4px);left:0;right:auto;min-width:240px;margin:0;padding:8px;border:1px solid var(--line);border-bottom:3px solid var(--gold);border-radius:14px 14px 0 0;box-shadow:0 -14px 28px rgba(13,74,58,.18);opacity:1;visibility:visible;transform:none;z-index:110}
 header nav#nav .ni.open>.dd{display:block}
+header .bar nav#nav{transform:translateZ(0);will-change:transform;backface-visibility:hidden;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+header nav#nav .ni>a,header nav#nav .nb{border:1px solid transparent;transition:background .15s,color .15s;-webkit-tap-highlight-color:transparent}
+header nav#nav .ni.on>a,header nav#nav .ni.on>.nb{border-color:#a9d0af}
+header nav#nav .ni>a:hover,header nav#nav .nb:hover,header nav#nav .ni:hover>.nb{transform:none;box-shadow:none}
+header nav#nav .ni.open>.dd{animation:ddUp .18s ease}
+@keyframes ddUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 header nav#nav .ni:last-child .dd,header nav#nav .ni:nth-last-child(2) .dd{left:auto;right:0}
 }
 /* ড্রপডাউন মেনুর সাজসজ্জা */
