@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</title>
 <link rel="icon" href="logo%20short.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d4a3a">
+<meta name="application-name" content="PCTB">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PCTB">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="logo%20short.png">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{--g:#0d4a3a;--g2:#145c49;--gold:#b8923a;--bg:#f2f6f3;--ink:#17261f;--mut:#5d6f66;--line:#d5e0d9;--w:#fff;--err:#a3281f}
@@ -706,6 +714,7 @@ async function route(){
   scrollTo(0,0);{const r=document.getElementById('scr');if(r)r.scrollTop=0}
 }
 addEventListener('hashchange',route);route();
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 /* মোবাইলে টেনে রিফ্রেশ (pull to refresh) */
 (()=>{const sc=document.getElementById('scr'),mq=matchMedia('(max-width:900px)');if(!sc)return;
  const ind=document.createElement('div');ind.id='ptr';ind.style.display='none';document.body.appendChild(ind);
