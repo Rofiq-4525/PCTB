@@ -142,6 +142,35 @@ table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#
 @media print{.ticker,header,.noprint,footer{display:none}.card{border:0}}
 footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* নোটিশ বোর্ড */
+.notice-card{position:relative;display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:14px;align-items:center;padding:18px 20px;border-left:4px solid var(--g);transition:box-shadow .2s,transform .2s}
+.notice-card:hover{box-shadow:0 8px 22px rgba(13,74,58,.09);transform:translateY(-1px)}
+.notice-seal{width:56px;height:56px;border-radius:50%;background:#fff;border:2px solid var(--gold);padding:4px;display:grid;place-items:center;box-shadow:0 0 0 3px #f6edda}
+.notice-seal svg{width:100%;height:100%}.notice-info h3{font-size:1.08rem;margin:0 0 5px;color:var(--g)}
+.notice-info p{margin:0 0 7px;color:#44574d}.notice-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.82rem;color:var(--mut)}
+.demo-tag{background:#fff5df;color:#7c5b11;border:1px solid #ead6a6;border-radius:20px;padding:1px 8px;font-size:.76rem}
+.notice-download{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#fff;color:#c62828;border:1px solid #f0caca;border-radius:9px;padding:9px 12px;text-decoration:none;font-weight:600;white-space:nowrap;transition:background .18s,color .18s}
+.notice-download svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.notice-download:hover{background:#c62828;color:#fff;border-color:#c62828}
+.notice-banner{display:flex;align-items:center;gap:14px;padding:18px 20px;margin-bottom:18px;background:linear-gradient(115deg,#e8f2eb,#fffaf0);border:1px solid #d9e5dc;border-radius:14px}
+.notice-banner-seal{width:68px;height:68px;flex:none}.notice-banner h2{margin:0 0 3px;color:var(--g)}.notice-banner p{margin:0;color:var(--mut)}
+@media(max-width:620px){.notice-card{grid-template-columns:46px minmax(0,1fr);gap:11px;padding:14px}.notice-seal{width:44px;height:44px}.notice-download{grid-column:2;justify-self:start;padding:7px 10px}.notice-banner{padding:14px;gap:10px}.notice-banner-seal{width:52px;height:52px}}
+
+
+/* পরিচালনা পরিষদ */
+.board-page-head{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 26px;margin:0 0 24px;border:1px solid #d4e3d8;border-radius:16px;background:linear-gradient(120deg,#edf6ef,#fffdf7);box-shadow:0 5px 18px rgba(13,74,58,.06)}
+.board-page-head h2{margin:7px 0;color:#0d4a3a;font-size:clamp(1.5rem,3vw,2.1rem)}
+.board-page-head p{margin:0;color:#52685c}
+.board-page-seal{display:flex;align-items:center;gap:12px;flex:none}
+.board-page-seal img{width:58px;height:58px;object-fit:contain}
+.board-official-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.board-official-card{min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:22px 14px 16px;border:1px solid #d6e2d9;border-radius:15px;background:linear-gradient(155deg,#fff 0%,#f2f7f3 100%);box-shadow:0 5px 16px rgba(13,74,58,.07)}
+.board-avatar{width:112px;height:112px;display:block;margin:0 0 18px;border-radius:50%;border:2px solid #b8923a;background:#edf5ef;box-shadow:0 0 0 5px #e7efe9;overflow:hidden}.board-avatar svg{display:block;width:100%;height:100%}
+.board-role{display:block;width:100%;box-sizing:border-box;padding:9px 10px;border-radius:9px;background:#0d5946;color:#fff;font-weight:700;line-height:1.5}
+.board-name-space{height:8px}
+@media(max-width:680px){.board-official-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.board-official-card{padding:17px 8px 12px}.board-avatar{width:88px;height:88px}.board-role{font-size:.96rem;padding:7px 5px}.board-page-head{padding:19px 15px}.board-page-seal{gap:4px}.board-page-seal img{width:43px;height:43px}}
+@media(max-width:390px){.board-page-seal{flex-direction:column}.board-official-grid{gap:8px}.board-avatar{width:78px;height:78px}}
 </style>
 <script>
 /* লোগো ফাইল: logo.* ও seal.* (png, jpg, jpeg, webp যেকোনোটা চলবে) */
@@ -298,13 +327,27 @@ async home(){
   ${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`},
 async about(){const t=await site('about',DEF_ABOUT);return `<h2>পরিচিতি</h2><div class="card"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো" style="display:block;margin:0 auto 14px;max-width:260px;width:100%">${esc(t).replace(/\n/g,'<br>')}</div>`},
 async sorry(){const q=new URLSearchParams(location.hash.split('?')[1]||'').get('b');return `<div class="card" style="text-align:center;padding:40px 20px"><div style="color:var(--gold)"><svg class="ic" style="width:54px;height:54px" viewBox="0 0 24 24" aria-hidden="true">${ICONS.book}</svg></div><h2 style="margin:10px 0 6px">দুঃখিত!</h2><p>${q?'“'+esc(q)+'” বইটি':'এই বইটি'} এখনো যুক্ত করা হয়নি। অনুগ্রহ করে কিছুদিন পরে আবার চেষ্টা করুন।</p><p><a href="#/">← হোমে ফিরে যান</a></p></div>`},
-async board(){const b=await site('board',BOARD);return `<h2>পরিচালনা পরিষদ</h2><div class="grid">${b.map(x=>`<div class="card"><h3>${esc(x[1]||'—')}</h3><span class="pill">${esc(x[0])}</span></div>`).join('')}</div>`},
+async board(){
+  const count=6;
+  return `<section class="board-page-head"><div><span class="pill">PCTB</span><h2>পরিচালনা পরিষদ</h2><p>পরিচালনা পরিষদের সকলেই দায়িত্বশীল</p></div><div class="board-page-seal"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="PCTB সিল"></div></section><div class="board-official-grid">${Array.from({length:count},(_,idx)=>`<article class="board-official-card"><div class="board-avatar"><svg viewBox="0 0 100 100" role="img" aria-label="দাড়িওয়ালা পুরুষের ইলাস্ট্রেটেড অ্যাভাটার"><defs><linearGradient id="avbg${idx}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${["#e2efe5","#f4e8d4","#dfeaf0","#eee3ed","#e8edda","#f3e2d9"][idx%6]}"/><stop offset="1" stop-color="#fffaf0"/></linearGradient></defs><rect width="100" height="100" rx="50" fill="url(#avbg${idx})"/><path d="M20 100 Q22 76 39 72 L61 72 Q80 77 82 100Z" fill="${["#24634f","#354d68","#6b4937","#4c6250","#5d496b","#285b63"][idx%6]}"/><path d="M41 65h18v14q-9 10-18 0Z" fill="#b87955"/><path d="M28 40Q25 15 50 14Q76 15 72 43L67 60H33Z" fill="#29251f"/><ellipse cx="50" cy="43" rx="22" ry="27" fill="#c98e68"/><path d="M28 38Q25 17 49 16Q70 15 73 36L67 31Q55 27 48 28Q38 34 28 38Z" fill="#2b2723"/><path d="M28 47Q30 64 39 68L50 79L61 68Q70 62 72 47Q67 55 61 55L58 47Q50 54 42 47L39 55Q32 54 28 47Z" fill="${["#29251f","#302a26","#3a2b22","#262821","#322822","#292721"][idx%6]}"/><path d="M37 42h7M56 42h7" stroke="#38281f" stroke-width="2.5" stroke-linecap="round"/><circle cx="41" cy="44" r="2" fill="#29231f"/><circle cx="59" cy="44" r="2" fill="#29231f"/><path d="M48 46l-2 8 5 1" fill="none" stroke="#a96748" stroke-width="1.8" stroke-linecap="round"/><path d="M43 59Q50 63 57 59" fill="none" stroke="#f0c0a2" stroke-width="1.8" stroke-linecap="round"/></svg></div><span class="board-role">দায়িত্বশীল</span><div class="board-name-space" aria-hidden="true"></div></article>`).join('')}</div>`
+},
 async textbook(){
   const l=await all('books');
   return `<h2>পাঠ্যপুস্তক</h2>${l.length?`<div class="grid">${l.map(b=>`<div class="card"><h3>${esc(b.title)}</h3><span class="pill">${esc(bdiv(b))} বিভাগ</span><p><a href="${esc(b.url)}" target="_blank" rel="noopener">বই খুলুন / ডাউনলোড</a></p></div>`).join('')}</div>`:empty('এখনও কোনো বই আপলোড হয়নি।')}`},
 async notice(){
   const l=await all('notices');
-  return `<h2>নোটিশ</h2>${l.length?l.map(n=>`<div class="card"><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p><span class="muted">${new Date(n.t).toLocaleDateString('bn-BD')}</span></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`},
+  const demo=[
+    {title:'নমুনা নোটিশ: নতুন শিক্ষাবর্ষের প্রস্তুতি',body:'শিক্ষাপ্রতিষ্ঠানসমূহকে নতুন শিক্ষাবর্ষের পাঠপরিকল্পনা ও প্রয়োজনীয় প্রস্তুতি সম্পন্ন করার অনুরোধ জানানো হলো। এটি ওয়েবসাইটের ডিজাইন প্রদর্শনের জন্য তৈরি একটি ডেমো নোটিশ।',date:'১৩ অক্টোবর ২০২৬',id:'sample-01'},
+    {title:'নমুনা বিজ্ঞপ্তি: শিক্ষক প্রশিক্ষণ কর্মশালা',body:'শিক্ষকদের পাঠদান পদ্ধতি ও মূল্যায়ন বিষয়ে প্রশিক্ষণ কর্মশালার একটি নমুনা বিজ্ঞপ্তি। প্রকৃত তারিখ, স্থান ও নিবন্ধনের তথ্য কর্তৃপক্ষ পরবর্তীতে জানাবে।',date:'১০ অক্টোবর ২০২৬',id:'sample-02'},
+    {title:'নমুনা নির্দেশনা: পাঠ্যপুস্তক বিতরণ',body:'শিক্ষাপ্রতিষ্ঠানগুলোকে শ্রেণিভিত্তিক পাঠ্যপুস্তকের চাহিদা যাচাই ও বিতরণ-সংক্রান্ত প্রস্তুতি রাখার নমুনা নির্দেশনা।',date:'০৫ অক্টোবর ২০২৬',id:'sample-03'},
+    {title:'নমুনা বিজ্ঞপ্তি: মূল্যায়ন ও ফলাফল প্রস্তুতি',body:'শিক্ষার্থীদের ধারাবাহিক মূল্যায়নের তথ্য সঠিকভাবে সংরক্ষণ এবং ফলাফল প্রস্তুতের জন্য একটি নমুনা বিজ্ঞপ্তি।',date:'০১ অক্টোবর ২০২৬',id:'sample-04'}
+  ];
+  const actual=l.map((n,i)=>({...n,date:n.t?new Date(n.t).toLocaleDateString('bn-BD'):'তারিখ উল্লেখ নেই',id:'live-'+i,isLive:true}));
+  const items=[...actual,...demo];
+  const seal=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PCTB সিল"><circle cx="50" cy="50" r="46" fill="#fffdf6" stroke="#b8923a" stroke-width="3"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0d4a3a" stroke-width="1.8" stroke-dasharray="2.5 2.5"/><path d="M27 39 Q50 31 50 43 Q50 31 73 39 L73 61 Q50 54 50 66 Q50 54 27 61Z" fill="#0d4a3a"/><path d="M50 42V64" stroke="#fff" stroke-width="2"/><text x="50" y="79" text-anchor="middle" font-size="11" font-family="Arial,sans-serif" font-weight="700" fill="#0d4a3a">PCTB</text></svg>`;
+  const logo=`<div style="font-family:Arial,sans-serif;font-weight:800;letter-spacing:2px;color:#0d4a3a;font-size:24px">PCTB</div><div style="font-size:15px;color:#0d4a3a;font-weight:700">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</div>`;
+  const makeDoc=n=>`<!doctype html><html lang="bn"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(n.title)}</title><style>body{font-family:'Noto Serif Bengali','Nirmala UI',sans-serif;color:#1b2d24;line-height:1.9;max-width:800px;margin:30px auto;padding:24px}header{text-align:center;border-bottom:3px double #b8923a;padding-bottom:18px}h1{font-size:23px;color:#0d4a3a}h2{font-size:21px;margin-top:34px}.seal{width:82px;height:82px;margin:0 auto 8px}.date{text-align:right;color:#596b61}.note{border:1px solid #d5e0d9;padding:20px;border-radius:8px;margin-top:24px}.stamp{margin-top:60px;text-align:right;color:#0d4a3a}footer{margin-top:50px;border-top:1px solid #d5e0d9;padding-top:12px;text-align:center;font-size:12px;color:#68766e}@media print{body{margin:0}}</style><body><header><div class="seal">${seal}</div>${logo}<p>নমুনা নোটিশ — শুধুমাত্র ওয়েবসাইটের ডেমো প্রদর্শনের জন্য</p></header><p class="date">তারিখ: ${esc(n.date)}</p><h2>${esc(n.title)}</h2><div class="note"><p>${esc(n.body)}</p></div><div class="stamp">কর্তৃপক্ষ<br>PCTB<br><small>নমুনা স্বাক্ষর/সিল</small></div><footer>এটি একটি কাল্পনিক ডেমো নোটিশ; কোনো বাস্তব প্রশাসনিক নির্দেশনা নয়।</footer></body></html>`;
+  return `<div class="notice-banner"><div class="notice-banner-seal">${seal}</div><div><h2>নোটিশ বোর্ড</h2><p>PCTB — নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ডের বিজ্ঞপ্তি ও নির্দেশনা</p></div></div><div class="card" style="padding:12px 16px;margin-bottom:16px"><span class="demo-tag">ডেমো</span> নমুনা নোটিশগুলো শুধু ডিজাইন ও ডাউনলোড সুবিধা দেখানোর জন্য। এগুলো বাস্তব/অনুমোদিত বিজ্ঞপ্তি নয়।</div>${items.map(n=>`<article class="card notice-card"><div class="notice-seal">${seal}</div><div class="notice-info"><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p><div class="notice-meta"><span>তারিখ: ${esc(n.date)}</span><span class="demo-tag">${n.isLive?'প্রকাশিত':'নমুনা'}</span></div></div><a class="notice-download" download="PCTB-${esc(n.id)}.html" href="data:text/html;charset=utf-8,${encodeURIComponent(makeDoc(n))}" title="নোটিশ ডাউনলোড"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 12v6m-3-3 3 3 3-3"/></svg><span>ডাউনলোড</span></a></article>`).join('')}`},
 async institution(){
   const l=await all('institutions');
   return `<h2>শিক্ষা প্রতিষ্ঠান সমূহ</h2>${l.length?`<div class="grid">${l.map(i=>`<div class="card"><h3>${esc(i.name)}</h3><div class="muted">${esc(i.address)}</div>${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div>`:empty('এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।')}`},
