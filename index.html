@@ -53,7 +53,7 @@ nav{display:flex;align-items:center;gap:2px;justify-content:flex-end;flex:0 0 au
 .mi{position:relative}
 .mb{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;margin:0;border-radius:10px;background:#fff;color:var(--g);border:1px solid var(--line);text-decoration:none;cursor:pointer}
 .mb .ic{width:20px;height:20px}
-.mb.pctb{width:34px;height:34px;min-width:0;padding:0;border-radius:50%;overflow:hidden}.mb.pctb img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;transform:scale(1.12)}
+.mb.pctb{width:auto;height:40px;min-width:0;padding:0 10px;border-radius:10px;font:800 1.08rem 'Hind Siliguri',sans-serif;letter-spacing:0;white-space:nowrap;color:#0d4a3a}
 .mb:hover{background:#e8f0eb}.mb.on,.mb.on:hover{background:#d1e9d5;color:var(--g);border-color:#a9d0af}
 .mb.loggedin,.mb.loggedin.on,.mb.loggedin:hover{border:2px solid var(--gold);box-shadow:0 0 0 2px rgba(184,146,58,.22)}
 .mnav > .mb:first-child.on,.mnav > .mb:first-child.on:hover{background:#edf5ef;color:var(--g);border-color:#d9e7dd}
@@ -165,6 +165,10 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 .mnav>.mb:first-child.on .ic{filter:drop-shadow(0 0 3px rgba(217,169,32,.85))}
 .mnav .mi:last-child>.mb.on .ic{filter:drop-shadow(0 0 3px rgba(93,180,214,.9))}
 .mnav .mb.loggedin{color:#b8923a}.mnav .mb.loggedin .ic{filter:drop-shadow(0 0 3px rgba(184,146,58,.8))}
+/* হেডার আইকন: বড় ও গাঢ় */
+.mnav>.mb .ic,.mnav .mi>.mb .ic{width:25px;height:25px;stroke-width:2.6}
+.mnav .mb.pctb:hover{color:#b8923a}
+.mnav .mb.pctb.on{color:#0d4a3a;text-shadow:0 0 7px rgba(184,146,58,.85)}
 main{max-width:1050px;margin:auto;padding:26px 18px 60px}
 .hero{background:linear-gradient(150deg,#f4f9f5 0%,#dcebe0 100%);border:1px solid #c5d9cb;box-shadow:0 8px 24px rgba(13,74,58,.08);color:var(--ink);border-radius:14px;padding:38px 30px;margin-bottom:26px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center}
 .hero h1{font-size:2rem}.hero p{color:var(--mut);margin:0}
@@ -716,7 +720,7 @@ const NAV=[
  {p:'result',t:'ফলাফল',i:'result'},{p:'student',t:'শিক্ষার্থী',i:'student'},{p:'teacher',t:'শিক্ষক',i:'users'}];
 const navHTML=k=>NAV.map(n=>n.c?`<div class="ni${n.c.some(c=>c.p==k)?' on':''}"><button class="nb" aria-haspopup="true">${ic(n.i)}${n.t}${ic('chev','chev')}</button><div class="dd">${n.c.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`:`<div class="ni${n.p==k?' on':''}"><a href="#/${n.p}">${ic(n.i)}${n.t}</a></div>`).join('');
 const MP=[{p:'about',t:'বোর্ড পরিচিতি',i:'info'},{p:'board',t:'পরিচালনা পরিষদ',i:'users'},{p:'textbook',t:'পাঠ্যপুস্তক',i:'book'},{p:'notice',t:'নোটিশ',i:'bell'},{p:'institution',t:'শিক্ষা প্রতিষ্ঠান সমূহ',i:'school'},{p:'result',t:'ফলাফল',i:'result'}],ML=[{p:'student',t:'শিক্ষার্থী লগইন',i:'student'},{p:'teacher',t:'শিক্ষক লগইন',i:'users'},{p:'admin',t:'অ্যাডমিন লগইন',i:'shield'}];
-const mdd=(l,k,ico,lbl)=>`<div class="mi"><button class="mb${l.some(c=>c.p==k)?' on':''}${ico==='logo'?' pctb':''}" aria-haspopup="true" aria-label="${lbl}">${ico==='logo'?'<img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="">':ic(ico)}</button><div class="md">${l.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`;
+const mdd=(l,k,ico,lbl)=>`<div class="mi"><button class="mb${l.some(c=>c.p==k)?' on':''}${ico==='logo'?' pctb':''}" aria-haspopup="true" aria-label="${lbl}">${ico==='logo'?'<span>পিসিটিবি</span>':ic(ico)}</button><div class="md">${l.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`;
 const mnavHTML=k=>`<a class="mb${k=='notice'?' on':''}" href="#/notice" aria-label="নোটিশ">${ic('bell')}</a>`+mdd(MP,k,'logo','পিসিটিবি')+(user?(()=>{const d=tstat==='admin'?'admin':'teacher';return `<a class="mb loggedin${k==d?' on':''}" href="#/${d}" aria-label="ড্যাশবোর্ড" title="ড্যাশবোর্ড">${ic('login')}</a>`})():mdd(ML,k,'login','লগইন'));
 $('#mnav').onclick=e=>{const b=e.target.closest('.mb[aria-haspopup]');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.mi.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
 $('#nav').onclick=e=>{const b=e.target.closest('.nb');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
