@@ -55,6 +55,8 @@ nav{display:flex;align-items:center;gap:2px;justify-content:flex-end;flex:0 0 au
 @media(max-width:900px){.mbtn,nav,header.menu-open nav{display:none!important}.mnav{display:flex}.bar{flex-wrap:nowrap;padding:4px 10px}.logo{min-width:0;flex:1;margin-left:0}.hlogo{max-width:100%;height:60px;object-fit:contain;object-position:left}.mnav .md a{font-size:.9rem;justify-content:flex-start;padding:10px 12px;gap:10px}.mnav .md .ic{width:18px;height:18px}}
 /* মোবাইল: পেজের নিচে স্থির (sticky) অ্যাপ-স্টাইল মেনু */
 @media(max-width:900px){
+html,body{height:100%;overflow:hidden}
+#scr{height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
 body footer.ft{padding-bottom:calc(16px + 62px)}
 header .bar nav#nav{display:flex!important;position:fixed;left:0;right:0;bottom:0;z-index:100;width:100%;flex-direction:row;align-items:stretch;justify-content:space-around;gap:2px;padding:5px 6px;background:linear-gradient(180deg,#e2f1e7 0%,#d2e8d9 100%);border-top:1px solid rgba(13,74,58,.12);box-shadow:0 -6px 16px rgba(13,74,58,.1)}
 header nav#nav .ni{flex:1 1 0;min-width:0;position:relative}
@@ -249,6 +251,7 @@ function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.datas
 </script>
 </head>
 <body>
+<div id="scr">
 <header><div class="bar">
 <a class="logo" href="#/">
   <img class="hlogo" src="logo%20short.png" data-f="logo short" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="124">
@@ -270,6 +273,7 @@ function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.datas
 </div>
 <div class="fcopy">© ২০২৬ PCTB। সর্বস্বত্ব সংরক্ষিত।</div>
 </div></footer>
+</div>
 
 <script type="module">
 
@@ -697,7 +701,7 @@ async function route(){
   const app=$('#app');app.innerHTML='<p class="muted">লোড হচ্ছে…</p>';
   try{app.innerHTML=await V[k||'home']()}catch(e){app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;return}
   ({'':bindHome,result:bindResult,student:bindStudent,teacher:bindTeacher,admin:bindAdmin,textbook:bindTextbook,institution:bindInst}[k]||(()=>{}))();if((k=='teacher'||k=='admin')&&user)loadList();
-  scrollTo(0,0);
+  scrollTo(0,0);{const r=document.getElementById('scr');if(r)r.scrollTop=0}
 }
 addEventListener('hashchange',route);route();
 </script>
