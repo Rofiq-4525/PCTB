@@ -15,7 +15,7 @@ a{color:var(--g2)}
 header{background:#e3f0e8;color:var(--ink);border-bottom:4px solid var(--g);box-shadow:0 2px 0 var(--gold)}
 .bar{max-width:1240px;margin:auto;padding:0 10px;display:flex;align-items:center;justify-content:space-between;gap:0;flex-wrap:nowrap}
 .logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--g);margin:0 0 0 -2px;flex:0 0 auto;padding-left:0;padding-right:0}
-.hlogo,.fseal{mix-blend-mode:multiply}
+.hlogo,.fseal,.homelogo{mix-blend-mode:multiply}
 .hlogo{height:124px;width:auto;display:block;transform:none}
 .logo span{display:flex;flex-direction:row;align-items:center;gap:6px;line-height:1}
 .logo b{font-family:'Noto Serif Bengali';font-size:1.1rem;display:block;line-height:1.2}
@@ -66,6 +66,12 @@ nav{display:flex;align-items:center;gap:2px;justify-content:flex-end;flex:0 0 au
 .md a.cur .ic,.dd a.cur .ic{background:var(--g);color:#fff}
 .md a::after,.dd a::after{content:"›";margin-left:auto;color:var(--gold);font-size:1.25rem;line-height:1;opacity:0;transform:translateX(-4px);transition:opacity .18s,transform .18s}
 .md a:hover::after,.dd a:hover::after{opacity:1;transform:none}
+.ticker{background:#f4f9f6;color:var(--g);overflow:hidden;padding:6px 0;font-size:.9rem;border-bottom:1px solid var(--line)}
+.tk{display:inline-flex;white-space:nowrap;opacity:.65;animation:tkRun 70s linear infinite;will-change:transform}
+.tk span{display:inline-block;padding-right:6px}.tk i{font-style:normal;color:var(--gold);margin:0 12px}
+.ticker:hover .tk{animation-play-state:paused}
+@keyframes tkRun{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.tk{animation:none;white-space:normal;display:block;text-align:center}.tk span[aria-hidden]{display:none}}
 main{max-width:1050px;margin:auto;padding:26px 18px 60px}
 .hero{background:var(--g);color:#fff;border-radius:14px;padding:38px 30px;margin-bottom:26px;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center;background-image:radial-gradient(circle at 100% 0,#1b6d57 0,transparent 55%)}
 .hero h1{font-size:2rem}.hero p{opacity:.88;margin:0}
@@ -89,7 +95,7 @@ th{background:#e8f0eb;font-weight:600}
 .muted{color:var(--mut)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .sub{display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center;margin-bottom:6px}.sub span{font-weight:500}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
-@media print{header,.noprint,footer{display:none}.card{border:0}}
+@media print{.ticker,header,.noprint,footer{display:none}.card{border:0}}
 footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -105,6 +111,7 @@ function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.datas
 </a>
 <button class="mbtn" id="mb" aria-label="মেনু" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 <nav id="nav" aria-label="মূল মেনু"></nav><div class="mnav" id="mnav"></div></div></header>
+<div class="ticker" role="marquee" aria-label="PCTB: Prophetic Curriculum and Textbook Board – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড"><div class="tk"><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span aria-hidden="true"><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span></span></div></div>
 <div id="demoB" hidden style="background:#fff3cd;color:#5c4a00;text-align:center;padding:6px 12px;font-size:.88rem">ডেমো মোড: ডেটা শুধু এই ব্রাউজারে সেভ হচ্ছে। শিক্ষক লগইন: admin@pctb.demo / 123456</div>
 <main id="app"></main>
 <footer><img class="fseal" src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="" width="36" height="36" style="border-radius:50%;display:block;margin:0 auto 6px">© PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</footer>
@@ -211,7 +218,7 @@ async function showResults(reg,out){
 const V={
 async home(){
   const ns=(await all('notices').catch(()=>[])).slice(0,4);
-  return `<section class="hero"><div><h1>নববী আদর্শে গড়া শিক্ষাক্রম ও পাঠ্যপুস্তক</h1><p>পাঠ্যবই, নোটিশ ও পরীক্ষার ফলাফল এক জায়গায়।</p></div>
+  return `<div style="text-align:center;padding:4px 0 22px"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div><section class="hero"><div><h1>নববী আদর্শে গড়া শিক্ষাক্রম ও পাঠ্যপুস্তক</h1><p>পাঠ্যবই, নোটিশ ও পরীক্ষার ফলাফল এক জায়গায়।</p></div>
   <div class="box"><h3>ফলাফল দেখুন</h3><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" placeholder="233001"><button id="hb">ফলাফল দেখুন</button></div></section>
   <h2>সর্বশেষ নোটিশ</h2>${ns.length?ns.map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`},
 async about(){const t=await site('about',DEF_ABOUT);return `<h2>পরিচিতি</h2><div class="card"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো" style="display:block;margin:0 auto 14px;max-width:260px;width:100%">${esc(t).replace(/\n/g,'<br>')}</div>`},
