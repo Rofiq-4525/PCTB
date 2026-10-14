@@ -1,6 +1,6 @@
 /* PCTB – সার্ভিস ওয়ার্কার */
-const V='pctb-v3';
-const CORE=['./','logo-short-web.png','pctb-icon-192.png'];
+const V='pctb-v4';
+const CORE=['./'];
 const OK_HOSTS=['fonts.googleapis.com','fonts.gstatic.com','www.gstatic.com','res.cloudinary.com'];
 
 self.addEventListener('install',e=>{
