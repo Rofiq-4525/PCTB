@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</title>
-<link rel="icon" href="logo%20short.png">
+<link rel="icon" href="https://res.cloudinary.com/d5vjnkoy/image/upload/logo_short">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d4a3a">
 <meta name="application-name" content="PCTB">
@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="PCTB">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="pctb-apple-180.png">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/d5vjnkoy/image/upload/pctb-apple-180">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{--g:#0d4a3a;--g2:#145c49;--gold:#b8923a;--bg:#f2f6f3;--ink:#17261f;--mut:#5d6f66;--line:#d5e0d9;--w:#fff;--err:#a3281f}
@@ -315,13 +315,15 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 <script>
 /* লোগো ফাইল: logo.* ও seal.* (png, jpg, jpeg, webp যেকোনোটা চলবে) */
 function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.dataset.i||0;if(n<e.length){i.dataset.i=n+1;i.src=i.dataset.f+"."+e[n]}else{i.onerror=null;i.style.display="none"}}
+function cloudImage(n){return "https://res.cloudinary.com/d5vjnkoy/image/upload/"+n.replace(/\.[^.]+$/,"").replace(/ /g,"_")}
+function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|seal|icon[1-4]|logo%20short)\.png"/g,(_,n)=>'src="'+cloudImage(n.replace(/%20/g," ") + ".png")+'"')}
 </script>
 </head>
 <body>
 <div id="scr">
 <header><div class="bar">
 <a class="logo" href="#/">
-  <img class="hlogo" src="logo-short-web.png" data-f="logo-short-web" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="80">
+  <img class="hlogo" src="https://res.cloudinary.com/d5vjnkoy/image/upload/logo-short-web" data-f="logo-short-web" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="80">
 </a>
 <button class="mbtn" id="mb" aria-label="মেনু" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 <nav id="nav" aria-label="মূল মেনু"></nav><div class="mnav" id="mnav"></div></div></header>
@@ -330,7 +332,7 @@ function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.datas
 <div class="ticker" role="marquee" aria-label="PCTB: Prophetic Curriculum and Textbook Board – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড"><div class="tk"><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span aria-hidden="true"><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span><span>PCTB = Prophetic Curriculum and Textbook Board <i>◆</i> পিসিটিবি = নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড <i>◆</i> </span></span></div></div>
 <footer class="ft"><div class="ftw">
 <div class="fbrand">
-<div class="flogo"><span class="fbox"><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt=""></span><div><b>PCTB</b><small>নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</small></div></div>
+<div class="flogo"><span class="fbox"><img src="https://res.cloudinary.com/d5vjnkoy/image/upload/seal" data-f="seal" data-i="1" onerror="pick(this)" alt=""></span><div><b>PCTB</b><small>নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</small></div></div>
 <p>নববী আদর্শে গড়া শিক্ষাক্রম ও পাঠ্যপুস্তকের নির্ভরযোগ্য ঠিকানা।</p>
 </div>
 <div class="fcols">
@@ -776,9 +778,9 @@ document.querySelectorAll('.fcols details').forEach(d=>d.open=true);
 async function route(){ 
   const p=(location.hash.replace(/^#\/?/,'').split('?')[0])||'';
   const k=pages.some(x=>x[0]==p)?p:'';
-  $('#demoB').hidden=!DEMO;$('#nav').innerHTML=navHTML(k);$('#mnav').innerHTML=mnavHTML(k);document.querySelector('header').classList.remove('menu-open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));
+  $('#demoB').hidden=!DEMO;$('#nav').innerHTML=cloudMarkup(navHTML(k));$('#mnav').innerHTML=mnavHTML(k);document.querySelector('header').classList.remove('menu-open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));
   const app=$('#app');app.innerHTML='<p class="muted">লোড হচ্ছে…</p>';
-  try{app.innerHTML=await V[k||'home']()}catch(e){app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;return}
+  try{app.innerHTML=cloudMarkup(await V[k||'home']())}catch(e){app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;return}
   ({'':bindHome,result:bindResult,student:bindStudent,teacher:bindTeacher,admin:bindAdmin,textbook:bindTextbook,institution:bindInst}[k]||(()=>{}))();if((k=='teacher'||k=='admin')&&user)loadList();
   scrollTo(0,0);{const r=document.getElementById('scr');if(r)r.scrollTop=0}
 }
