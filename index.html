@@ -469,9 +469,7 @@ const emptyBox=(i,t,sub)=>`<div class="card cc emp"><span class="bvn">${ic(i)}</
 const SHOW_DEMO_NOTICES=true; /* false করলে নমুনা নোটিশ আর দেখাবে না */
 const errBox=e=>emptyBox('info','তথ্য এখন লোড করা যাচ্ছে না','কিছুক্ষণ পরে আবার চেষ্টা করুন।'+(e&&e.code?`<br><small>(${esc(e.code)})</small>`:''));
 async function safeAll(c){try{return{l:await all(c)}}catch(e){console.error('Firestore:',c,e);return{err:e}}}
-const ICON_EXT='png'; /* ছবির ধরন: 'png' বা 'svg' */
-const ICON_DIR=''; /* ইলাস্ট্রেশন ছবিগুলো যে ফোল্ডারে থাকবে, যেমন 'icons/' ; ফাঁকা মানে index.html-এর পাশেই */
-const divIcon=i=>`<span class="bvn">${ic(['adab','talib','lazim','khid'][i])}<img class="ill" src="${ICON_DIR}icon${i+1}.${ICON_EXT}" alt="" loading="lazy" onerror="this.remove()"></span>`;
+const divIcon=i=>`<span class="bvn">${ic(['adab','talib','lazim','khid'][i])}<img class="ill" src="${cloudImage(`icon${i+1}`)}" alt="" loading="lazy" onerror="this.remove()"></span>`;
 const DIVINFO=[['আদব','প্রাইমারি','১–৫','নববী আদর্শ ও নৈতিকতা অর্জন'],['তলিব','মাধ্যমিক','৬–৮','ইলম ও আমল অর্জন'],['লাজিম','উচ্চ মাধ্যমিক','৯–১০','ব্যবহারিক দক্ষতা অর্জন ও কর্মজীবন গঠন'],['খিদমাহ','স্নাতক ও স্নাতকোত্তর','১১–১২','পরিবার, সমাজ ও উম্মাহর দায়িত্ব গ্রহণ']];
 const divCards=()=>`<div class="bv">${DIVINFO.map((x,i)=>`<div class="bvc d${i}" title="${x[0]}">${divIcon(i)}<div class="bvd">${x[1]}</div><p class="bvl">${x[3]}</p></div>`).join('')}</div>`;
 const MON=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
