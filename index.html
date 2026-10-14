@@ -315,7 +315,7 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 <script>
 /* লোগো ফাইল: logo.* ও seal.* (png, jpg, jpeg, webp যেকোনোটা চলবে) */
 function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.dataset.i||0;if(n<e.length){i.dataset.i=n+1;i.src=i.dataset.f+"."+e[n]}else{i.onerror=null;i.style.display="none"}}
-function cloudImage(n){return "https://res.cloudinary.com/d5vjnkoy/image/upload/"+n.replace(/\.[^.]+$/,"").replace(/ /g,"_")}
+function cloudImage(n){var id=n.replace(/\.[^.]+$/,"").replace(/ /g,"_"),w={"logo-short-web":160,"logo-icon":64,logo:640,seal:192,icon1:380,icon2:380,icon3:380,icon4:380}[id]||380;return "https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_"+w+",c_limit/"+id}
 function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|seal|icon[1-4]|logo%20short)\.png"/g,(_,n)=>'src="'+cloudImage(n.replace(/%20/g," ") + ".png")+'"')}
 </script>
 </head>
@@ -323,7 +323,7 @@ function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|se
 <div id="scr">
 <header><div class="bar">
 <a class="logo" href="#/">
-  <img class="hlogo" src="https://res.cloudinary.com/d5vjnkoy/image/upload/logo-short-web" data-f="logo-short-web" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="80">
+  <img class="hlogo" src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_160,c_limit/logo-short-web" data-f="logo-short-web" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" height="80">
 </a>
 <button class="mbtn" id="mb" aria-label="মেনু" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 <nav id="nav" aria-label="মূল মেনু"></nav><div class="mnav" id="mnav"></div></div></header>
