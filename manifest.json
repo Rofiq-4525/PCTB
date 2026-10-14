@@ -13,19 +13,19 @@
   "theme_color": "#0d4a3a",
   "icons": [
     {
-      "src": "pctb-icon-192.png",
+      "src": "https://res.cloudinary.com/d5vjnkoy/image/upload/pctb-icon-192",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "pctb-icon-512.png",
+      "src": "https://res.cloudinary.com/d5vjnkoy/image/upload/pctb-icon-512",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "pctb-icon-maskable-512.png",
+      "src": "https://res.cloudinary.com/d5vjnkoy/image/upload/pctb-icon-maskable-512",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
