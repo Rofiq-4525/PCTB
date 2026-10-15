@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-title" content="PCTB">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_180,c_limit/pctb-apple-180">
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Naskh+Arabic:wght@500;600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{--g:#0d4a3a;--g2:#145c49;--gold:#b8923a;--bg:#f2f6f3;--ink:#17261f;--mut:#5d6f66;--line:#d5e0d9;--w:#fff;--err:#a3281f}
 *{box-sizing:border-box}
@@ -256,22 +256,24 @@ table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#
 .registration-certificate::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--cert-watermark) center/330px auto no-repeat;opacity:.055;pointer-events:none}
 .registration-certificate .cert-heading{width:100%;display:flex;flex-direction:column;align-items:center;border-bottom:2px solid rgba(169,135,69,.6);padding-bottom:15px}
 .registration-certificate header.cert-heading{background:transparent;color:inherit;border-bottom:2px solid rgba(169,135,69,.6);box-shadow:none}
-.registration-certificate .cert-logo{width:205px;max-height:112px;object-fit:contain;margin-bottom:8px}
+.registration-certificate .cert-logo{width:250px;max-height:132px;object-fit:contain;margin-bottom:8px;background:transparent;mix-blend-mode:multiply}
 .registration-certificate .cert-board{font:700 1.55rem/1.5 'Noto Serif Bengali',serif;color:var(--g);margin:0}
+.registration-certificate .cert-board-ar{font:600 1.25rem/1.6 'Noto Naskh Arabic',serif;color:#604b25;margin:0}
+.registration-certificate .cert-board-en{font:600 1rem/1.6 'Hind Siliguri',sans-serif;color:#604b25;margin:0;letter-spacing:.04em}
 .registration-certificate .cert-title{font-size:1.85rem;color:#6f5424;margin:19px 0 10px}
 .registration-certificate .cert-reg{font:700 1.2rem 'Noto Serif Bengali',serif;letter-spacing:1px;color:var(--g);border:2px solid #a98745;padding:8px 24px;margin:6px 0 18px;background:rgba(255,252,240,.62)}
 .registration-certificate .cert-table{position:relative;width:100%;max-width:610px;margin:10px auto 0;text-align:left;border-collapse:collapse;background:rgba(255,252,240,.48)}
 .registration-certificate .cert-table caption{text-align:left;font:600 1.05rem 'Noto Serif Bengali',serif;color:var(--g);padding:7px 10px 4px}
 .registration-certificate .cert-table th,.registration-certificate .cert-table td{border:1px solid rgba(139,113,64,.42);padding:8px 12px}
 .registration-certificate .cert-table th{width:38%;color:#604b25;font-weight:600}
-.registration-certificate .cert-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-top:auto;padding-top:32px}
+.registration-certificate .cert-footer{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:auto;padding-top:32px}
 .registration-certificate footer.cert-footer{text-align:left;color:inherit;font-size:inherit;padding:32px 0 0}
-.registration-certificate .cert-seal-wrap{width:110px;display:flex;justify-content:center;align-items:center;flex:none}
-.registration-certificate .cert-seal{width:94px;height:94px;object-fit:contain}
-.registration-certificate .cert-signatures{flex:1;display:flex;justify-content:flex-end;align-items:flex-end;gap:18px}
-.registration-certificate .cert-sign{width:190px;max-width:48%;padding-top:9px;border-top:1px solid #604b25;font-size:.9rem}
+.registration-certificate .cert-seal-wrap{width:132px;display:flex;justify-content:center;align-items:center;flex:none}
+.registration-certificate .cert-seal{width:118px;height:118px;object-fit:contain;background:transparent;mix-blend-mode:multiply}
+.registration-certificate .cert-signatures{flex:1;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.registration-certificate .cert-sign{width:190px;max-width:48%;padding-top:9px;border-top:1px solid #604b25;font-size:.9rem;text-align:center}
 .certificate-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px auto}
-@media(max-width:600px){.registration-certificate{width:100%;min-height:0;margin:12px auto;padding:30px 14px;border-width:6px;outline-offset:-14px}.registration-certificate .cert-logo{width:min(170px,65%);max-height:84px}.registration-certificate .cert-board{font-size:1.12rem}.registration-certificate .cert-title{font-size:1.4rem;margin:14px 0 8px}.registration-certificate .cert-reg{font-size:1rem;letter-spacing:0;padding:7px 10px;margin-bottom:12px}.registration-certificate .cert-table{table-layout:fixed;font-size:.88rem;margin-top:7px}.registration-certificate .cert-table caption{font-size:.95rem}.registration-certificate .cert-table th,.registration-certificate .cert-table td{overflow-wrap:anywhere;padding:6px 5px}.registration-certificate .cert-footer{gap:7px;padding-top:22px}.registration-certificate footer.cert-footer{padding-top:22px}.registration-certificate .cert-seal-wrap{width:66px}.registration-certificate .cert-seal{width:62px;height:62px}.registration-certificate .cert-signatures{gap:8px}.registration-certificate .cert-sign{font-size:.72rem;padding-top:6px}.certificate-actions{gap:8px}.certificate-actions button{font-size:.88rem;padding:7px 10px}}
+@media(max-width:600px){.registration-certificate{width:100%;min-height:0;margin:12px auto;padding:30px 14px;border-width:6px;outline-offset:-14px}.registration-certificate .cert-logo{width:min(200px,75%);max-height:100px}.registration-certificate .cert-board{font-size:1.12rem}.registration-certificate .cert-board-ar{font-size:1rem}.registration-certificate .cert-board-en{font-size:.82rem}.registration-certificate .cert-title{font-size:1.4rem;margin:14px 0 8px}.registration-certificate .cert-reg{font-size:1rem;letter-spacing:0;padding:7px 10px;margin-bottom:12px}.registration-certificate .cert-table{table-layout:fixed;font-size:.88rem;margin-top:7px}.registration-certificate .cert-table caption{font-size:.95rem}.registration-certificate .cert-table th,.registration-certificate .cert-table td{overflow-wrap:anywhere;padding:6px 5px}.registration-certificate .cert-footer{gap:7px;padding-top:22px}.registration-certificate footer.cert-footer{padding-top:22px}.registration-certificate .cert-seal-wrap{width:76px}.registration-certificate .cert-seal{width:72px;height:72px}.registration-certificate .cert-signatures{gap:8px}.registration-certificate .cert-sign{font-size:.72rem;padding-top:6px}.certificate-actions{gap:8px}.certificate-actions button{font-size:.88rem;padding:7px 10px}}
 @page{size:A4 portrait;margin:0}
 @media print{html,body{width:210mm!important;height:auto!important;overflow:visible!important;background:#fff!important}body *{visibility:hidden!important}.registration-certificate.print-target,.registration-certificate.print-target *{visibility:visible!important}.registration-certificate.print-target{position:fixed!important;left:0!important;top:0!important;width:210mm!important;height:297mm!important;min-height:297mm!important;max-width:none!important;margin:0!important;padding:17mm 16mm!important;border:10px double #b8923a!important;outline:1px solid #0d4a3a!important;outline-offset:-20px!important;box-shadow:none!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.certificate-actions,.ticker,body>#scr>header,body>#scr>footer{display:none!important}}
 footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
@@ -506,7 +508,9 @@ function registrationCertificate(student,id='registrationCertificate'){
   return `<article id="${esc(id)}" class="registration-certificate" style="--cert-watermark:url('${cloudImage('logo')}')">
     <header class="cert-heading">
       <img class="cert-logo" src="${cloudImage('logo-short-web')}" alt="PCTB লোগো">
+      <p class="cert-board-ar" lang="ar" dir="rtl">مجلس المناهج النبوية والكتب المدرسية</p>
       <h2 class="cert-board">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</h2>
+      <p class="cert-board-en" lang="en">Prophetic Curriculum and Textbook Board</p>
     </header>
     <h1 class="cert-title">শিক্ষার্থী নিবন্ধন সনদ</h1>
     <div class="cert-reg">রেজিস্ট্রেশন নম্বর: ${esc(student.reg||'')}</div>
@@ -529,10 +533,22 @@ function registrationCertificate(student,id='registrationCertificate'){
 
 function downloadRegistrationCertificate(student){
   const certificate=registrationCertificate(student);
-  const html=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PCTB নিবন্ধন সনদ - ${esc(student.reg||'')}</title><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet"><style>
+  const html=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PCTB নিবন্ধন সনদ - ${esc(student.reg||'')}</title><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Naskh+Arabic:wght@500;600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet"><style>
     *{box-sizing:border-box}body{margin:0;background:#f2f6f3;color:#392f20;font:16px/1.7,'Hind Siliguri',sans-serif}.registration-certificate{position:relative;isolation:isolate;overflow:hidden;width:210mm;height:297mm;margin:12px auto;padding:17mm 16mm;background:radial-gradient(ellipse at 18% 12%,rgba(181,144,83,.11),transparent 35%),radial-gradient(ellipse at 82% 88%,rgba(161,126,70,.09),transparent 36%),linear-gradient(135deg,#f7f0df,#fbf7eb 45%,#f1e7d2);border:10px double #a98745;outline:1px solid #765d32;outline-offset:-20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;print-color-adjust:exact;-webkit-print-color-adjust:exact}.registration-certificate::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--cert-watermark) center/330px auto no-repeat;opacity:.055;pointer-events:none}.cert-heading{width:100%;display:flex;flex-direction:column;align-items:center;border-bottom:2px solid rgba(169,135,69,.6);padding-bottom:15px}.cert-logo{width:205px;max-height:112px;object-fit:contain;margin-bottom:8px}.cert-board{font:700 1.55rem/1.5 'Noto Serif Bengali',serif;color:#0d4a3a;margin:0}.cert-title{font:700 1.85rem/1.35 'Noto Serif Bengali',serif;color:#6f5424;margin:19px 0 10px}.cert-reg{font:700 1.2rem 'Noto Serif Bengali',serif;letter-spacing:1px;color:#0d4a3a;border:2px solid #a98745;padding:8px 24px;margin:6px 0 18px;background:rgba(255,252,240,.62)}.cert-table{position:relative;width:100%;max-width:610px;margin:10px auto 0;text-align:left;border-collapse:collapse;background:rgba(255,252,240,.48)}.cert-table caption{text-align:left;font:600 1.05rem 'Noto Serif Bengali',serif;color:#0d4a3a;padding:7px 10px 4px}.cert-table th,.cert-table td{border:1px solid rgba(139,113,64,.42);padding:8px 12px}.cert-table th{width:38%;color:#604b25;font-weight:600}.cert-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-top:auto;padding-top:32px}.cert-seal-wrap{width:110px;display:flex;justify-content:center;align-items:center;flex:none}.cert-seal{width:94px;height:94px;object-fit:contain}.cert-signatures{flex:1;display:flex;justify-content:flex-end;align-items:flex-end;gap:18px}.cert-sign{width:190px;max-width:48%;padding-top:9px;border-top:1px solid #604b25;font-size:.9rem}@page{size:A4 portrait;margin:0}@media print{body{background:#fff}.registration-certificate{margin:0}}@media(max-width:700px){.registration-certificate{width:calc(100% - 16px);height:auto;min-height:0;margin:8px auto;padding:30px 14px;border-width:6px;outline-offset:-14px}.cert-logo{width:min(170px,65%);max-height:84px}.cert-board{font-size:1.12rem}.cert-title{font-size:1.4rem;margin:14px 0 8px}.cert-reg{font-size:1rem;letter-spacing:0;padding:7px 10px;margin-bottom:12px}.cert-table{table-layout:fixed;font-size:.88rem;margin-top:7px}.cert-table caption{font-size:.95rem}.cert-table th,.cert-table td{overflow-wrap:anywhere;padding:6px 5px}.cert-footer{gap:7px;padding-top:22px}.cert-seal-wrap{width:66px}.cert-seal{width:62px;height:62px}.cert-signatures{gap:8px}.cert-sign{font-size:.72rem;padding-top:6px}}.certificate-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px}.certificate-actions button{font:inherit;padding:8px 16px;cursor:pointer}
   </style></head><body>${certificate}<div class="certificate-actions"><button onclick="window.print()">প্রিন্ট / PDF</button></div></body></html>`;
-  const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
+  const certificateStyles=`<style>
+    .cert-logo{width:250px;max-height:132px;background:transparent;mix-blend-mode:multiply}
+    .cert-board-ar{font:600 1.25rem/1.6 'Noto Naskh Arabic',serif;color:#604b25;margin:0}
+    .cert-board-en{font:600 1rem/1.6 'Hind Siliguri',sans-serif;color:#604b25;margin:0;letter-spacing:.04em}
+    .cert-footer{align-items:center}
+    .cert-seal-wrap{width:132px}
+    .cert-seal{width:118px;height:118px;background:transparent;mix-blend-mode:multiply}
+    .cert-signatures{align-items:center}
+    .cert-sign{text-align:center}
+    @media(max-width:700px){.cert-logo{width:min(200px,75%);max-height:100px}.cert-board{font-size:1.12rem}.cert-board-ar{font-size:1rem}.cert-board-en{font-size:.82rem}.cert-footer{gap:7px;padding-top:22px}.cert-seal-wrap{width:76px}.cert-seal{width:72px;height:72px}.cert-signatures{gap:8px}.cert-sign{font-size:.72rem;padding-top:6px}}
+  </style>`;
+  const styledHtml=html.replace('</head>',`${certificateStyles}</head>`);
+  const url=URL.createObjectURL(new Blob([styledHtml],{type:'text/html;charset=utf-8'}));
   const link=document.createElement('a');
   link.href=url;link.download=`PCTB-registration-${student.reg||'certificate'}.html`;
   document.body.append(link);link.click();link.remove();
