@@ -252,7 +252,23 @@ table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#
 .result-entry #sv{width:100%;margin-top:10px;padding:8px}
 .result-entry #tm{font-size:.86rem}
 }
-@media print{.ticker,header,.noprint,footer{display:none}.card{border:0}}
+.registration-certificate{width:min(100%,794px);min-height:1123px;margin:18px auto;padding:58px 54px;background:#fff;border:10px double var(--gold);outline:1px solid var(--g);outline-offset:-20px;color:#20372d;text-align:center;box-shadow:0 8px 28px rgba(13,74,58,.12);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.registration-certificate .cert-logo{width:150px;max-height:88px;object-fit:contain;margin-bottom:10px}
+.registration-certificate .cert-seal{width:92px;height:92px;object-fit:contain;margin:12px 0}
+.registration-certificate h1{font-size:2rem;color:var(--g);margin:8px 0}
+.registration-certificate .cert-subtitle{color:var(--mut);margin:0 0 16px}
+.registration-certificate .cert-intro{font-size:1.08rem;margin:14px 0}
+.registration-certificate .cert-name{font:700 1.8rem 'Noto Serif Bengali',serif;color:var(--g);border-bottom:2px solid var(--gold);padding:0 24px 6px;margin:2px 0 10px}
+.registration-certificate .cert-reg{font:700 1.35rem 'Noto Serif Bengali',serif;letter-spacing:1px;color:var(--g);border:2px solid var(--gold);border-radius:8px;padding:7px 22px;margin:12px 0}
+.registration-certificate .cert-details{width:100%;max-width:580px;margin:18px auto;text-align:left;border-collapse:collapse}
+.registration-certificate .cert-details th,.registration-certificate .cert-details td{border-bottom:1px solid var(--line);padding:9px 12px}
+.registration-certificate .cert-details th{width:38%;color:var(--g);font-weight:600}
+.registration-certificate .cert-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-top:44px}
+.registration-certificate .cert-sign{width:190px;padding-top:8px;border-top:1px solid var(--g);font-size:.9rem}
+.certificate-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px auto}
+@media(max-width:600px){.registration-certificate{min-height:0;padding:44px 28px;outline-offset:-14px}.registration-certificate h1{font-size:1.55rem}.registration-certificate .cert-footer{margin-top:24px}.registration-certificate .cert-details th,.registration-certificate .cert-details td{padding:7px 6px}}
+@page{size:A4 portrait;margin:0}
+@media print{html,body{width:210mm!important;height:auto!important;overflow:visible!important;background:#fff!important}body *{visibility:hidden!important}#registrationCertificate,#registrationCertificate *{visibility:visible!important}#registrationCertificate{position:fixed!important;left:0!important;top:0!important;width:210mm!important;height:297mm!important;min-height:297mm!important;max-width:none!important;margin:0!important;padding:17mm 16mm!important;border:10px double #b8923a!important;outline:1px solid #0d4a3a!important;outline-offset:-20px!important;box-shadow:none!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.certificate-actions,.ticker,header,footer{display:none!important}}
 footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
@@ -478,6 +494,43 @@ async function register(d){
   });
 }
 
+function registrationCertificate(student){
+  const issued=new Date().toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});
+  const detail=(label,value)=>value?`<tr><th>${label}</th><td>${esc(value)}</td></tr>`:'';
+  return `<article id="registrationCertificate" class="registration-certificate">
+    <img class="cert-logo" src="${cloudImage('logo-short-web')}" alt="PCTB লোগো">
+    <p class="cert-subtitle">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</p>
+    <img class="cert-seal" src="${cloudImage('seal')}" alt="PCTB সিল">
+    <h1>শিক্ষার্থী নিবন্ধন সনদ</h1>
+    <p class="cert-intro">এই মর্মে প্রত্যয়ন করা যাচ্ছে যে</p>
+    <div class="cert-name">${esc(student.name||'')}</div>
+    <p class="cert-intro">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ডের শিক্ষার্থী হিসেবে নিবন্ধিত হয়েছেন।</p>
+    <div class="cert-reg">রেজিস্ট্রেশন নম্বর: ${esc(student.reg||'')}</div>
+    <table class="cert-details"><tbody>
+      ${detail('পিতার নাম',student.father)}
+      ${detail('অভিভাবকের নাম',student.guardian)}
+      ${detail('বিভাগ',bdiv(student))}
+      ${detail('পর্ব',student.term?`পর্ব ${student.term}`:'')}
+      ${detail('প্রতিষ্ঠান',student.inst)}
+      <tr><th>সনদ প্রদানের তারিখ</th><td>${esc(issued)}</td></tr>
+    </tbody></table>
+    <p class="cert-subtitle">এই সনদটি শিক্ষার্থী নিবন্ধনের প্রমাণ হিসেবে প্রদান করা হলো।</p>
+    <div class="cert-footer"><div class="cert-sign">শিক্ষার্থীর স্বাক্ষর</div><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div>
+  </article>`;
+}
+
+function downloadRegistrationCertificate(student){
+  const certificate=registrationCertificate(student);
+  const html=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PCTB নিবন্ধন সনদ - ${esc(student.reg||'')}</title><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet"><style>
+    *{box-sizing:border-box}body{margin:0;background:#f2f6f3;color:#20372d;font:16px/1.7,'Hind Siliguri',sans-serif}.registration-certificate{width:210mm;height:297mm;margin:12px auto;padding:17mm 16mm;background:#fff;border:10px double #b8923a;outline:1px solid #0d4a3a;outline-offset:-20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}.cert-logo{width:150px;max-height:88px;object-fit:contain;margin-bottom:10px}.cert-seal{width:92px;height:92px;object-fit:contain;margin:12px 0}h1{font:700 2rem/1.35 'Noto Serif Bengali',serif;color:#0d4a3a;margin:8px 0}.cert-subtitle{color:#5d6f66;margin:0 0 16px}.cert-intro{font-size:1.08rem;margin:14px 0}.cert-name{font:700 1.8rem 'Noto Serif Bengali',serif;color:#0d4a3a;border-bottom:2px solid #b8923a;padding:0 24px 6px;margin:2px 0 10px}.cert-reg{font:700 1.35rem 'Noto Serif Bengali',serif;letter-spacing:1px;color:#0d4a3a;border:2px solid #b8923a;border-radius:8px;padding:7px 22px;margin:12px 0}.cert-details{width:100%;max-width:580px;margin:18px auto;text-align:left;border-collapse:collapse}.cert-details th,.cert-details td{border-bottom:1px solid #d5e0d9;padding:9px 12px}.cert-details th{width:38%;color:#0d4a3a;font-weight:600}.cert-footer{width:100%;display:flex;justify-content:space-between;gap:28px;margin-top:44px}.cert-sign{width:190px;padding-top:8px;border-top:1px solid #0d4a3a;font-size:.9rem}@page{size:A4 portrait;margin:0}@media print{body{background:#fff}.registration-certificate{margin:0;print-color-adjust:exact;-webkit-print-color-adjust:exact}}@media(max-width:700px){.registration-certificate{width:100%;height:auto;min-height:297mm;margin:0;padding:17mm 10mm}.cert-details th,.cert-details td{padding:7px 6px}}.certificate-actions{display:flex;justify-content:center;gap:10px;margin:14px}.certificate-actions button{font:inherit;padding:8px 16px;cursor:pointer}
+  </style></head><body>${certificate}<div class="certificate-actions"><button onclick="window.print()">প্রিন্ট / PDF</button></div></body></html>`;
+  const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
+  const link=document.createElement('a');
+  link.href=url;link.download=`PCTB-registration-${student.reg||'certificate'}.html`;
+  document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
 /* ---------- ফলাফল দেখানো ---------- */
 function card(r){
   const total=r.total??r.subjects.reduce((a,x)=>a+x.m,0),n=r.subjects.length,avg=r.avg??total/n,fail=r.subjects.filter(x=>x.m<50).length;
@@ -676,7 +729,13 @@ function bindStudent(){
       if(!d.term)return say(o(),'পর্ব নির্বাচন করুন।');
       if(!phone.test(d.mobile))return say(o(),'সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (যেমন 01712345678)।');
       say(o(),'অপেক্ষা করুন…',1);
-      try{const r=await register(d);o().className='';o().innerHTML=r.existing?ok(r.existing,'এই শিক্ষার্থী আগেই নিবন্ধিত।'):ok(r,'রেজিস্ট্রেশন সম্পন্ন।')}
+      try{
+        const r=await register(d),student=r.existing||r;
+        o().className='';
+        o().innerHTML=`<div class="msg ok">${r.existing?'এই শিক্ষার্থী আগেই নিবন্ধিত। সনদটি আবার ডাউনলোড বা প্রিন্ট করতে পারবেন।':'রেজিস্ট্রেশন সম্পন্ন। আপনার নিবন্ধন সনদ তৈরি হয়েছে।'} প্রিন্ট করে PDF হিসেবে সংরক্ষণ অথবা HTML ফাইল ডাউনলোড করুন।</div>${registrationCertificate(student)}<div class="certificate-actions"><button type="button" id="printRegistration">সনদ প্রিন্ট করুন</button><button type="button" class="alt" id="downloadRegistration">সনদ ডাউনলোড (HTML)</button></div>`;
+        $('#printRegistration').onclick=()=>window.print();
+        $('#downloadRegistration').onclick=()=>downloadRegistrationCertificate(student);
+      }
       catch(e){say(o(),'রেজিস্ট্রেশন হয়নি: '+e.message)}
       };
     }
