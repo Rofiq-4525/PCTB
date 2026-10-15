@@ -226,6 +226,29 @@ th{background:#e8f0eb;font-weight:600}
 .muted{color:var(--mut)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .sub{display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center;margin-bottom:6px}.sub span{font-weight:500}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
+@media(max-width:620px){
+.result-entry{padding:12px;margin-bottom:10px}
+.result-entry h3{font-size:1.05rem;margin-bottom:8px}
+.result-entry .row{gap:7px}
+.result-entry label{font-size:.82rem;margin:6px 0 2px}
+.result-entry input,.result-entry select{padding:7px 8px;font-size:.9rem}
+.result-entry>p.muted{font-size:.78rem;line-height:1.45;margin:8px 0}
+.marks-scroll{overflow:visible!important}
+.mk{display:block;table-layout:fixed;font-size:.8rem}
+.mk tbody{display:block}
+.mk .score-head{display:none}
+.mk .score-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;gap:3px;padding:5px 0;border-bottom:1px solid var(--line)}
+.mk .score-row td{min-width:0;padding:2px;text-align:center;font-size:.72rem;line-height:1.15}
+.mk .score-row td:first-child{grid-column:1/-1;padding:3px 4px;text-align:left;background:#f3f7f4;font-size:.78rem;font-weight:600}
+.mk .score-row td[data-label]::before{content:attr(data-label);display:block;margin-bottom:2px;color:var(--mut);font-size:.66rem;line-height:1.1;white-space:nowrap}
+.mk .score-row td input{width:100%;min-width:0;height:32px;padding:3px 1px;font-size:.8rem;text-align:center;border-radius:5px}
+.mk .score-row td.tt{font-weight:700;align-self:center}
+.mk .score-row td.tt::before{content:"মোট";display:block;margin-bottom:2px;color:var(--mut);font-size:.66rem;line-height:1.1}
+.mk .grp-row{display:block;margin-top:5px}
+.mk .grp-row th{display:block;padding:5px 8px;font-size:.82rem}
+.result-entry #sv{width:100%;margin-top:10px;padding:8px}
+.result-entry #tm{font-size:.86rem}
+}
 @media print{.ticker,header,.noprint,footer{display:none}.card{border:0}}
 footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -396,6 +419,10 @@ async function ensureAdminTeacherProfile(u){
   if(!p.t)profile.t=Date.now();
   if(Object.keys(profile).some(k=>p[k]!==profile[k]))await setDoc(r,profile,{merge:true});
 }
+function adminTeacherSyncMessage(e){
+  if(e.code==='permission-denied')return 'Firebase Firestore Rules-এ শিক্ষকের তথ্য লেখার অনুমতি নেই। Firebase Console-এ firestore.rules-এর নিয়মগুলো Publish করে আবার লগইন করুন।';
+  return e.message||String(e);
+}
 async function calcStat(u){
   if(!u)return null;
   if(DEMO&&u.email==='admin@pctb.demo')return 'admin';
@@ -407,7 +434,7 @@ onAuthStateChanged(auth,async u=>{
   adminTeacherSyncError='';
   if(u&&(u.email||'').toLowerCase()===ADMIN_EMAIL.toLowerCase()&&(u.emailVerified||DEMO)){
     try{await ensureAdminTeacherProfile(u)}
-    catch(e){adminTeacherSyncError=e.message;console.error('Admin teacher profile sync failed',e)}
+    catch(e){adminTeacherSyncError=adminTeacherSyncMessage(e);console.error('Admin teacher profile sync failed',e)}
   }
   const x=await calcStat(u);user=u;tstat=x;route()
 });
@@ -674,12 +701,13 @@ function bindTeacher(){
   $('#lo').onclick=()=>signOut(auth);
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{tTab=b.dataset.t;route()});
   const box=$('#tbox'),cls=CLASSES.map(c=>`<option>${c}</option>`).join('');
+  box.classList.toggle('result-entry',tTab=='result');
   if(tTab=='result'){
     box.innerHTML=`<h3>ফলাফল তৈরি</h3><div class="row"><div><label for="rg">শিক্ষার্থীর রেজিস্ট্রেশন নম্বর</label><input id="rg" placeholder="233001"></div><div><label for="ex">পরীক্ষার নাম</label><input id="ex" placeholder="বার্ষিক পরীক্ষা ২০২৬"></div></div>
     <div id="sn2" class="muted">নম্বর দিলে শিক্ষার্থীর নাম এখানে দেখাবে।</div><div class="row"><div><label for="dv">বিভাগ</label><select id="dv">${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="cl">শ্রেণি</label><select id="cl"></select></div></div>
     <p class="muted">নম্বর বণ্টন: লিখিত ৩০, ব্যবহারিক ৩০, মৌখিক ২০, আদব ২০ = মোট ১০০। যে বিষয়ে কিছুই লেখা হবে না তা বাদ যাবে; আংশিক লিখলে ফাঁকা ঘর ০ ধরা হবে।</p>
-    <div style="overflow-x:auto"><table class="mk"><tr><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]} (${p[2]})</th>`).join('')}<th>মোট</th></tr>
-    ${SUBJ.map(g=>`<tr><th colspan="6" class="grp">${g[0]}</th></tr>`+g[1].map(n=>`<tr><td>${n}</td>${PARTS.map(p=>`<td><input type="number" min="0" max="${p[2]}" data-sub="${n}" data-k="${p[0]}" aria-label="${n} ${p[1]}"></td>`).join('')}<td class="tt">0</td></tr>`).join('')).join('')}</table></div>
+    <div class="marks-scroll" style="overflow-x:auto"><table class="mk"><tr class="score-head"><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]} (${p[2]})</th>`).join('')}<th>মোট</th></tr>
+    ${SUBJ.map(g=>`<tr class="grp-row"><th colspan="6" class="grp">${g[0]}</th></tr>`+g[1].map(n=>`<tr class="score-row"><td>${n}</td>${PARTS.map(p=>`<td data-label="${p[1]} (${p[2]})"><input type="number" min="0" max="${p[2]}" data-sub="${n}" data-k="${p[0]}" aria-label="${n} ${p[1]}"></td>`).join('')}<td class="tt">0</td></tr>`).join('')).join('')}</table></div>
     <button id="sv">ফলাফল সংরক্ষণ করুন</button><div id="tm"></div>`;
     box.oninput=e=>{const t=e.target;if(!t.dataset.sub)return;const tr=t.closest('tr');
       const mx=+t.max;if(+t.value>mx)t.value=mx;if(+t.value<0)t.value=0;
