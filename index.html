@@ -252,23 +252,28 @@ table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#
 .result-entry #sv{width:100%;margin-top:10px;padding:8px}
 .result-entry #tm{font-size:.86rem}
 }
-.registration-certificate{width:min(100%,794px);min-height:1123px;margin:18px auto;padding:58px 54px;background:#fff;border:10px double var(--gold);outline:1px solid var(--g);outline-offset:-20px;color:#20372d;text-align:center;box-shadow:0 8px 28px rgba(13,74,58,.12);display:flex;flex-direction:column;align-items:center;justify-content:center}
-.registration-certificate .cert-logo{width:150px;max-height:88px;object-fit:contain;margin-bottom:10px}
-.registration-certificate .cert-seal{width:92px;height:92px;object-fit:contain;margin:12px 0}
-.registration-certificate h1{font-size:2rem;color:var(--g);margin:8px 0}
-.registration-certificate .cert-subtitle{color:var(--mut);margin:0 0 16px}
-.registration-certificate .cert-intro{font-size:1.08rem;margin:14px 0}
-.registration-certificate .cert-name{font:700 1.8rem 'Noto Serif Bengali',serif;color:var(--g);border-bottom:2px solid var(--gold);padding:0 24px 6px;margin:2px 0 10px}
-.registration-certificate .cert-reg{font:700 1.35rem 'Noto Serif Bengali',serif;letter-spacing:1px;color:var(--g);border:2px solid var(--gold);border-radius:8px;padding:7px 22px;margin:12px 0}
-.registration-certificate .cert-details{width:100%;max-width:580px;margin:18px auto;text-align:left;border-collapse:collapse}
-.registration-certificate .cert-details th,.registration-certificate .cert-details td{border-bottom:1px solid var(--line);padding:9px 12px}
-.registration-certificate .cert-details th{width:38%;color:var(--g);font-weight:600}
-.registration-certificate .cert-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:28px;margin-top:44px}
-.registration-certificate .cert-sign{width:190px;padding-top:8px;border-top:1px solid var(--g);font-size:.9rem}
+.registration-certificate{position:relative;isolation:isolate;overflow:hidden;width:min(100%,794px);min-height:1123px;margin:18px auto;padding:54px 52px;background:radial-gradient(ellipse at 18% 12%,rgba(181,144,83,.11),transparent 35%),radial-gradient(ellipse at 82% 88%,rgba(161,126,70,.09),transparent 36%),linear-gradient(135deg,#f7f0df,#fbf7eb 45%,#f1e7d2);border:10px double #a98745;outline:1px solid #765d32;outline-offset:-20px;color:#392f20;text-align:center;box-shadow:0 8px 28px rgba(13,74,58,.12);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.registration-certificate::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--cert-watermark) center/330px auto no-repeat;opacity:.055;pointer-events:none}
+.registration-certificate .cert-heading{width:100%;display:flex;flex-direction:column;align-items:center;border-bottom:2px solid rgba(169,135,69,.6);padding-bottom:15px}
+.registration-certificate header.cert-heading{background:transparent;color:inherit;border-bottom:2px solid rgba(169,135,69,.6);box-shadow:none}
+.registration-certificate .cert-logo{width:205px;max-height:112px;object-fit:contain;margin-bottom:8px}
+.registration-certificate .cert-board{font:700 1.55rem/1.5 'Noto Serif Bengali',serif;color:var(--g);margin:0}
+.registration-certificate .cert-title{font-size:1.85rem;color:#6f5424;margin:19px 0 10px}
+.registration-certificate .cert-reg{font:700 1.2rem 'Noto Serif Bengali',serif;letter-spacing:1px;color:var(--g);border:2px solid #a98745;padding:8px 24px;margin:6px 0 18px;background:rgba(255,252,240,.62)}
+.registration-certificate .cert-table{position:relative;width:100%;max-width:610px;margin:10px auto 0;text-align:left;border-collapse:collapse;background:rgba(255,252,240,.48)}
+.registration-certificate .cert-table caption{text-align:left;font:600 1.05rem 'Noto Serif Bengali',serif;color:var(--g);padding:7px 10px 4px}
+.registration-certificate .cert-table th,.registration-certificate .cert-table td{border:1px solid rgba(139,113,64,.42);padding:8px 12px}
+.registration-certificate .cert-table th{width:38%;color:#604b25;font-weight:600}
+.registration-certificate .cert-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-top:auto;padding-top:32px}
+.registration-certificate footer.cert-footer{text-align:left;color:inherit;font-size:inherit;padding:32px 0 0}
+.registration-certificate .cert-seal-wrap{width:110px;display:flex;justify-content:center;align-items:center;flex:none}
+.registration-certificate .cert-seal{width:94px;height:94px;object-fit:contain}
+.registration-certificate .cert-signatures{flex:1;display:flex;justify-content:flex-end;align-items:flex-end;gap:18px}
+.registration-certificate .cert-sign{width:190px;max-width:48%;padding-top:9px;border-top:1px solid #604b25;font-size:.9rem}
 .certificate-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px auto}
-@media(max-width:600px){.registration-certificate{min-height:0;padding:44px 28px;outline-offset:-14px}.registration-certificate h1{font-size:1.55rem}.registration-certificate .cert-footer{margin-top:24px}.registration-certificate .cert-details th,.registration-certificate .cert-details td{padding:7px 6px}}
+@media(max-width:600px){.registration-certificate{width:100%;min-height:0;margin:12px auto;padding:30px 14px;border-width:6px;outline-offset:-14px}.registration-certificate .cert-logo{width:min(170px,65%);max-height:84px}.registration-certificate .cert-board{font-size:1.12rem}.registration-certificate .cert-title{font-size:1.4rem;margin:14px 0 8px}.registration-certificate .cert-reg{font-size:1rem;letter-spacing:0;padding:7px 10px;margin-bottom:12px}.registration-certificate .cert-table{table-layout:fixed;font-size:.88rem;margin-top:7px}.registration-certificate .cert-table caption{font-size:.95rem}.registration-certificate .cert-table th,.registration-certificate .cert-table td{overflow-wrap:anywhere;padding:6px 5px}.registration-certificate .cert-footer{gap:7px;padding-top:22px}.registration-certificate footer.cert-footer{padding-top:22px}.registration-certificate .cert-seal-wrap{width:66px}.registration-certificate .cert-seal{width:62px;height:62px}.registration-certificate .cert-signatures{gap:8px}.registration-certificate .cert-sign{font-size:.72rem;padding-top:6px}.certificate-actions{gap:8px}.certificate-actions button{font-size:.88rem;padding:7px 10px}}
 @page{size:A4 portrait;margin:0}
-@media print{html,body{width:210mm!important;height:auto!important;overflow:visible!important;background:#fff!important}body *{visibility:hidden!important}#registrationCertificate,#registrationCertificate *{visibility:visible!important}#registrationCertificate{position:fixed!important;left:0!important;top:0!important;width:210mm!important;height:297mm!important;min-height:297mm!important;max-width:none!important;margin:0!important;padding:17mm 16mm!important;border:10px double #b8923a!important;outline:1px solid #0d4a3a!important;outline-offset:-20px!important;box-shadow:none!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.certificate-actions,.ticker,header,footer{display:none!important}}
+@media print{html,body{width:210mm!important;height:auto!important;overflow:visible!important;background:#fff!important}body *{visibility:hidden!important}.registration-certificate.print-target,.registration-certificate.print-target *{visibility:visible!important}.registration-certificate.print-target{position:fixed!important;left:0!important;top:0!important;width:210mm!important;height:297mm!important;min-height:297mm!important;max-width:none!important;margin:0!important;padding:17mm 16mm!important;border:10px double #b8923a!important;outline:1px solid #0d4a3a!important;outline-offset:-20px!important;box-shadow:none!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.certificate-actions,.ticker,body>#scr>header,body>#scr>footer{display:none!important}}
 footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
@@ -494,35 +499,38 @@ async function register(d){
   });
 }
 
-function registrationCertificate(student){
+function registrationCertificate(student,id='registrationCertificate'){
   const issued=new Date().toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});
-  const detail=(label,value)=>value?`<tr><th>${label}</th><td>${esc(value)}</td></tr>`:'';
-  return `<article id="registrationCertificate" class="registration-certificate">
-    <img class="cert-logo" src="${cloudImage('logo-short-web')}" alt="PCTB লোগো">
-    <p class="cert-subtitle">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</p>
-    <img class="cert-seal" src="${cloudImage('seal')}" alt="PCTB সিল">
-    <h1>শিক্ষার্থী নিবন্ধন সনদ</h1>
-    <p class="cert-intro">এই মর্মে প্রত্যয়ন করা যাচ্ছে যে</p>
-    <div class="cert-name">${esc(student.name||'')}</div>
-    <p class="cert-intro">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ডের শিক্ষার্থী হিসেবে নিবন্ধিত হয়েছেন।</p>
+  const detail=(label,value)=>`<tr><th>${label}</th><td>${esc(value||'—')}</td></tr>`;
+  const dob=student.dob&& !Number.isNaN(Date.parse(student.dob))?new Date(`${student.dob}T00:00:00`).toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'}):'—';
+  return `<article id="${esc(id)}" class="registration-certificate" style="--cert-watermark:url('${cloudImage('logo')}')">
+    <header class="cert-heading">
+      <img class="cert-logo" src="${cloudImage('logo-short-web')}" alt="PCTB লোগো">
+      <h2 class="cert-board">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</h2>
+    </header>
+    <h1 class="cert-title">শিক্ষার্থী নিবন্ধন সনদ</h1>
     <div class="cert-reg">রেজিস্ট্রেশন নম্বর: ${esc(student.reg||'')}</div>
-    <table class="cert-details"><tbody>
+    <table class="cert-table"><caption>শিক্ষার্থীর ব্যক্তিগত তথ্য</caption><tbody>
+      ${detail('শিক্ষার্থীর নাম',student.name)}
+      ${detail('জন্মতারিখ',dob)}
       ${detail('পিতার নাম',student.father)}
       ${detail('অভিভাবকের নাম',student.guardian)}
+      ${detail('যোগাযোগের মোবাইল',student.mobile)}
+    </tbody></table>
+    <table class="cert-table"><caption>শিক্ষাগত ও প্রতিষ্ঠানের তথ্য</caption><tbody>
       ${detail('বিভাগ',bdiv(student))}
       ${detail('পর্ব',student.term?`পর্ব ${student.term}`:'')}
       ${detail('প্রতিষ্ঠান',student.inst)}
-      <tr><th>সনদ প্রদানের তারিখ</th><td>${esc(issued)}</td></tr>
+      ${detail('সনদ প্রদানের তারিখ',issued)}
     </tbody></table>
-    <p class="cert-subtitle">এই সনদটি শিক্ষার্থী নিবন্ধনের প্রমাণ হিসেবে প্রদান করা হলো।</p>
-    <div class="cert-footer"><div class="cert-sign">শিক্ষার্থীর স্বাক্ষর</div><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div>
+    <footer class="cert-footer"><div class="cert-seal-wrap"><img class="cert-seal" src="${cloudImage('seal')}" alt="PCTB সিল"></div><div class="cert-signatures"><div class="cert-sign">শিক্ষার্থীর স্বাক্ষর</div><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div></footer>
   </article>`;
 }
 
 function downloadRegistrationCertificate(student){
   const certificate=registrationCertificate(student);
   const html=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PCTB নিবন্ধন সনদ - ${esc(student.reg||'')}</title><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet"><style>
-    *{box-sizing:border-box}body{margin:0;background:#f2f6f3;color:#20372d;font:16px/1.7,'Hind Siliguri',sans-serif}.registration-certificate{width:210mm;height:297mm;margin:12px auto;padding:17mm 16mm;background:#fff;border:10px double #b8923a;outline:1px solid #0d4a3a;outline-offset:-20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}.cert-logo{width:150px;max-height:88px;object-fit:contain;margin-bottom:10px}.cert-seal{width:92px;height:92px;object-fit:contain;margin:12px 0}h1{font:700 2rem/1.35 'Noto Serif Bengali',serif;color:#0d4a3a;margin:8px 0}.cert-subtitle{color:#5d6f66;margin:0 0 16px}.cert-intro{font-size:1.08rem;margin:14px 0}.cert-name{font:700 1.8rem 'Noto Serif Bengali',serif;color:#0d4a3a;border-bottom:2px solid #b8923a;padding:0 24px 6px;margin:2px 0 10px}.cert-reg{font:700 1.35rem 'Noto Serif Bengali',serif;letter-spacing:1px;color:#0d4a3a;border:2px solid #b8923a;border-radius:8px;padding:7px 22px;margin:12px 0}.cert-details{width:100%;max-width:580px;margin:18px auto;text-align:left;border-collapse:collapse}.cert-details th,.cert-details td{border-bottom:1px solid #d5e0d9;padding:9px 12px}.cert-details th{width:38%;color:#0d4a3a;font-weight:600}.cert-footer{width:100%;display:flex;justify-content:space-between;gap:28px;margin-top:44px}.cert-sign{width:190px;padding-top:8px;border-top:1px solid #0d4a3a;font-size:.9rem}@page{size:A4 portrait;margin:0}@media print{body{background:#fff}.registration-certificate{margin:0;print-color-adjust:exact;-webkit-print-color-adjust:exact}}@media(max-width:700px){.registration-certificate{width:100%;height:auto;min-height:297mm;margin:0;padding:17mm 10mm}.cert-details th,.cert-details td{padding:7px 6px}}.certificate-actions{display:flex;justify-content:center;gap:10px;margin:14px}.certificate-actions button{font:inherit;padding:8px 16px;cursor:pointer}
+    *{box-sizing:border-box}body{margin:0;background:#f2f6f3;color:#392f20;font:16px/1.7,'Hind Siliguri',sans-serif}.registration-certificate{position:relative;isolation:isolate;overflow:hidden;width:210mm;height:297mm;margin:12px auto;padding:17mm 16mm;background:radial-gradient(ellipse at 18% 12%,rgba(181,144,83,.11),transparent 35%),radial-gradient(ellipse at 82% 88%,rgba(161,126,70,.09),transparent 36%),linear-gradient(135deg,#f7f0df,#fbf7eb 45%,#f1e7d2);border:10px double #a98745;outline:1px solid #765d32;outline-offset:-20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;print-color-adjust:exact;-webkit-print-color-adjust:exact}.registration-certificate::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--cert-watermark) center/330px auto no-repeat;opacity:.055;pointer-events:none}.cert-heading{width:100%;display:flex;flex-direction:column;align-items:center;border-bottom:2px solid rgba(169,135,69,.6);padding-bottom:15px}.cert-logo{width:205px;max-height:112px;object-fit:contain;margin-bottom:8px}.cert-board{font:700 1.55rem/1.5 'Noto Serif Bengali',serif;color:#0d4a3a;margin:0}.cert-title{font:700 1.85rem/1.35 'Noto Serif Bengali',serif;color:#6f5424;margin:19px 0 10px}.cert-reg{font:700 1.2rem 'Noto Serif Bengali',serif;letter-spacing:1px;color:#0d4a3a;border:2px solid #a98745;padding:8px 24px;margin:6px 0 18px;background:rgba(255,252,240,.62)}.cert-table{position:relative;width:100%;max-width:610px;margin:10px auto 0;text-align:left;border-collapse:collapse;background:rgba(255,252,240,.48)}.cert-table caption{text-align:left;font:600 1.05rem 'Noto Serif Bengali',serif;color:#0d4a3a;padding:7px 10px 4px}.cert-table th,.cert-table td{border:1px solid rgba(139,113,64,.42);padding:8px 12px}.cert-table th{width:38%;color:#604b25;font-weight:600}.cert-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-top:auto;padding-top:32px}.cert-seal-wrap{width:110px;display:flex;justify-content:center;align-items:center;flex:none}.cert-seal{width:94px;height:94px;object-fit:contain}.cert-signatures{flex:1;display:flex;justify-content:flex-end;align-items:flex-end;gap:18px}.cert-sign{width:190px;max-width:48%;padding-top:9px;border-top:1px solid #604b25;font-size:.9rem}@page{size:A4 portrait;margin:0}@media print{body{background:#fff}.registration-certificate{margin:0}}@media(max-width:700px){.registration-certificate{width:calc(100% - 16px);height:auto;min-height:0;margin:8px auto;padding:30px 14px;border-width:6px;outline-offset:-14px}.cert-logo{width:min(170px,65%);max-height:84px}.cert-board{font-size:1.12rem}.cert-title{font-size:1.4rem;margin:14px 0 8px}.cert-reg{font-size:1rem;letter-spacing:0;padding:7px 10px;margin-bottom:12px}.cert-table{table-layout:fixed;font-size:.88rem;margin-top:7px}.cert-table caption{font-size:.95rem}.cert-table th,.cert-table td{overflow-wrap:anywhere;padding:6px 5px}.cert-footer{gap:7px;padding-top:22px}.cert-seal-wrap{width:66px}.cert-seal{width:62px;height:62px}.cert-signatures{gap:8px}.cert-sign{font-size:.72rem;padding-top:6px}}.certificate-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px}.certificate-actions button{font:inherit;padding:8px 16px;cursor:pointer}
   </style></head><body>${certificate}<div class="certificate-actions"><button onclick="window.print()">প্রিন্ট / PDF</button></div></body></html>`;
   const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
   const link=document.createElement('a');
@@ -673,9 +681,9 @@ async institution(){
 result:()=>pageHead('ফলাফল','রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন','result')
   +`<div class="rgrid"><div class="card cc"><h3>ফলাফল অনুসন্ধান</h3><label for="rd">বিভাগ (ঐচ্ছিক)</label><select id="rd"><option value="">সব বিভাগ</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="rr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"><button id="rb">ফলাফল দেখুন</button></div>`
   +`<div class="card cc"><h3>নম্বরের মান</h3><div class="lgd">${[['৯০ বা বেশি','সর্বোত্তম'],['৮০–৮৯','উত্তম'],['৭০–৭৯','মধ্যমান'],['৫০–৬৯','উন্নতি প্রয়োজন'],['৫০-এর কম','অকৃতকার্য']].map(x=>`<div><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div><p class="muted" style="margin:0">নম্বর হারিয়ে ফেললে <a href="#/student">শিক্ষার্থী প্যানেল</a> থেকে খুঁজে নিন।</p></div></div><div id="rout"></div>`,
-student:()=>pageHead('শিক্ষার্থী প্যানেল','রেজিস্ট্রেশন করুন, ফলাফল দেখুন বা নম্বর খুঁজে নিন','student')
-  +`<div class="tabs"><button class="on" data-s="reg">নতুন রেজিস্ট্রেশন</button><button data-s="res">ফলাফল দেখুন</button><button data-s="find">নম্বর হারিয়ে ফেলেছি</button></div>
-  <div class="sgrid"><div class="card cc" id="sbox"></div><aside class="card cc"><h3>মনে রাখুন</h3><ul class="cl"><li>রেজিস্ট্রেশনের পর পাওয়া নম্বরটি লিখে রাখুন।</li><li>ফলাফল দেখতে এই নম্বরটিই লাগবে।</li><li>নম্বর হারিয়ে গেলে মোবাইল নম্বর ও জন্মতারিখ দিয়ে খুঁজে নিতে পারবেন।</li></ul></aside></div><div id="srout"></div>`,
+student:()=>pageHead('শিক্ষার্থী প্যানেল','রেজিস্ট্রেশন করুন, ফলাফল দেখুন বা সনদ ও নম্বর খুঁজে নিন','student')
+  +`<div class="tabs"><button class="on" data-s="reg">নতুন রেজিস্ট্রেশন</button><button data-s="res">ফলাফল দেখুন</button><button data-s="find">সনদ / নম্বর দেখুন</button></div>
+  <div class="sgrid"><div class="card cc" id="sbox"></div><aside class="card cc"><h3>মনে রাখুন</h3><ul class="cl"><li>রেজিস্ট্রেশনের পর পাওয়া নম্বরটি লিখে রাখুন।</li><li>ফলাফল দেখতে এই নম্বরটিই লাগবে।</li><li>সনদ ও নম্বর আবার পেতে মোবাইল নম্বর ও জন্মতারিখ দিয়ে খুঁজুন।</li></ul></aside></div><div id="srout"></div>`,
 async sorry(){const q=new URLSearchParams(location.hash.split('?')[1]||'').get('b');return `<div class="card" style="text-align:center;padding:40px 20px"><div style="color:var(--gold)"><svg class="ic" style="width:54px;height:54px" viewBox="0 0 24 24" aria-hidden="true">${ICONS.book}</svg></div><h2 style="margin:10px 0 6px">দুঃখিত!</h2><p>${q?'“'+esc(q)+'” বইটি':'এই বইটি'} এখনো যুক্ত করা হয়নি। অনুগ্রহ করে কিছুদিন পরে আবার চেষ্টা করুন।</p><p><a href="#/">← হোমে ফিরে যান</a></p></div>`},
 admin(){
   if(!user)return `${pageHead('অ্যাডমিন প্যানেল','','shield')}<div class="card" style="max-width:420px"><p class="muted">অ্যাডমিন অ্যাকাউন্ট দিয়ে লগইন করুন।</p><button id="gl" class="alt" style="width:100%;margin:0">Google দিয়ে লগইন</button><p class="muted" style="text-align:center;margin:8px 0 0">অথবা ইমেইল দিয়ে</p><label for="em">ইমেইল</label><input id="em" type="email" autocomplete="username"><label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password"><button id="lg">লগইন</button><div id="lm"></div></div>`;
@@ -712,10 +720,21 @@ function bindStudent(){
     <label for="si">প্রতিষ্ঠানের নাম *</label><input id="si"><label for="sp">অভিভাবকের নাম *</label><input id="sp">
     <label for="sm">যোগাযোগের মোবাইল নম্বর *</label><input id="sm" inputmode="numeric" placeholder="01XXXXXXXXX"><button id="sg">রেজিস্ট্রেশন করুন</button><div id="so"></div>`
     :m=='res'?`<h3>ফলাফল দেখুন</h3><label for="sr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><button id="svb">ফলাফল দেখুন</button>`
-    :`<p class="muted">রেজিস্ট্রেশনের সময় দেওয়া মোবাইল নম্বর ও জন্মতারিখ দিন।</p><label for="sm">মোবাইল নম্বর</label><input id="sm" inputmode="numeric" placeholder="01XXXXXXXXX"><label for="sd">জন্মতারিখ</label><input id="sd" type="date"><button id="sf">রেজিস্ট্রেশন নম্বর খুঁজুন</button><div id="so"></div>`;
+    :`<p class="muted">রেজিস্ট্রেশনের সময় দেওয়া মোবাইল নম্বর ও জন্মতারিখ দিয়ে নিবন্ধন সনদ ও রেজিস্ট্রেশন নম্বর দেখুন।</p><label for="sm">মোবাইল নম্বর</label><input id="sm" inputmode="numeric" placeholder="01XXXXXXXXX"><label for="sd">জন্মতারিখ</label><input id="sd" type="date"><button id="sf">সনদ ও নম্বর খুঁজুন</button><div id="so"></div>`;
     const o=()=>$('#so');
-    const ok=(r,pre)=>`<p>${pre?pre+' ':''}<b>${esc(r.name)}</b>-এর (${esc(bdiv(r))} বিভাগ) রেজিস্ট্রেশন নম্বর:</p><span class="reg">${esc(r.reg)}</span><p class="muted">ফলাফল দেখতে এই নম্বর লাগবে। নম্বরটি লিখে রাখুন।</p>`;
     const phone=/^01[3-9]\d{8}$/;
+    const showCertificates=(students,message)=>{
+      o().className='';
+      o().innerHTML=`<div class="msg ok">${message}</div>${students.map((student,index)=>`<section class="saved-certificate"><p><b>${esc(student.name||'')}</b> · ${esc(student.reg||'')}</p>${registrationCertificate(student,`registrationCertificate-${index}`)}<div class="certificate-actions"><button type="button" data-cert-print="${index}">সনদ প্রিন্ট করুন</button><button type="button" class="alt" data-cert-download="${index}">সনদ ডাউনলোড (HTML)</button></div></section>`).join('')}`;
+      o().querySelectorAll('[data-cert-print]').forEach(button=>button.onclick=()=>{
+        const certificate=o().querySelectorAll('.registration-certificate')[Number(button.dataset.certPrint)];
+        certificate.classList.add('print-target');
+        const cleanup=()=>certificate.classList.remove('print-target');
+        window.addEventListener('afterprint',cleanup,{once:true});
+        window.print();
+      });
+      o().querySelectorAll('[data-cert-download]').forEach(button=>button.onclick=()=>downloadRegistrationCertificate(students[Number(button.dataset.certDownload)]));
+    };
     if(m=='reg'){
       const div=$('#sdiv');
       $('#sg').onclick=async()=>{
@@ -731,10 +750,7 @@ function bindStudent(){
       say(o(),'অপেক্ষা করুন…',1);
       try{
         const r=await register(d),student=r.existing||r;
-        o().className='';
-        o().innerHTML=`<div class="msg ok">${r.existing?'এই শিক্ষার্থী আগেই নিবন্ধিত। সনদটি আবার ডাউনলোড বা প্রিন্ট করতে পারবেন।':'রেজিস্ট্রেশন সম্পন্ন। আপনার নিবন্ধন সনদ তৈরি হয়েছে।'} প্রিন্ট করে PDF হিসেবে সংরক্ষণ অথবা HTML ফাইল ডাউনলোড করুন।</div>${registrationCertificate(student)}<div class="certificate-actions"><button type="button" id="printRegistration">সনদ প্রিন্ট করুন</button><button type="button" class="alt" id="downloadRegistration">সনদ ডাউনলোড (HTML)</button></div>`;
-        $('#printRegistration').onclick=()=>window.print();
-        $('#downloadRegistration').onclick=()=>downloadRegistrationCertificate(student);
+        showCertificates([student],r.existing?'এই শিক্ষার্থী আগেই নিবন্ধিত। সংরক্ষিত নিবন্ধন সনদ দেখুন।':'রেজিস্ট্রেশন সম্পন্ন। আপনার সনদটি শিক্ষার্থী রেকর্ডে সংরক্ষিত হয়েছে।');
       }
       catch(e){say(o(),'রেজিস্ট্রেশন হয়নি: '+e.message)}
       };
@@ -746,7 +762,7 @@ function bindStudent(){
       try{const q=await getDocs(query(collection(db,'students'),where('mobile','==',mo)));
         const f=q.docs.map(x=>x.data()).filter(x=>x.dob==dob);
         if(!f.length)return say(o(),'মিলে এমন কোনো রেজিস্ট্রেশন পাওয়া যায়নি।');
-        o().className='';o().innerHTML=f.map(r=>ok(r)).join('<hr>')
+        showCertificates(f,'আপনার নিবন্ধন সনদ ও রেজিস্ট্রেশন নম্বর পাওয়া গেছে।')
       }catch(e){say(o(),'সমস্যা হয়েছে: '+e.message)}
     };
   };
