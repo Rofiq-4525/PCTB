@@ -244,6 +244,9 @@ table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#
 .mk .score-row td input{width:100%;min-width:0;height:32px;padding:3px 1px;font-size:.8rem;text-align:center;border-radius:5px}
 .mk .score-row td.tt{font-weight:700;align-self:center}
 .mk .score-row td.tt::before{content:"মোট";display:block;margin-bottom:2px;color:var(--mut);font-size:.66rem;line-height:1.1}
+.reg-entry{display:flex;align-items:stretch;width:100%}
+.reg-prefix{display:flex;align-items:center;padding:0 12px;background:#e8f0eb;border:1px solid #b9c9c0;border-right:0;border-radius:7px 0 0 7px;color:var(--g);font-weight:600}
+.reg-entry input{flex:1;width:0;min-width:0;border-radius:0 7px 7px 0}
 .mk .grp-row{display:block;margin-top:5px}
 .mk .grp-row th{display:block;padding:5px 8px;font-size:.82rem}
 .result-entry #sv{width:100%;margin-top:10px;padding:8px}
@@ -443,9 +446,10 @@ const pages=[['','হোম'],['about','পরিচিতি'],['board','পর
 const BOARD=[['চেয়ারম্যান','নাম এখানে লিখুন'],['সদস্য সচিব','নাম এখানে লিখুন'],['সদস্য (শিক্ষাক্রম)','নাম এখানে লিখুন'],['সদস্য (পাঠ্যপুস্তক)','নাম এখানে লিখুন'],['সদস্য (পরীক্ষা)','নাম এখানে লিখুন']];
 const SUBJ=[['দ্বীন শিক্ষা',['ইমান শিক্ষা','কুরআন শিক্ষা','সীরাত শিক্ষা','হাদিস শিক্ষা','ব্যবহারিক ইসলাম শিক্ষা','সাহাবিদের জীবনি','ইতিহাস শিক্ষা','উম্মাহর রাহবা','আদব ও আখলাখ']],['কর্ম ও জীবিকা শিক্ষা',['বাংলা শিক্ষা','গনিত শিক্ষা','ইংরেজি শিক্ষা','ব্যাবহারিক বিজ্ঞান','বিশ্ব-পরিচয়','কর্ম-জীবিকা শিক্ষা','ব্যবসা ও উদ্যোগ শিক্ষা','প্রাথমিক-দক্ষতা','আত্ম-উন্নয়ন']]];
 const PARTS=[['w','লিখিত',30],['p','ব্যবহারিক',30],['o','মৌখিক',20],['a','আদব',20]];
-const CLASSES=['প্রথম','দ্বিতীয়','তৃতীয়','চতুর্থ','পঞ্চম','ষষ্ঠ','সপ্তম','অষ্টম','নবম','দশম','একাদশ','দ্বাদশ'];
-const DIVS=[['আদব',['প্রথম','দ্বিতীয়','তৃতীয়','চতুর্থ','পঞ্চম']],['তলিব',['ষষ্ঠ','সপ্তম','অষ্টম']],['লাজিম',['নবম','দশম']],['খিদমাহ',['একাদশ','দ্বাদশ']]];
-const bdiv=b=>b.div||(DIVS.find(d=>d[1].includes(b.cls))||[])[0]||'';
+const DIVS=[['আদব'],['তলিব'],['লাজিম'],['খিদমাহ']];
+const DIV_CODES={আদব:'233',তলিব:'333',লাজিম:'433',খিদমাহ:'533'};
+const divisionOptions=()=>`<option value="" selected disabled>বিভাগ নির্বাচন করুন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}`;
+const bdiv=b=>b.div||DIVS.find(d=>b.reg?.startsWith(DIV_CODES[d[0]]))?.[0]||'';
 
 function remark(m){return m>=90?'সর্বোত্তম':m>=80?'উত্তম':m>=70?'মধ্যমান':m>=50?'উন্নতি প্রয়োজন':'অকৃতকার্য'}
 async function all(c){return (await getDocs(collection(db,c))).docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.t||0)-(a.t||0))}
@@ -457,10 +461,19 @@ async function register(d){
   const same=dup.docs.map(x=>x.data()).find(x=>x.name.trim().toLowerCase()==d.name.toLowerCase()&&x.dob==d.dob);
   if(same)return {existing:same};
   return runTransaction(db,async tx=>{
-    const cr=doc(db,'meta','counter'),c=await tx.get(cr),n=(c.exists()?c.data().n:0)+1;
-    const reg='233'+String(n).padStart(3,'0');
-    const rec={...d,reg,t:Date.now()};
-    tx.set(cr,{n});tx.set(doc(db,'students',reg),rec);
+    const division=bdiv(d),code=DIV_CODES[division],term=String(d.term||'');
+    if(!code||!['1','2','3'].includes(term))throw new Error('বিভাগ ও পর্ব নির্বাচন করে আবার চেষ্টা করুন।');
+    const cr=doc(db,'meta',`counter_${code}_${term}`),c=await tx.get(cr),n=(c.exists()?c.data().n:0)+1;
+    let serial=n,reg='',studentRef;
+    while(serial<=999){
+      reg=code+term+String(serial).padStart(3,'0');
+      studentRef=doc(db,'students',reg);
+      if(!(await tx.get(studentRef)).exists())break;
+      serial++;
+    }
+    if(serial>999)throw new Error('এই বিভাগ ও পর্বের ৩ অঙ্কের সিরিয়াল শেষ হয়েছে। অ্যাডমিনের সঙ্গে যোগাযোগ করুন।');
+    const rec={...d,div:division,reg,t:Date.now()};
+    tx.set(cr,{n:serial});tx.set(studentRef,rec);
     return rec;
   });
 }
@@ -470,7 +483,7 @@ function card(r){
   const total=r.total??r.subjects.reduce((a,x)=>a+x.m,0),n=r.subjects.length,avg=r.avg??total/n,fail=r.subjects.filter(x=>x.m<50).length;
   const rm=m=>`<span style="${m<50?'color:var(--err);font-weight:600':''}">${remark(m)}</span>`,v=x=>x??'–';
   return `<div class="card"><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="" width="64" height="64" style="float:right;border-radius:50%"><h3>${esc(r.exam)}</h3>
-  <p><b>${esc(r.name)}</b> &nbsp;${r.div?`<span class="pill">${esc(r.div)} বিভাগ</span> `:''}<span class="pill">${esc(r.cls)} শ্রেণি</span> <span class="pill">${esc(r.reg)}</span></p>
+  <p><b>${esc(r.name)}</b>${r.father?` · পিতা: ${esc(r.father)}`:''}${r.guardian?` · অভিভাবক: ${esc(r.guardian)}`:''} &nbsp;${bdiv(r)?`<span class="pill">${esc(bdiv(r))} বিভাগ</span> `:''}<span class="pill">${esc(r.reg)}</span></p>
   <div style="overflow-x:auto"><table><tr><th>বিষয়</th><th>লিখিত (৩০)</th><th>ব্যবহারিক (৩০)</th><th>মৌখিক (২০)</th><th>আদব (২০)</th><th>মোট (১০০)</th><th>মন্তব্য</th></tr>
   ${r.subjects.map(x=>`<tr><td>${esc(x.n)}</td><td>${v(x.w)}</td><td>${v(x.p)}</td><td>${v(x.o)}</td><td>${v(x.a)}</td><td><b>${x.m}</b></td><td>${rm(x.m)}</td></tr>`).join('')}</table></div>
   <p><b>সর্বমোট: ${total} / ${n*100}</b> &nbsp; <b>গড় নম্বর: ${avg.toFixed(1)}</b> &nbsp; <b>সার্বিক মন্তব্য: ${rm(avg)}</b></p>
@@ -545,7 +558,7 @@ home(routeToken){
     const stages=[
       ()=>`<hr class="dv">${head('শিক্ষাক্রম (কারিকুলাম)','')}<div class="chips" id="cchips" style="margin-bottom:4px">${DIVS.map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div>${DIVS.map((d,i)=>`<div class="cvw" data-d="${d[0]}"${i?' hidden':''}>${curBody(d[0])}</div>`).join('')}`,
       ()=>`<hr class="dv">${head('পাঠ্যপুস্তক','textbook')}${bkGroups()}`,
-      ()=>`<hr class="dv"><section class="hero" style="margin-top:30px"><div><h2>পরীক্ষার ফলাফল</h2><p>রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন।</p></div><div class="box"><h3>ফলাফল দেখুন</h3><label for="hd">বিভাগ</label><select id="hd" required><option value="" selected disabled hidden>বিভাগ নির্বাচন করুন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="233001"><button id="hb">ফলাফল দেখুন</button></div></section><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
+      ()=>`<hr class="dv"><section class="hero" style="margin-top:30px"><div><h2>পরীক্ষার ফলাফল</h2><p>রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন।</p></div><div class="box"><h3>ফলাফল দেখুন</h3><label for="hd">বিভাগ</label><select id="hd" required><option value="" selected disabled hidden>বিভাগ নির্বাচন করুন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="hr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"><button id="hb">ফলাফল দেখুন</button></div></section><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
     ];
     const appendStage=i=>{
       if(i>=stages.length||routeToken!==routeVersion||!rest.isConnected)return;
@@ -567,7 +580,7 @@ home(routeToken){
 },
 async about(){const t=await site('about',DEF_ABOUT);
   const works=[['book','শিক্ষাক্রম প্রণয়ন','চার বিভাগের জন্য নববী আদর্শভিত্তিক শিক্ষাক্রম।'],['read','পাঠ্যপুস্তক প্রকাশ','প্রতিটি বিভাগ ও বিষয়ের পাঠ্যপুস্তক এক জায়গায়।'],['result','ফলাফল ব্যবস্থাপনা','রেজিস্ট্রেশন নম্বর দিয়ে সহজে ফলাফল দেখা।']];
-  const stats=[[DIVS.length,'বিভাগ'],[CLASSES.length,'শ্রেণি'],[SUBJ.reduce((a,g)=>a+g[1].length,0),'বিষয়'],[SUBJ.length,'শাখা']];
+  const stats=[[DIVS.length,'বিভাগ'],[SUBJ.reduce((a,g)=>a+g[1].length,0),'বিষয়'],[SUBJ.length,'শাখা']];
   return pageHead('বোর্ড পরিচিতি','নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড','info')
   +`<div class="card cc abt"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p>${esc(t).replace(/\n/g,'<br>')}</p></div>`
   +head('এক নজরে','')+`<div class="stats">${stats.map(x=>`<div class="stat"><b>${bnum(x[0])}</b><span>${x[1]}</span></div>`).join('')}</div>`
@@ -591,7 +604,7 @@ async notice(){
   const demo=[
     {title:'নমুনা নোটিশ: নতুন শিক্ষাবর্ষের প্রস্তুতি',body:'শিক্ষাপ্রতিষ্ঠানসমূহকে নতুন শিক্ষাবর্ষের পাঠপরিকল্পনা ও প্রয়োজনীয় প্রস্তুতি সম্পন্ন করার অনুরোধ জানানো হলো। এটি ওয়েবসাইটের ডিজাইন প্রদর্শনের জন্য তৈরি একটি ডেমো নোটিশ।',date:'১৩ অক্টোবর ২০২৬',id:'sample-01'},
     {title:'নমুনা বিজ্ঞপ্তি: শিক্ষক প্রশিক্ষণ কর্মশালা',body:'শিক্ষকদের পাঠদান পদ্ধতি ও মূল্যায়ন বিষয়ে প্রশিক্ষণ কর্মশালার একটি নমুনা বিজ্ঞপ্তি। প্রকৃত তারিখ, স্থান ও নিবন্ধনের তথ্য কর্তৃপক্ষ পরবর্তীতে জানাবে।',date:'১০ অক্টোবর ২০২৬',id:'sample-02'},
-    {title:'নমুনা নির্দেশনা: পাঠ্যপুস্তক বিতরণ',body:'শিক্ষাপ্রতিষ্ঠানগুলোকে শ্রেণিভিত্তিক পাঠ্যপুস্তকের চাহিদা যাচাই ও বিতরণ-সংক্রান্ত প্রস্তুতি রাখার নমুনা নির্দেশনা।',date:'০৫ অক্টোবর ২০২৬',id:'sample-03'},
+    {title:'নমুনা নির্দেশনা: পাঠ্যপুস্তক বিতরণ',body:'শিক্ষাপ্রতিষ্ঠানগুলোকে পাঠ্যপুস্তকের চাহিদা যাচাই ও বিতরণ-সংক্রান্ত প্রস্তুতি রাখার নমুনা নির্দেশনা।',date:'০৫ অক্টোবর ২০২৬',id:'sample-03'},
     {title:'নমুনা বিজ্ঞপ্তি: মূল্যায়ন ও ফলাফল প্রস্তুতি',body:'শিক্ষার্থীদের ধারাবাহিক মূল্যায়নের তথ্য সঠিকভাবে সংরক্ষণ এবং ফলাফল প্রস্তুতের জন্য একটি নমুনা বিজ্ঞপ্তি।',date:'০১ অক্টোবর ২০২৬',id:'sample-04'}
   ];
   const actual=l.map((n,i)=>({...n,date:n.t?(d=>`${bnum(d.getDate())} ${MON[d.getMonth()]} ${bnum(d.getFullYear())}`)(new Date(n.t)):'তারিখ উল্লেখ নেই',id:'live-'+i,isLive:true}));
@@ -605,7 +618,7 @@ async institution(){
   return pageHead('শিক্ষা প্রতিষ্ঠান সমূহ','বোর্ডভুক্ত প্রতিষ্ঠানের তালিকা','school')
   +(r.err?errBox(r.err):l.length?`<div class="tbar"><div class="muted" id="icnt">মোট ${bnum(l.length)} টি প্রতিষ্ঠান</div><div class="srch"><span>${ic('search')}</span><input id="iq" placeholder="নাম বা ঠিকানা দিয়ে খুঁজুন…" aria-label="প্রতিষ্ঠান খুঁজুন"></div></div><div class="grid" id="ilist">${l.map(i=>`<div class="card cc ins" data-s="${esc((i.name+' '+(i.address||'')+' '+(i.code||'')).toLowerCase())}"><span class="bvn">${ic('school')}</span><h3>${esc(i.name)}</h3>${i.address?`<div class="muted adr">${ic('pin')}<span>${esc(i.address)}</span></div>`:''}${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div><div class="card cc emp" id="inone" hidden>কোনো প্রতিষ্ঠান পাওয়া যায়নি।</div>`:emptyBox('school','এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।','প্রতিষ্ঠান যুক্ত হলে এখানে তালিকা দেখা যাবে।'))},
 result:()=>pageHead('ফলাফল','রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন','result')
-  +`<div class="rgrid"><div class="card cc"><h3>ফলাফল অনুসন্ধান</h3><label for="rd">বিভাগ (ঐচ্ছিক)</label><select id="rd"><option value="">সব বিভাগ</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="rr">রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="233001"><button id="rb">ফলাফল দেখুন</button></div>`
+  +`<div class="rgrid"><div class="card cc"><h3>ফলাফল অনুসন্ধান</h3><label for="rd">বিভাগ (ঐচ্ছিক)</label><select id="rd"><option value="">সব বিভাগ</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="rr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"><button id="rb">ফলাফল দেখুন</button></div>`
   +`<div class="card cc"><h3>নম্বরের মান</h3><div class="lgd">${[['৯০ বা বেশি','সর্বোত্তম'],['৮০–৮৯','উত্তম'],['৭০–৭৯','মধ্যমান'],['৫০–৬৯','উন্নতি প্রয়োজন'],['৫০-এর কম','অকৃতকার্য']].map(x=>`<div><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div><p class="muted" style="margin:0">নম্বর হারিয়ে ফেললে <a href="#/student">শিক্ষার্থী প্যানেল</a> থেকে খুঁজে নিন।</p></div></div><div id="rout"></div>`,
 student:()=>pageHead('শিক্ষার্থী প্যানেল','রেজিস্ট্রেশন করুন, ফলাফল দেখুন বা নম্বর খুঁজে নিন','student')
   +`<div class="tabs"><button class="on" data-s="reg">নতুন রেজিস্ট্রেশন</button><button data-s="res">ফলাফল দেখুন</button><button data-s="find">নম্বর হারিয়ে ফেলেছি</button></div>
@@ -635,30 +648,38 @@ function bindResult(){
   if(q){i.value=q;if(dv)rd.value=dv;go(dv)}
 }
 function bindStudent(){
-  const box=$('#sbox'),copts=CLASSES.map(c=>`<option>${c}</option>`).join('');
+  const box=$('#sbox');
   const draw=m=>{
     document.querySelectorAll('[data-s]').forEach(b=>b.classList.toggle('on',b.dataset.s==m));
     $('#srout').innerHTML='';
-    box.innerHTML=m=='reg'?`<label for="sn">শিক্ষার্থীর নাম</label><input id="sn" autocomplete="name">
-    <div class="row"><div><label for="sd">জন্মতারিখ</label><input id="sd" type="date"></div><div><label for="sc">শ্রেণি</label><select id="sc">${copts}</select></div></div>
-    <label for="si">প্রতিষ্ঠানের নাম</label><input id="si"><label for="sp">অভিভাবকের নাম</label><input id="sp">
-    <label for="sm">মোবাইল নম্বর</label><input id="sm" inputmode="numeric" placeholder="01XXXXXXXXX"><button id="sg">রেজিস্ট্রেশন করুন</button><div id="so"></div>`
-    :m=='res'?`<h3>ফলাফল দেখুন</h3><label for="sr">রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="233001"><button id="svb">ফলাফল দেখুন</button>`
+    box.innerHTML=m=='reg'?`<label for="sn">শিক্ষার্থীর নাম *</label><input id="sn" autocomplete="name">
+    <label for="sfather">পিতার নাম *</label><input id="sfather" autocomplete="off">
+    <label for="sdiv">বিভাগ *</label><select id="sdiv">${divisionOptions()}</select>
+    <div class="row"><div><label for="sd">জন্মতারিখ *</label><input id="sd" type="date"></div><div><label for="sterm">পর্ব *</label><select id="sterm"><option value="" selected disabled>পর্ব নির্বাচন করুন</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div>
+    <label for="si">প্রতিষ্ঠানের নাম *</label><input id="si"><label for="sp">অভিভাবকের নাম *</label><input id="sp">
+    <label for="sm">যোগাযোগের মোবাইল নম্বর *</label><input id="sm" inputmode="numeric" placeholder="01XXXXXXXXX"><button id="sg">রেজিস্ট্রেশন করুন</button><div id="so"></div>`
+    :m=='res'?`<h3>ফলাফল দেখুন</h3><label for="sr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><button id="svb">ফলাফল দেখুন</button>`
     :`<p class="muted">রেজিস্ট্রেশনের সময় দেওয়া মোবাইল নম্বর ও জন্মতারিখ দিন।</p><label for="sm">মোবাইল নম্বর</label><input id="sm" inputmode="numeric" placeholder="01XXXXXXXXX"><label for="sd">জন্মতারিখ</label><input id="sd" type="date"><button id="sf">রেজিস্ট্রেশন নম্বর খুঁজুন</button><div id="so"></div>`;
     const o=()=>$('#so');
-    const ok=(r,pre)=>`<p>${pre?pre+' ':''}<b>${esc(r.name)}</b> (${esc(r.cls||'')} শ্রেণি)-এর রেজিস্ট্রেশন নম্বর:</p><span class="reg">${esc(r.reg)}</span><p class="muted">ফলাফল দেখতে এই নম্বর লাগবে। নম্বরটি লিখে রাখুন।</p>`;
+    const ok=(r,pre)=>`<p>${pre?pre+' ':''}<b>${esc(r.name)}</b>-এর (${esc(bdiv(r))} বিভাগ) রেজিস্ট্রেশন নম্বর:</p><span class="reg">${esc(r.reg)}</span><p class="muted">ফলাফল দেখতে এই নম্বর লাগবে। নম্বরটি লিখে রাখুন।</p>`;
     const phone=/^01[3-9]\d{8}$/;
-    if(m=='reg')$('#sg').onclick=async()=>{
-      const d={name:$('#sn').value.trim(),dob:$('#sd').value,cls:$('#sc').value,inst:$('#si').value.trim(),guardian:$('#sp').value.trim(),mobile:$('#sm').value.trim()};
+    if(m=='reg'){
+      const div=$('#sdiv');
+      $('#sg').onclick=async()=>{
+      const d={name:$('#sn').value.trim(),father:$('#sfather').value.trim(),div:div.value,dob:$('#sd').value,term:$('#sterm').value,inst:$('#si').value.trim(),guardian:$('#sp').value.trim(),mobile:$('#sm').value.trim()};
       if(d.name.length<2)return say(o(),'শিক্ষার্থীর নাম লিখুন।');
+      if(d.father.length<2)return say(o(),'পিতার নাম লিখুন।');
+      if(!d.div)return say(o(),'বিভাগ নির্বাচন করুন।');
       if(!d.dob)return say(o(),'জন্মতারিখ দিন।');
       if(!d.inst)return say(o(),'প্রতিষ্ঠানের নাম লিখুন।');
       if(d.guardian.length<2)return say(o(),'অভিভাবকের নাম লিখুন।');
+      if(!d.term)return say(o(),'পর্ব নির্বাচন করুন।');
       if(!phone.test(d.mobile))return say(o(),'সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন (যেমন 01712345678)।');
       say(o(),'অপেক্ষা করুন…',1);
       try{const r=await register(d);o().className='';o().innerHTML=r.existing?ok(r.existing,'এই শিক্ষার্থী আগেই নিবন্ধিত।'):ok(r,'রেজিস্ট্রেশন সম্পন্ন।')}
       catch(e){say(o(),'রেজিস্ট্রেশন হয়নি: '+e.message)}
-    };
+      };
+    }
     else if(m=='res'){const go=()=>showResults($('#sr').value,$('#srout'));$('#svb').onclick=go;$('#sr').onkeydown=e=>e.key=='Enter'&&go()}
     else $('#sf').onclick=async()=>{
       const mo=$('#sm').value.trim(),dob=$('#sd').value;
@@ -700,11 +721,11 @@ function bindTeacher(){
     $('#lg').onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){say($('#lm'),'লগইন হয়নি। ইমেইল ও পাসওয়ার্ড দেখুন।')}};return}
   $('#lo').onclick=()=>signOut(auth);
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{tTab=b.dataset.t;route()});
-  const box=$('#tbox'),cls=CLASSES.map(c=>`<option>${c}</option>`).join('');
+  const box=$('#tbox');
   box.classList.toggle('result-entry',tTab=='result');
   if(tTab=='result'){
-    box.innerHTML=`<h3>ফলাফল তৈরি</h3><div class="row"><div><label for="rg">শিক্ষার্থীর রেজিস্ট্রেশন নম্বর</label><input id="rg" placeholder="233001"></div><div><label for="ex">পরীক্ষার নাম</label><input id="ex" placeholder="বার্ষিক পরীক্ষা ২০২৬"></div></div>
-    <div id="sn2" class="muted">নম্বর দিলে শিক্ষার্থীর নাম এখানে দেখাবে।</div><div class="row"><div><label for="dv">বিভাগ</label><select id="dv">${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="cl">শ্রেণি</label><select id="cl"></select></div></div>
+    box.innerHTML=`<h3>ফলাফল তৈরি</h3><div class="row"><div><label for="rg">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rg" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="2331001"></div><div><label for="ex">পরীক্ষার নাম</label><select id="ex"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option><option>সাপ্তাহিক মূল্যায়ন</option><option>মাসিক মূল্যায়ন</option><option>অর্ধবার্ষিক মূল্যায়ন</option><option>বার্ষিক মূল্যায়ন</option><option>পর্ব উন্নয়ন</option><option>বিভাগ উন্নয়ন</option></select></div></div>
+    <div class="row"><div><label for="studentName">শিক্ষার্থীর নাম</label><input id="studentName" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div><label for="studentFather">পিতার নাম</label><input id="studentFather" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div></div><div><label for="studentDivision">বিভাগ</label><input id="studentDivision" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div id="sn2" class="muted" aria-live="polite">রেজিস্ট্রেশন নম্বর লিখে যাচাই করুন।</div>
     <p class="muted">নম্বর বণ্টন: লিখিত ৩০, ব্যবহারিক ৩০, মৌখিক ২০, আদব ২০ = মোট ১০০। যে বিষয়ে কিছুই লেখা হবে না তা বাদ যাবে; আংশিক লিখলে ফাঁকা ঘর ০ ধরা হবে।</p>
     <div class="marks-scroll" style="overflow-x:auto"><table class="mk"><tr class="score-head"><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]} (${p[2]})</th>`).join('')}<th>মোট</th></tr>
     ${SUBJ.map(g=>`<tr class="grp-row"><th colspan="6" class="grp">${g[0]}</th></tr>`+g[1].map(n=>`<tr class="score-row"><td>${n}</td>${PARTS.map(p=>`<td data-label="${p[1]} (${p[2]})"><input type="number" min="0" max="${p[2]}" data-sub="${n}" data-k="${p[0]}" aria-label="${n} ${p[1]}"></td>`).join('')}<td class="tt">0</td></tr>`).join('')).join('')}</table></div>
@@ -712,11 +733,12 @@ function bindTeacher(){
     box.oninput=e=>{const t=e.target;if(!t.dataset.sub)return;const tr=t.closest('tr');
       const mx=+t.max;if(+t.value>mx)t.value=mx;if(+t.value<0)t.value=0;
       tr.querySelector('.tt').textContent=[...tr.querySelectorAll('input')].reduce((a,i)=>a+(+i.value||0),0)};
-    const dv=$('#dv'),cl=$('#cl'),fill=()=>{const d=DIVS.find(x=>x[0]==dv.value);cl.innerHTML=d[1].map(c=>`<option>${c}</option>`).join('')};dv.onchange=fill;fill();
-    let stu=null;
-    $('#rg').onchange=async()=>{const r=norm($('#rg').value);$('#rg').value=r;const d=await getDoc(doc(db,'students',r));stu=d.exists()?d.data():null;if(stu&&stu.cls){const d=DIVS.find(x=>x[1].includes(stu.cls));if(d){dv.value=d[0];fill()}cl.value=stu.cls}$('#sn2').innerHTML=stu?`শিক্ষার্থী: <b>${esc(stu.name)}</b>`:'<span class="msg bad">এই নম্বরে কোনো শিক্ষার্থী নেই।</span>'};
+    let stu=null,lookupVersion=0;
+    const clearStudent=()=>{stu=null;$('#studentName').value='';$('#studentFather').value='';$('#studentDivision').value=''};
+    const lookupStudent=async()=>{const version=++lookupVersion,reg=norm($('#rg').value).replace(/\D/g,'');$('#rg').value=reg;clearStudent();if(!reg){$('#sn2').textContent='সম্পূর্ণ রেজিস্ট্রেশন নম্বর লিখুন।';return}$('#sn2').textContent='শিক্ষার্থী খোঁজা হচ্ছে…';try{const d=await getDoc(doc(db,'students',reg));if(version!==lookupVersion)return;stu=d.exists()?{...d.data(),reg:d.id}:null;if(!stu){$('#sn2').innerHTML='<span class="msg bad">এই রেজিস্ট্রেশন নম্বরের শিক্ষার্থী পাওয়া যায়নি।</span>';return}$('#studentName').value=stu.name||'';$('#studentFather').value=stu.father||'';$('#studentDivision').value=bdiv(stu);$('#sn2').innerHTML=`<span class="msg ok">শিক্ষার্থী পাওয়া গেছে (${esc(stu.reg)})</span>`}catch(e){if(version!==lookupVersion)return;$('#sn2').innerHTML=`<span class="msg bad">শিক্ষার্থীর তথ্য আনা যায়নি: ${esc(e.message)}</span>`}};
+    $('#rg').onchange=lookupStudent;$('#rg').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();lookupStudent()}};
     $('#sv').onclick=async()=>{
-      const tm=$('#tm'),exam=$('#ex').value.trim();await $('#rg').onchange();
+      const tm=$('#tm'),exam=$('#ex').value;await lookupStudent();
       if(!stu)return say(tm,'আগে সঠিক রেজিস্ট্রেশন নম্বর দিন।');
       if(!exam)return say(tm,'পরীক্ষার নাম লিখুন।');
       const subjects=[];
@@ -725,7 +747,7 @@ function bindTeacher(){
         if(any)subjects.push({n,...v,m:v.w+v.p+v.o+v.a})}));
       if(!subjects.length)return say(tm,'অন্তত একটি বিষয়ের নম্বর দিন।');
       const total=subjects.reduce((a,x)=>a+x.m,0),avg=total/subjects.length;
-      try{await setDoc(doc(db,'results',stu.reg+'__'+exam),{reg:stu.reg,name:stu.name,exam,div:$('#dv').value,cls:$('#cl').value,subjects,total,avg,t:Date.now()});say(tm,`সংরক্ষিত হয়েছে। সর্বমোট ${total}/${subjects.length*100}, মন্তব্য: ${remark(avg)}।`,1);loadList()}catch(e){say(tm,'সংরক্ষণ হয়নি: '+e.message)}
+      try{await setDoc(doc(db,'results',stu.reg+'__'+exam),{reg:stu.reg,name:stu.name,father:stu.father||'',guardian:stu.guardian||'',exam,div:bdiv(stu),subjects,total,avg,t:Date.now()});say(tm,`সংরক্ষিত হয়েছে। সর্বমোট ${total}/${subjects.length*100}, মন্তব্য: ${remark(avg)}।`,1);loadList()}catch(e){say(tm,'সংরক্ষণ হয়নি: '+e.message)}
     };
   }else if(tTab=='site'){
     Promise.all([site('about',DEF_ABOUT),site('board',BOARD)]).then(([ab,bd])=>{
@@ -736,17 +758,25 @@ function bindTeacher(){
     });
   }else if(tTab=='add'){
     box.innerHTML=`<h3>নতুন ছাত্র যোগ করুন</h3><label for="an">শিক্ষার্থীর নাম *</label><input id="an">
-    <div class="row"><div><label for="ac">শ্রেণি *</label><select id="ac">${cls}</select></div><div><label for="ad">জন্মতারিখ</label><input id="ad" type="date"></div></div>
-    <label for="ai">প্রতিষ্ঠানের নাম</label><input id="ai"><label for="ag">অভিভাবকের নাম</label><input id="ag">
-    <label for="am">মোবাইল নম্বর</label><input id="am" inputmode="numeric" placeholder="01XXXXXXXXX"><button id="ab2">যোগ করুন</button><div id="tm"></div>`;
+    <label for="af">পিতার নাম *</label><input id="af">
+    <label for="adiv">বিভাগ *</label><select id="adiv">${divisionOptions()}</select><div class="row"><div><label for="ad">জন্মতারিখ *</label><input id="ad" type="date"></div><div><label for="aterm">পর্ব *</label><select id="aterm"><option value="" selected disabled>পর্ব নির্বাচন করুন</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div>
+    <label for="ai">প্রতিষ্ঠানের নাম *</label><input id="ai"><label for="ag">অভিভাবকের নাম *</label><input id="ag">
+    <label for="am">যোগাযোগের মোবাইল নম্বর *</label><input id="am" inputmode="numeric" placeholder="01XXXXXXXXX"><button id="ab2">যোগ করুন</button><div id="tm"></div>`;
+    const adiv=$('#adiv');
     $('#ab2').onclick=async()=>{
-      const tm=$('#tm'),d={name:$('#an').value.trim(),cls:$('#ac').value,dob:$('#ad').value,inst:$('#ai').value.trim(),guardian:$('#ag').value.trim(),mobile:$('#am').value.trim()};
+      const tm=$('#tm'),d={name:$('#an').value.trim(),father:$('#af').value.trim(),div:adiv.value,dob:$('#ad').value,term:$('#aterm').value,inst:$('#ai').value.trim(),guardian:$('#ag').value.trim(),mobile:$('#am').value.trim()};
       if(d.name.length<2)return say(tm,'শিক্ষার্থীর নাম লিখুন।');
-      if(d.mobile&&!/^01[3-9]\d{8}$/.test(d.mobile))return say(tm,'সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন, অথবা ঘরটি ফাঁকা রাখুন।');
+      if(d.father.length<2)return say(tm,'পিতার নাম লিখুন।');
+      if(!d.div)return say(tm,'বিভাগ নির্বাচন করুন।');
+      if(!d.dob)return say(tm,'জন্মতারিখ দিন।');
+      if(!d.term)return say(tm,'পর্ব নির্বাচন করুন।');
+      if(!d.inst)return say(tm,'প্রতিষ্ঠানের নাম লিখুন।');
+      if(d.guardian.length<2)return say(tm,'অভিভাবকের নাম লিখুন।');
+      if(!/^01[3-9]\d{8}$/.test(d.mobile))return say(tm,'সঠিক ১১ সংখ্যার মোবাইল নম্বর দিন।');
       say(tm,'অপেক্ষা করুন…',1);
       try{const r=await register(d);const x=r.existing||r;tm.className='';
-        tm.innerHTML=`<p>${r.existing?'এই শিক্ষার্থী আগেই নিবন্ধিত।':'ছাত্র যোগ হয়েছে।'} <b>${esc(x.name)}</b> (${esc(x.cls||'')} শ্রেণি)</p><span class="reg">${esc(x.reg)}</span><p class="muted">এই রেজিস্ট্রেশন নম্বর শিক্ষার্থীকে জানিয়ে দিন।</p>`;
-        if(!r.existing)['an','ad','ai','ag','am'].forEach(i=>$('#'+i).value='')
+        tm.innerHTML=`<p>${r.existing?'এই শিক্ষার্থী আগেই নিবন্ধিত।':'ছাত্র যোগ হয়েছে।'} <b>${esc(x.name)}</b> (${esc(bdiv(x))} বিভাগ, পর্ব ${esc(x.term||'')})</p><span class="reg">${esc(x.reg)}</span><p class="muted">এই রেজিস্ট্রেশন নম্বর শিক্ষার্থীকে জানিয়ে দিন।</p>`;
+        if(!r.existing)['an','af','ad','ai','ag','am'].forEach(i=>$('#'+i).value='')
       }catch(e){say(tm,'যোগ করা যায়নি: '+e.message)}
     };
   }else if(tTab=='tch'){
@@ -760,7 +790,7 @@ function bindTeacher(){
     box.innerHTML=`<h3>নিবন্ধিত শিক্ষার্থী</h3><input id="sq" placeholder="নাম, মোবাইল বা রেজিস্ট্রেশন নম্বর দিয়ে খুঁজুন" aria-label="শিক্ষার্থী খুঁজুন"><div id="sl" class="muted">লোড হচ্ছে…</div>`;
     all('students').then(l=>{
       const draw=()=>{const q=$('#sq').value.trim().toLowerCase(),f=l.filter(x=>[x.name,x.mobile,x.reg,x.inst].join(' ').toLowerCase().includes(q));
-        $('#sl').className='';$('#sl').innerHTML=`<p>মোট ${f.length} জন</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন নম্বর</th><th>নাম</th><th>শ্রেণি</th><th>প্রতিষ্ঠান</th><th>অভিভাবক</th><th>মোবাইল</th></tr>${f.map(x=>`<tr><td>${esc(x.reg)}</td><td>${esc(x.name)}</td><td>${esc(x.cls)}</td><td>${esc(x.inst)}</td><td>${esc(x.guardian)}</td><td>${esc(x.mobile)}</td></tr>`).join('')}</table></div>`};
+        $('#sl').className='';$('#sl').innerHTML=`<p>মোট ${f.length} জন</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন নম্বর</th><th>নাম</th><th>বিভাগ</th><th>পর্ব</th><th>প্রতিষ্ঠান</th><th>অভিভাবক</th><th>মোবাইল</th></tr>${f.map(x=>`<tr><td>${esc(x.reg)}</td><td>${esc(x.name)}</td><td>${esc(bdiv(x))}</td><td>${esc(x.term||'')}</td><td>${esc(x.inst)}</td><td>${esc(x.guardian)}</td><td>${esc(x.mobile)}</td></tr>`).join('')}</table></div>`};
       $('#sq').oninput=draw;draw();
     }).catch(e=>say($('#sl'),'তালিকা আনা যায়নি: '+e.message));
   }else if(tTab=='book'){
