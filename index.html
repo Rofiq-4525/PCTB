@@ -1030,11 +1030,13 @@ async function bindTeacher(){
       tv=tv&&typeof tv==='object'?tv:{};
       const cur=k=>typeof tv[k]==='string'&&tv[k].trim()?tv[k]:TXD[k];
       const ta=(k,l,r)=>`<label for="tx_${k}">${l}</label><textarea id="tx_${k}" data-k="${k}" rows="${r||2}">${esc(cur(k))}</textarea>`;
-      const oi=(v,i)=>`<input data-o placeholder="উদ্দেশ্য ${bnum(i+1)}" aria-label="উদ্দেশ্য ${bnum(i+1)}" value="${esc(v)}" style="margin-top:8px">`;
+      const oi=(v,i)=>`<div class="orow" style="display:flex;gap:6px;align-items:center;margin-top:8px"><input data-o placeholder="উদ্দেশ্য ${bnum(i+1)}" aria-label="উদ্দেশ্য ${bnum(i+1)}" value="${esc(v)}" style="flex:1;margin:0"><button type="button" class="alt odel" aria-label="মুছুন" title="মুছুন" style="margin:0;white-space:nowrap">মুছুন</button></div>`;
       const oItems=cur('h_obj').split('\n').map(s=>s.trim()).filter(Boolean);while(oItems.length<5)oItems.push('');
       const nm=i=>{const n=String(bd[i]?.[1]||'').trim();return n==='নাম এখানে লিখুন'?'':n};
       box.innerHTML=`<h3>সাইটের তথ্য</h3><label for="ab">পরিচিতি</label><textarea id="ab" rows="5">${esc(ab)}</textarea><h3 style="margin-top:18px">আমাদের লক্ষ্য ও উদ্দেশ্য</h3>${ta('h_goal_x','আমাদের লক্ষ্য',3)}<div class="txg" style="padding:10px 12px"><b>আমাদের উদ্দেশ্য</b><div id="objList">${oItems.map(oi).join('')}</div><button type="button" class="alt" id="objAdd" style="margin-top:8px">+ আরেকটি উদ্দেশ্য যোগ করুন</button></div><h3 style="margin-top:18px">শিক্ষা পদ্ধতি ও নীতিমালা</h3>${ta('h_met_x','শিক্ষা পদ্ধতি',3)}${ta('h_pol_x','নীতিমালা',3)}<h3 style="margin-top:18px">পরিচালনা পরিষদ — দায়িত্বশীলদের নাম</h3>${[...Array(8).keys()].map(i=>`<input data-p="${i}" placeholder="দায়িত্বশীল ${i+1}-এর নাম" aria-label="দায়িত্বশীল ${i+1}-এর নাম" value="${esc(nm(i))}" style="margin-bottom:8px">`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
+      const renum=()=>[...$('#objList').querySelectorAll('input[data-o]')].forEach((el,k)=>{el.placeholder='উদ্দেশ্য '+bnum(k+1);el.setAttribute('aria-label',el.placeholder)});
       $('#objAdd').onclick=()=>{const l=$('#objList');l.insertAdjacentHTML('beforeend',oi('',l.children.length))};
+      $('#objList').onclick=e=>{const b=e.target.closest('.odel');if(!b)return;b.closest('.orow').remove();renum()};
       $('#ss').onclick=async()=>{try{await setDoc(doc(db,'site','about'),{v:$('#ab').value});
         const b=[...Array(8).keys()].map(i=>['দায়িত্বশীল',$(`[data-p="${i}"]`).value.trim()]).filter(x=>x[1]);
         await setDoc(doc(db,'site','board'),{v:b});
