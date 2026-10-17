@@ -794,8 +794,8 @@ home(routeToken){
   const head=(t,p,l='সব দেখুন')=>`<div class="shd"><h2>${t}</h2>${p?`<a href="#/${p}">${l} →</a>`:''}</div>`;
   const first=`<div class="hlw"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div>
   ${head('পরিচিতি','about','বিস্তারিত').replace('class="shd"','class="shd ln"')}<div class="card" id="homeAbout">${esc(DEF_ABOUT).replace(/\n/g,'<br>')}</div>
-  <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">নববী আদর্শের আলোকে একটি সুসংহত, যুগোপযোগী ও মানসম্মত শিক্ষাব্যবস্থা গড়ে তোলা, যেখানে প্রতিটি শিক্ষার্থী জ্ঞান, চরিত্র ও দক্ষতায় সমৃদ্ধ হয়ে উঠবে।</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3><ul style="margin:0;padding-left:1.2em"><li>নববী শিক্ষাক্রমের আলোকে সময়োপযোগী পাঠ্যক্রম প্রণয়ন ও হালনাগাদ করা।</li><li>মানসম্মত পাঠ্যপুস্তক প্রকাশ করা ও সহজলভ্য করা।</li></ul><details class="bmore"><summary><span class="mo">আরও ৩ টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch"><li>আদব, তলিব, লাজিম ও খিদমাহ বিভাগে ধাপে ধাপে শিক্ষার সুষ্ঠু কাঠামো নিশ্চিত করা।</li><li>নৈতিকতা, ইলম ও কর্মদক্ষতার সমন্বয়ে আদর্শ মানুষ গড়ে তোলা।</li><li>পরীক্ষা ও ফলাফল ব্যবস্থাকে স্বচ্ছ ও সহজ করা।</li></ul></details></div></div><div id="homeRest"></div>`;
-  const staticStage=`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">বিবরণ শীঘ্রই যুক্ত করা হবে।</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">বিবরণ শীঘ্রই যুক্ত করা হবে।</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
+  <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3><ul style="margin:0;padding-left:1.2em"><li>${txe('h_obj_1')}</li><li>${txe('h_obj_2')}</li></ul><details class="bmore"><summary><span class="mo">আরও ৩ টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch"><li>${txe('h_obj_3')}</li><li>${txe('h_obj_4')}</li><li>${txe('h_obj_5')}</li></ul></details></div></div><div id="homeRest"></div>`;
+  const staticStage=`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
   const staticReady=new Promise(resolve=>requestAnimationFrame(()=>{
     const rest=document.getElementById('homeRest');
     if(routeToken!==routeVersion||!rest){resolve(false);return}
@@ -835,13 +835,11 @@ home(routeToken){
   return first;
 },
 async about(){const t=await site('about',DEF_ABOUT);
-  const works=[['book','শিক্ষাক্রম প্রণয়ন',tx('a_w1_d')],['read','পাঠ্যপুস্তক প্রকাশ',tx('a_w2_d')],['result','ফলাফল ব্যবস্থাপনা',tx('a_w3_d')]];
-  const stats=[[DIVS.length,'বিভাগ'],[SUBJ.reduce((a,g)=>a+g[1].length,0),'বিষয়'],[SUBJ.length,'শাখা']];
   return pageHead('বোর্ড পরিচিতি','নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড','info')
   +`<div class="card cc abt"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p>${esc(t).replace(/\n/g,'<br>')}</p></div>`
-  +head('এক নজরে','')+`<div class="stats">${stats.map(x=>`<div class="stat"><b>${bnum(x[0])}</b><span>${x[1]}</span></div>`).join('')}</div>`
-  +head('আমাদের কাজ','')+`<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">${works.map(w=>`<div class="card cc wk"><span class="bvn">${ic(w[0])}</span><h3>${w[1]}</h3><p class="muted" style="margin:0">${esc(w[2])}</p></div>`).join('')}</div>`
-  +head('বিভাগসমূহ','')+divCards()},
+  +`<hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3><ul style="margin:0;padding-left:1.2em"><li>${txe('h_obj_1')}</li><li>${txe('h_obj_2')}</li></ul><details class="bmore"><summary><span class="mo">আরও ৩ টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch"><li>${txe('h_obj_3')}</li><li>${txe('h_obj_4')}</li><li>${txe('h_obj_5')}</li></ul></details></div></div>`
+  +`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div>`
+  +`<hr class="dv">`+head('বিভাগ পরিচিতি','')+divCards()},
 async board(){
   const bd=await site('board',null),rows=Array.isArray(bd)&&bd.length?bd:Array.from({length:6},()=>['দায়িত্বশীল','']);
   const AV=[['#eadcc6',''],['#f7f7f3',''],['#f4f4f0','#2f5a46'],['#f1f1ee','#8a8f93'],['#eed9bd',''],['#f2f2ef','#2c3b57']];
@@ -849,7 +847,7 @@ async board(){
   const av=k=>{const [rb,vs]=AV[k%6];return `<svg viewBox="0 0 120 150" role="img" aria-label="অ্যাভাটার"><defs><linearGradient id="bg${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b8f79"/><stop offset="1" stop-color="#1f4d3d"/></linearGradient><clipPath id="cp${k}"><path d="${ARCH}"/></clipPath></defs><path d="${ARCH}" fill="url(#bg${k})"/><g clip-path="url(#cp${k})"><path d="M0 150V124Q4 106 34 100L60 114L86 100Q116 106 120 124V150Z" fill="${rb}"/>${vs?`<path d="M31 101L52 150H20Q16 124 31 101Z" fill="${vs}"/><path d="M89 101L68 150H100Q104 124 89 101Z" fill="${vs}"/>`:''}<path d="M49 88h22v18q-11 11-22 0Z" fill="#d6a47d"/><path d="M47 100L60 120L73 100L67 97L60 108L53 97Z" fill="#ecE8de"/><ellipse cx="38.5" cy="64" rx="3.5" ry="7" fill="#d9a780"/><ellipse cx="81.5" cy="64" rx="3.5" ry="7" fill="#d9a780"/><ellipse cx="60" cy="63" rx="22" ry="27" fill="#e4b590"/><path d="M38 66Q38 101 60 109Q82 101 82 66Q77 83 60 83Q43 83 38 66Z" fill="#1d1b1a"/><path d="M37 52Q37 27 60 26Q83 27 83 52Q60 45 37 52Z" fill="#f6f6f3" stroke="#d2d0c8" stroke-width="1"/><path d="M38 52Q60 46 82 52" fill="none" stroke="#dedcd4" stroke-width="1.5"/></g><path d="${ARCH}" fill="none" stroke="#c49a3c" stroke-width="3.5"/></svg>`};
   const nm=x=>{const n=String(x[1]||'').trim();return n&&n!='নাম এখানে লিখুন'?esc(n):'<span class="muted">—</span>'};
   return pageHead('পরিচালনা পরিষদ','নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ডের দায়িত্বশীল পরিষদ')
-  +`<div class="bgrid3">${rows.map((x,k)=>`<article class="bcard"><div class="binn"><div class="bpic">${av(k)}</div><div class="bside"><div class="orn s"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.2 6.8L22 12l-6.8 3.2L12 22l-3.2-6.8L2 12l6.8-3.2z" fill="currentColor"/></svg><i></i></div><span class="board-role">${esc(x[0]||'দায়িত্বশীল')}</span><div class="bname">${nm(x)}</div></div></div></article>`).join('')}</div><div class="bwave" aria-hidden="true"></div>`
+  +`<div class="bgrid3">${rows.map((x,k)=>`<article class="bcard"><div class="binn"><div class="bpic">${av(k)}</div><div class="bside"><div class="orn s"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.2 6.8L22 12l-6.8 3.2L12 22l-3.2-6.8L2 12l6.8-3.2z" fill="currentColor"/></svg><i></i></div><span class="board-role">দায়িত্বশীল</span><div class="bname">${nm(x)}</div></div></div></article>`).join('')}</div><div class="bwave" aria-hidden="true"></div>`
 },
 async textbook(){
   const bk=await all('books').catch(()=>[]),U=bookUI(bk);
@@ -1030,10 +1028,12 @@ async function bindTeacher(){
   }else if(tTab=='site'){
     Promise.all([site('about',DEF_ABOUT),site('board',BOARD),site('texts',{})]).then(([ab,bd,tv])=>{
       tv=tv&&typeof tv==='object'?tv:{};
-      const fld=x=>{const cur=typeof tv[x[0]]==='string'&&tv[x[0]].trim()?tv[x[0]]:x[2];return `<label for="tx_${x[0]}">${esc(x[1])}</label><textarea id="tx_${x[0]}" data-k="${x[0]}" rows="2">${esc(cur)}</textarea>`};
-      box.innerHTML=`<h3>সাইটের তথ্য</h3><h3 style="margin-top:6px">বোর্ড পরিচিতি পেজ</h3><label for="ab">পরিচিতি (About Us)</label><textarea id="ab" rows="5">${esc(ab)}</textarea>${TX[0][1].map(fld).join('')}<h3 style="margin-top:18px">পরিচালনা পরিষদ পেজ</h3>${[...Array(8).keys()].map(i=>`<div class="row"><input data-r="${i}" placeholder="পদবি" aria-label="পদবি ${i+1}" value="${esc(bd[i]?.[0])}"><input data-p="${i}" placeholder="নাম" aria-label="নাম ${i+1}" value="${esc(bd[i]?.[1])}"></div>`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
+      const cur=k=>typeof tv[k]==='string'&&tv[k].trim()?tv[k]:TXD[k];
+      const ta=(k,l,r)=>`<label for="tx_${k}">${l}</label><textarea id="tx_${k}" data-k="${k}" rows="${r||2}">${esc(cur(k))}</textarea>`;
+      const nm=i=>{const n=String(bd[i]?.[1]||'').trim();return n==='নাম এখানে লিখুন'?'':n};
+      box.innerHTML=`<h3>সাইটের তথ্য</h3><label for="ab">পরিচিতি</label><textarea id="ab" rows="5">${esc(ab)}</textarea><h3 style="margin-top:18px">আমাদের লক্ষ্য ও উদ্দেশ্য</h3>${ta('h_goal_x','আমাদের লক্ষ্য',3)}${[1,2,3,4,5].map(i=>ta('h_obj_'+i,'উদ্দেশ্য '+['১','২','৩','৪','৫'][i-1])).join('')}<h3 style="margin-top:18px">শিক্ষা পদ্ধতি ও নীতিমালা</h3>${ta('h_met_x','শিক্ষা পদ্ধতি',3)}${ta('h_pol_x','নীতিমালা',3)}<h3 style="margin-top:18px">পরিচালনা পরিষদ — দায়িত্বশীলদের নাম</h3>${[...Array(8).keys()].map(i=>`<input data-p="${i}" placeholder="দায়িত্বশীল ${i+1}-এর নাম" aria-label="দায়িত্বশীল ${i+1}-এর নাম" value="${esc(nm(i))}" style="margin-bottom:8px">`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
       $('#ss').onclick=async()=>{try{await setDoc(doc(db,'site','about'),{v:$('#ab').value});
-        const b=[...Array(8).keys()].map(i=>[$(`[data-r="${i}"]`).value.trim(),$(`[data-p="${i}"]`).value.trim()]).filter(x=>x[0]||x[1]);
+        const b=[...Array(8).keys()].map(i=>['দায়িত্বশীল',$(`[data-p="${i}"]`).value.trim()]).filter(x=>x[1]);
         await setDoc(doc(db,'site','board'),{v:b});
         const o={};box.querySelectorAll('[data-k]').forEach(el=>{const v=el.value.trim();if(v&&v!==TXD[el.dataset.k])o[el.dataset.k]=v});
         await setDoc(doc(db,'site','texts'),{v:o});TXO=o;
@@ -1197,16 +1197,22 @@ async function bindTeacher(){
 
 const DEF_ABOUT='PCTB (নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড) রাসুলুল্লাহ ﷺ-এর আদর্শের আলোকে শিক্ষাক্রম প্রণয়ন, পাঠ্যপুস্তক প্রকাশ এবং পরীক্ষার ফলাফল ব্যবস্থাপনার দায়িত্ব পালন করে।';
 async function site(k,def){try{const d=await getDoc(doc(db,'site',k));return d.exists()?d.data().v:def}catch{return def}}
-/* সম্পাদনাযোগ্য লেখা: বোর্ড পরিচিতি পেজের বিবরণ */
-const TX=[['বোর্ড পরিচিতি পেজের বিবরণ',[
- ['a_w1_d','শিক্ষাক্রম প্রণয়ন — বিবরণ','চার বিভাগের জন্য নববী আদর্শভিত্তিক শিক্ষাক্রম।'],
- ['a_w2_d','পাঠ্যপুস্তক প্রকাশ — বিবরণ','প্রতিটি বিভাগ ও বিষয়ের পাঠ্যপুস্তক এক জায়গায়।'],
- ['a_w3_d','ফলাফল ব্যবস্থাপনা — বিবরণ','রেজিস্ট্রেশন নম্বর দিয়ে সহজে ফলাফল দেখা।']
-]]];
-const TXD={};TX.forEach(g=>g[1].forEach(x=>TXD[x[0]]=x[2]));
+/* সম্পাদনাযোগ্য লেখা (অ্যাডমিন → সাইট তথ্য) */
+const TX=[
+ ['h_goal_x','আমাদের লক্ষ্য','নববী আদর্শের আলোকে একটি সুসংহত, যুগোপযোগী ও মানসম্মত শিক্ষাব্যবস্থা গড়ে তোলা, যেখানে প্রতিটি শিক্ষার্থী জ্ঞান, চরিত্র ও দক্ষতায় সমৃদ্ধ হয়ে উঠবে।',1],
+ ['h_obj_1','উদ্দেশ্য ১','নববী শিক্ষাক্রমের আলোকে সময়োপযোগী পাঠ্যক্রম প্রণয়ন ও হালনাগাদ করা।'],
+ ['h_obj_2','উদ্দেশ্য ২','মানসম্মত পাঠ্যপুস্তক প্রকাশ করা ও সহজলভ্য করা।'],
+ ['h_obj_3','উদ্দেশ্য ৩','আদব, তলিব, লাজিম ও খিদমাহ বিভাগে ধাপে ধাপে শিক্ষার সুষ্ঠু কাঠামো নিশ্চিত করা।'],
+ ['h_obj_4','উদ্দেশ্য ৪','নৈতিকতা, ইলম ও কর্মদক্ষতার সমন্বয়ে আদর্শ মানুষ গড়ে তোলা।'],
+ ['h_obj_5','উদ্দেশ্য ৫','পরীক্ষা ও ফলাফল ব্যবস্থাকে স্বচ্ছ ও সহজ করা।'],
+ ['h_met_x','শিক্ষা পদ্ধতি','বিবরণ শীঘ্রই যুক্ত করা হবে।',1],
+ ['h_pol_x','নীতিমালা','বিবরণ শীঘ্রই যুক্ত করা হবে।',1]
+];
+const TXD={};TX.forEach(x=>TXD[x[0]]=x[2]);
 let TXO=null;
 async function loadTX(){if(TXO)return;const v=await site('texts',{});TXO=v&&typeof v==='object'?v:{}}
 const tx=k=>{const v=TXO&&TXO[k];return typeof v==='string'&&v.trim()!==''?v:(TXD[k]??'')};
+const txe=k=>esc(tx(k));
 
 const LISTS={book:['books',b=>`${b.title} (${bdiv(b)} বিভাগ)`],notice:['notices',n=>n.title]};
 async function loadList(){
