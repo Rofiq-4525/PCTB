@@ -501,6 +501,18 @@ async function all(c){return (await getDocs(collection(db,c))).docs.map(d=>({id:
 const empty=t=>`<div class="card muted">${t}</div>`;
 
 /* ---------- রেজিস্ট্রেশন ---------- */
+const rollKey=s=>bdiv(s)+'|'+String(s.term||'');
+function assignRolls(list){
+  const groups=new Map(),out=new Map();
+  list.forEach(s=>{const k=rollKey(s);if(!groups.has(k))groups.set(k,[]);groups.get(k).push(s)});
+  groups.forEach(g=>{
+    const used=new Set(g.filter(s=>s.roll).map(s=>+s.roll));
+    g.filter(s=>s.roll).forEach(s=>out.set(s.reg,+s.roll));
+    let n=0;
+    g.filter(s=>!s.roll).sort((a,b)=>(a.t||0)-(b.t||0)||String(a.reg).localeCompare(String(b.reg))).forEach(s=>{do n++;while(used.has(n));out.set(s.reg,n)});
+  });
+  return out;
+}
 async function register(d,database=db){
   const studentQuery=d.institutionCode
     ?query(collection(database,'students'),where('institutionCode','==',d.institutionCode))
@@ -508,6 +520,11 @@ async function register(d,database=db){
   const dup=await getDocs(studentQuery);
   const same=dup.docs.map(x=>x.data()).find(x=>x.mobile===d.mobile&&x.name.trim().toLowerCase()==d.name.toLowerCase()&&x.dob==d.dob);
   if(same)return {existing:same};
+  let roll=0;
+  if(d.institutionCode){
+    const rows=dup.docs.map(x=>({...x.data(),reg:x.id})),rolls=assignRolls(rows),key=rollKey({...d,div:bdiv(d)});
+    roll=rows.filter(s=>rollKey(s)===key).reduce((m,s)=>Math.max(m,rolls.get(s.reg)||0),0)+1;
+  }
   return runTransaction(database,async tx=>{
     const division=bdiv(d),code=DIV_CODES[division],term=String(d.term||'');
     if(!code||!['1','2','3'].includes(term))throw new Error('বিভাগ ও পর্ব নির্বাচন করে আবার চেষ্টা করুন।');
@@ -520,7 +537,7 @@ async function register(d,database=db){
       serial++;
     }
     if(serial>999)throw new Error('এই বিভাগ ও পর্বের ৩ অঙ্কের সিরিয়াল শেষ হয়েছে। অ্যাডমিনের সঙ্গে যোগাযোগ করুন।');
-    const rec={...d,div:division,reg,t:Date.now()};
+    const rec={...d,div:division,reg,t:Date.now(),...(roll?{roll}:{})};
     tx.set(cr,d.institutionCode?{n:serial,institutionCode:d.institutionCode}:{n:serial});tx.set(studentRef,rec);
     return rec;
   });
@@ -652,7 +669,7 @@ function card(r){
   const total=r.total??r.subjects.reduce((a,x)=>a+x.m,0),n=r.subjects.length,avg=r.avg??total/n,fail=r.subjects.filter(x=>x.m<50).length;
   const rm=m=>`<span style="${m<50?'color:var(--err);font-weight:600':''}">${remark(m)}</span>`,v=x=>x??'–';
   return `<div class="card"><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="" width="64" height="64" style="float:right;border-radius:50%"><h3>${esc(r.exam)}</h3>
-  <p><b>${esc(r.name)}</b>${r.father?` · পিতা: ${esc(r.father)}`:''}${r.guardian?` · অভিভাবক: ${esc(r.guardian)}`:''} &nbsp;${bdiv(r)?`<span class="pill">${esc(bdiv(r))} বিভাগ</span> `:''}<span class="pill">${esc(r.reg)}</span></p>
+  <p><b>${esc(r.name)}</b>${r.father?` · পিতা: ${esc(r.father)}`:''}${r.guardian?` · অভিভাবক: ${esc(r.guardian)}`:''} &nbsp;${bdiv(r)?`<span class="pill">${esc(bdiv(r))} বিভাগ</span> `:''}<span class="pill">${esc(r.reg)}</span>${r.roll?` <span class="pill">রোল ${bnum(r.roll)}</span>`:''}</p>
   <div style="overflow-x:auto"><table><tr><th>বিষয়</th><th>লিখিত (৩০)</th><th>ব্যবহারিক (৩০)</th><th>মৌখিক (২০)</th><th>আদব (২০)</th><th>মোট (১০০)</th><th>মন্তব্য</th></tr>
   ${r.subjects.map(x=>`<tr><td>${esc(x.n)}</td><td>${v(x.w)}</td><td>${v(x.p)}</td><td>${v(x.o)}</td><td>${v(x.a)}</td><td><b>${x.m}</b></td><td>${rm(x.m)}</td></tr>`).join('')}</table></div>
   <p><b>সর্বমোট: ${total} / ${n*100}</b> &nbsp; <b>গড় নম্বর: ${avg.toFixed(1)}</b> &nbsp; <b>সার্বিক মন্তব্য: ${rm(avg)}</b></p>
@@ -671,7 +688,7 @@ async function showResults(reg,out,dv){
   if(!reg){out.innerHTML='';return}
   out.innerHTML='<p class="muted">খোঁজা হচ্ছে…</p>';
   try{
-    let rs=(await getDocs(query(collection(db,'results'),where('reg','==',reg)))).docs.map(d=>d.data()).sort((a,b)=>b.t-a.t);
+    let rs=(await getDocs(query(collection(db,'results'),where('reg','==',reg)))).docs.map(d=>d.data()).sort((a,b)=>b.t-a.t).filter(r=>!r.draft);
     if(dv)rs=rs.filter(r=>r.div==dv);
     if(!rs.length){out.innerHTML=`<div class="card"><span class="msg bad">${dv?`এই রেজিস্ট্রেশন নম্বরে ${esc(dv)} বিভাগের কোনো ফলাফল পাওয়া যায়নি।`:'এই রেজিস্ট্রেশন নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বরটি আবার দেখুন।'}</span></div>`;return}
     out.innerHTML=rs.map(card).join('');
@@ -1125,6 +1142,91 @@ function bindTextbook(){
   q.oninput=apply;
   document.querySelectorAll('#tchips button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tchips button').forEach(x=>x.classList.toggle('on',x==b));dv=b.dataset.d;apply()});
 }
+async function renderInstitutionResultEntry(box,institution,database){
+  const MIN=5,EXAMS=['সাপ্তাহিক মূল্যায়ন','মাসিক মূল্যায়ন','অর্ধবার্ষিক মূল্যায়ন','বার্ষিক মূল্যায়ন','পর্ব উন্নয়ন','বিভাগ উন্নয়ন'];
+  const divisions=(institution.divisions||[]).filter(d=>DIVS.some(x=>x[0]===d));
+  const order=[];SUBJ.forEach(g=>g[1].forEach(n=>order.push(n)));
+  box.innerHTML='<h4>ফলাফল তৈরি</h4><p class="muted">শিক্ষার্থীর তালিকা লোড হচ্ছে…</p>';
+  let students=[];
+  try{
+    const snap=await getDocs(query(collection(database,'students'),where('institutionCode','==',institution.code)));
+    const rows=snap.docs.map(d=>({...d.data(),reg:d.id})),rolls=assignRolls(rows);
+    students=rows.map(s=>({...s,div:bdiv(s),roll:rolls.get(s.reg)}));
+  }catch(error){box.innerHTML=`<p class="msg bad">শিক্ষার্থীর তালিকা আনা যায়নি: ${esc(error.message)}</p>`;return}
+  box.innerHTML=`<h4>ফলাফল তৈরি</h4>
+  <div class="row"><div><label for="rsDiv">বিভাগ *</label><select id="rsDiv"><option value="" selected disabled>বিভাগ নির্বাচন করুন</option>${divisions.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div>
+  <div><label for="rsTerm">পর্ব *</label><select id="rsTerm"><option value="" selected disabled>পর্ব নির্বাচন করুন</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div>
+  <div class="row"><div><label for="rsExam">পরীক্ষার নাম *</label><select id="rsExam"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option>${EXAMS.map(e=>`<option>${esc(e)}</option>`).join('')}</select></div>
+  <div><label for="rsSub">বিষয় *</label><select id="rsSub"><option value="" selected disabled>বিষয় নির্বাচন করুন</option>${SUBJ.map(g=>`<optgroup label="${esc(g[0])}">${g[1].map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}</optgroup>`).join('')}</select></div></div>
+  <div id="rsStatus" class="muted" aria-live="polite">বিভাগ, পর্ব, পরীক্ষা ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।</div>
+  <div id="rsTable"></div><div id="rsMsg" aria-live="polite"></div><div id="rsSheet"></div>`;
+  let results=new Map(),list=[],loadVersion=0;
+  const sel=()=>({d:$('#rsDiv').value,t:$('#rsTerm').value,exam:$('#rsExam').value,sub:$('#rsSub').value});
+  const resRef=(s,exam)=>doc(database,'results',s.reg+'__'+exam);
+  const fetchResults=async exam=>{
+    const snap=await getDocs(query(collection(database,'results'),where('institutionCode','==',institution.code)));
+    results=new Map(snap.docs.map(d=>d.data()).filter(r=>r.exam===exam).map(r=>[r.reg,r]));
+  };
+  const rowTotal=tr=>{const v=PARTS.reduce((s,p)=>s+(+tr.querySelector(`[data-k="${p[0]}"]`).value||0),0);tr.querySelector('.rs-tt').textContent=bnum(v)};
+  const countCell=reg=>{const n=(results.get(reg)?.subjects||[]).length;return n>=MIN?`<span class="pill">${bnum(n)} টি ✓</span>`:`<span class="muted">${bnum(n)} / ${bnum(MIN)}</span>`};
+  const draw=()=>{
+    const {d,t,exam,sub}=sel();
+    if(!list.length){$('#rsTable').innerHTML='';return}
+    $('#rsTable').innerHTML=`<h4 style="margin-top:16px">${esc(sub)} — ${esc(d)} বিভাগ, পর্ব ${bnum(t)}</h4><p class="muted">প্রতিটি শিক্ষার্থীর ঘরে নম্বর দিন। যে শিক্ষার্থীর সব ঘর ফাঁকা থাকবে তার নম্বর জমা হবে না; আংশিক লিখলে ফাঁকা ঘর ০ ধরা হবে।</p>
+    <div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট</th><th>জমা বিষয়</th><th>রেজাল্ট শিট</th></tr>
+    ${list.map(s=>{const saved=(results.get(s.reg)?.subjects||[]).find(x=>x.n===sub),n=(results.get(s.reg)?.subjects||[]).length;
+      return `<tr data-reg="${esc(s.reg)}" data-had="${saved?1:0}"><td>${bnum(s.roll)}</td><td>${esc(s.reg)}</td><td>${esc(s.name)}</td>${PARTS.map(p=>`<td><input type="number" min="0" max="${p[2]}" inputmode="numeric" data-k="${p[0]}" value="${saved?saved[p[0]]??'':''}" style="min-width:64px" aria-label="${esc(s.name)} ${p[1]}"></td>`).join('')}<td class="rs-tt" style="text-align:center">0</td><td class="rs-cnt">${countCell(s.reg)}</td><td style="white-space:nowrap">${n>=MIN?`<button class="alt" data-rs-view="${esc(s.reg)}" style="margin:0 4px 0 0">দেখুন</button><button class="alt" data-rs-dl="${esc(s.reg)}" style="margin:0">ডাউনলোড</button>`:'<span class="muted">৫টি বিষয় লাগবে</span>'}</td></tr>`}).join('')}</table></div>
+    <button id="rsSave">সকল শিক্ষার্থীর নম্বর সংরক্ষণ করুন</button>`;
+    $('#rsTable').querySelectorAll('tr[data-reg]').forEach(rowTotal);
+    $('#rsTable').oninput=e=>{const el=e.target;if(!el.dataset.k)return;const p=PARTS.find(x=>x[0]===el.dataset.k);if(+el.value>p[2])el.value=p[2];if(+el.value<0)el.value=0;rowTotal(el.closest('tr'))};
+    $('#rsTable').querySelectorAll('[data-rs-view]').forEach(b=>b.onclick=()=>{
+      const r=results.get(b.dataset.rsView),out=$('#rsSheet');out.innerHTML=card(r);
+      out.querySelector('.result-print').onclick=()=>{const c=out.querySelector('.card');c.classList.add('print-target');addEventListener('afterprint',()=>c.classList.remove('print-target'),{once:true});print()};
+      out.querySelector('.result-download').onclick=()=>downloadResult(r);
+      out.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    $('#rsTable').querySelectorAll('[data-rs-dl]').forEach(b=>b.onclick=()=>downloadResult(results.get(b.dataset.rsDl)));
+    $('#rsSave').onclick=save;
+  };
+  const load=async()=>{
+    const {d,t,exam,sub}=sel();
+    $('#rsMsg').textContent='';$('#rsSheet').innerHTML='';
+    if(!d||!t||!exam||!sub){list=[];$('#rsTable').innerHTML='';$('#rsStatus').textContent='বিভাগ, পর্ব, পরীক্ষা ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।';return}
+    list=students.filter(s=>s.div===d&&String(s.term)===t).sort((a,b)=>(a.roll||0)-(b.roll||0));
+    if(!list.length){$('#rsTable').innerHTML='';$('#rsStatus').textContent='এই বিভাগ ও পর্বে কোনো নিবন্ধিত শিক্ষার্থী নেই।';return}
+    const version=++loadVersion;$('#rsStatus').textContent='সংরক্ষিত নম্বর দেখা হচ্ছে…';
+    try{await fetchResults(exam);if(version!==loadVersion)return;$('#rsStatus').textContent=`${bnum(list.length)} জন শিক্ষার্থী।`;draw()}
+    catch(error){if(version!==loadVersion)return;list=[];$('#rsTable').innerHTML='';say($('#rsStatus'),'সংরক্ষিত নম্বর আনা যায়নি: '+error.message)}
+  };
+  const save=async()=>{
+    const {exam,sub}=sel(),msg=$('#rsMsg'),button=$('#rsSave');
+    const rows=[...$('#rsTable').querySelectorAll('tr[data-reg]')];
+    const jobs=rows.map(tr=>{
+      const marks={};let any=false;
+      PARTS.forEach(p=>{const el=tr.querySelector(`[data-k="${p[0]}"]`);if(el.value!=='')any=true;marks[p[0]]=Math.min(p[2],Math.max(0,+el.value||0))});
+      return {student:list.find(s=>s.reg===tr.dataset.reg),marks,any,had:tr.dataset.had==='1'};
+    }).filter(j=>j.any||j.had);
+    if(!jobs.length)return say(msg,'অন্তত একজন শিক্ষার্থীর নম্বর দিন।');
+    button.disabled=true;let done=0,failed=0,firstError='';
+    for(const j of jobs){
+      say(msg,`সংরক্ষণ হচ্ছে… (${bnum(done+failed)}/${bnum(jobs.length)})`,true);
+      try{
+        const s=j.student,snap=await getDoc(resRef(s,exam));
+        let subjects=(snap.exists()?snap.data().subjects||[]:[]).filter(x=>x.n!==sub);
+        if(j.any)subjects.push({n:sub,...j.marks,m:j.marks.w+j.marks.p+j.marks.o+j.marks.a});
+        subjects.sort((a,b)=>order.indexOf(a.n)-order.indexOf(b.n));
+        const total=subjects.reduce((x,y)=>x+y.m,0),avg=subjects.length?total/subjects.length:0;
+        const result={reg:s.reg,name:s.name,father:s.father||'',guardian:s.guardian||'',exam,div:s.div,term:String(s.term||''),roll:s.roll,subjects,total,avg,t:Date.now(),institutionCode:institution.code};
+        if(subjects.length<MIN)result.draft=true;
+        await setDoc(resRef(s,exam),result);done++;
+      }catch(error){failed++;firstError=firstError||error.message}
+    }
+    try{await fetchResults(exam);draw()}catch(error){}
+    const m2=$('#rsMsg');
+    say(m2,failed?`${bnum(done)} জনের নম্বর সংরক্ষিত হয়েছে, ${bnum(failed)} জনের হয়নি: ${firstError}`:`${bnum(done)} জন শিক্ষার্থীর "${sub}" বিষয়ের নম্বর সংরক্ষিত হয়েছে।`,!failed);
+  };
+  ['rsDiv','rsTerm','rsExam','rsSub'].forEach(id=>$('#'+id).onchange=load);
+}
 function bindDash(){
   const dashboard=$('#institutionDashboardContent');
   const showInstitutionLogin=(mode='login')=>{
@@ -1158,8 +1260,7 @@ function bindDash(){
     const form=$('#institutionDashboardForm');
     const drawInstitutionTab=tab=>{
       dashboard.querySelectorAll('[data-institution-tab]').forEach(button=>button.classList.toggle('on',button.dataset.institutionTab===tab));
-      form.classList.toggle('result-entry',tab==='result');
-      if(tab==='result'){renderResultEntryForm(form,institution);return}
+      if(tab==='result'){renderInstitutionResultEntry(form,institution,instDb);return}
       if(tab==='student'){
         form.innerHTML=`<h4>নতুন শিক্ষার্থী নিবন্ধন</h4><label for="dashStudentName">শিক্ষার্থীর নাম *</label><input id="dashStudentName"><label for="dashStudentFather">পিতার নাম *</label><input id="dashStudentFather"><label for="dashStudentDivision">বিভাগ *</label><select id="dashStudentDivision">${divisions.map(division=>`<option>${esc(division)}</option>`).join('')}</select><div class="row"><div><label for="dashStudentDob">জন্মতারিখ *</label><input id="dashStudentDob" type="date"></div><div><label for="dashStudentTerm">পর্ব *</label><select id="dashStudentTerm"><option value="" selected disabled>পর্ব নির্বাচন করুন</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div><label for="dashStudentGuardian">অভিভাবকের নাম *</label><input id="dashStudentGuardian"><label for="dashStudentMobile">যোগাযোগের মোবাইল নম্বর *</label><input id="dashStudentMobile" inputmode="numeric" placeholder="01XXXXXXXXX"><button id="dashStudentSubmit">শিক্ষার্থী নিবন্ধন করুন</button><div id="dashStudentMessage" aria-live="polite"></div>`;
         $('#dashStudentSubmit').onclick=async()=>{
@@ -1170,7 +1271,7 @@ function bindDash(){
           button.disabled=true;say(message,'নিবন্ধন হচ্ছে…',true);
           try{
             const registered=await register(student,instDb),saved=registered.existing||registered;
-            say(message,`${registered.existing?'এই শিক্ষার্থী আগেই নিবন্ধিত।':'শিক্ষার্থী নিবন্ধন সম্পন্ন।'} রেজিস্ট্রেশন নম্বর: ${saved.reg}`,true);
+            say(message,`${registered.existing?'এই শিক্ষার্থী আগেই নিবন্ধিত।':'শিক্ষার্থী নিবন্ধন সম্পন্ন।'} রেজিস্ট্রেশন নম্বর: ${saved.reg}${saved.roll?` · রোল নম্বর: ${bnum(saved.roll)}`:''}`,true);
             if(!registered.existing)['dashStudentName','dashStudentFather','dashStudentDob','dashStudentGuardian','dashStudentMobile'].forEach(id=>$('#'+id).value='');
           }catch(error){say(message,'নিবন্ধন হয়নি: '+error.message)}
           finally{button.disabled=false}
