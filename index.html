@@ -794,7 +794,7 @@ home(routeToken){
   const head=(t,p,l='সব দেখুন')=>`<div class="shd"><h2>${t}</h2>${p?`<a href="#/${p}">${l} →</a>`:''}</div>`;
   const first=`<div class="hlw"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div>
   ${head('পরিচিতি','about','বিস্তারিত').replace('class="shd"','class="shd ln"')}<div class="card" id="homeAbout">${esc(DEF_ABOUT).replace(/\n/g,'<br>')}</div>
-  <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3><ul style="margin:0;padding-left:1.2em"><li>${txe('h_obj_1')}</li><li>${txe('h_obj_2')}</li></ul><details class="bmore"><summary><span class="mo">আরও ৩ টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch"><li>${txe('h_obj_3')}</li><li>${txe('h_obj_4')}</li><li>${txe('h_obj_5')}</li></ul></details></div></div><div id="homeRest"></div>`;
+  <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div><div id="homeRest"></div>`;
   const staticStage=`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
   const staticReady=new Promise(resolve=>requestAnimationFrame(()=>{
     const rest=document.getElementById('homeRest');
@@ -837,7 +837,7 @@ home(routeToken){
 async about(){const t=await site('about',DEF_ABOUT);
   return pageHead('বোর্ড পরিচিতি','নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড','info')
   +`<div class="card cc abt"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p>${esc(t).replace(/\n/g,'<br>')}</p></div>`
-  +`<hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3><ul style="margin:0;padding-left:1.2em"><li>${txe('h_obj_1')}</li><li>${txe('h_obj_2')}</li></ul><details class="bmore"><summary><span class="mo">আরও ৩ টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch"><li>${txe('h_obj_3')}</li><li>${txe('h_obj_4')}</li><li>${txe('h_obj_5')}</li></ul></details></div></div>`
+  +`<hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div>`
   +`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div>`
   +`<hr class="dv">`+head('বিভাগ পরিচিতি','')+divCards()},
 async board(){
@@ -1031,7 +1031,7 @@ async function bindTeacher(){
       const cur=k=>typeof tv[k]==='string'&&tv[k].trim()?tv[k]:TXD[k];
       const ta=(k,l,r)=>`<label for="tx_${k}">${l}</label><textarea id="tx_${k}" data-k="${k}" rows="${r||2}">${esc(cur(k))}</textarea>`;
       const nm=i=>{const n=String(bd[i]?.[1]||'').trim();return n==='নাম এখানে লিখুন'?'':n};
-      box.innerHTML=`<h3>সাইটের তথ্য</h3><label for="ab">পরিচিতি</label><textarea id="ab" rows="5">${esc(ab)}</textarea><h3 style="margin-top:18px">আমাদের লক্ষ্য ও উদ্দেশ্য</h3>${ta('h_goal_x','আমাদের লক্ষ্য',3)}${[1,2,3,4,5].map(i=>ta('h_obj_'+i,'উদ্দেশ্য '+['১','২','৩','৪','৫'][i-1])).join('')}<h3 style="margin-top:18px">শিক্ষা পদ্ধতি ও নীতিমালা</h3>${ta('h_met_x','শিক্ষা পদ্ধতি',3)}${ta('h_pol_x','নীতিমালা',3)}<h3 style="margin-top:18px">পরিচালনা পরিষদ — দায়িত্বশীলদের নাম</h3>${[...Array(8).keys()].map(i=>`<input data-p="${i}" placeholder="দায়িত্বশীল ${i+1}-এর নাম" aria-label="দায়িত্বশীল ${i+1}-এর নাম" value="${esc(nm(i))}" style="margin-bottom:8px">`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
+      box.innerHTML=`<h3>সাইটের তথ্য</h3><label for="ab">পরিচিতি</label><textarea id="ab" rows="5">${esc(ab)}</textarea><h3 style="margin-top:18px">আমাদের লক্ষ্য ও উদ্দেশ্য</h3>${ta('h_goal_x','আমাদের লক্ষ্য',3)}${ta('h_obj','উদ্দেশ্য (প্রতি লাইনে একটি করে লিখুন)',7)}<h3 style="margin-top:18px">শিক্ষা পদ্ধতি ও নীতিমালা</h3>${ta('h_met_x','শিক্ষা পদ্ধতি',3)}${ta('h_pol_x','নীতিমালা',3)}<h3 style="margin-top:18px">পরিচালনা পরিষদ — দায়িত্বশীলদের নাম</h3>${[...Array(8).keys()].map(i=>`<input data-p="${i}" placeholder="দায়িত্বশীল ${i+1}-এর নাম" aria-label="দায়িত্বশীল ${i+1}-এর নাম" value="${esc(nm(i))}" style="margin-bottom:8px">`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
       $('#ss').onclick=async()=>{try{await setDoc(doc(db,'site','about'),{v:$('#ab').value});
         const b=[...Array(8).keys()].map(i=>['দায়িত্বশীল',$(`[data-p="${i}"]`).value.trim()]).filter(x=>x[1]);
         await setDoc(doc(db,'site','board'),{v:b});
@@ -1200,11 +1200,7 @@ async function site(k,def){try{const d=await getDoc(doc(db,'site',k));return d.e
 /* সম্পাদনাযোগ্য লেখা (অ্যাডমিন → সাইট তথ্য) */
 const TX=[
  ['h_goal_x','আমাদের লক্ষ্য','নববী আদর্শের আলোকে একটি সুসংহত, যুগোপযোগী ও মানসম্মত শিক্ষাব্যবস্থা গড়ে তোলা, যেখানে প্রতিটি শিক্ষার্থী জ্ঞান, চরিত্র ও দক্ষতায় সমৃদ্ধ হয়ে উঠবে।',1],
- ['h_obj_1','উদ্দেশ্য ১','নববী শিক্ষাক্রমের আলোকে সময়োপযোগী পাঠ্যক্রম প্রণয়ন ও হালনাগাদ করা।'],
- ['h_obj_2','উদ্দেশ্য ২','মানসম্মত পাঠ্যপুস্তক প্রকাশ করা ও সহজলভ্য করা।'],
- ['h_obj_3','উদ্দেশ্য ৩','আদব, তলিব, লাজিম ও খিদমাহ বিভাগে ধাপে ধাপে শিক্ষার সুষ্ঠু কাঠামো নিশ্চিত করা।'],
- ['h_obj_4','উদ্দেশ্য ৪','নৈতিকতা, ইলম ও কর্মদক্ষতার সমন্বয়ে আদর্শ মানুষ গড়ে তোলা।'],
- ['h_obj_5','উদ্দেশ্য ৫','পরীক্ষা ও ফলাফল ব্যবস্থাকে স্বচ্ছ ও সহজ করা।'],
+ ['h_obj','উদ্দেশ্য','নববী শিক্ষাক্রমের আলোকে সময়োপযোগী পাঠ্যক্রম প্রণয়ন ও হালনাগাদ করা।\nমানসম্মত পাঠ্যপুস্তক প্রকাশ করা ও সহজলভ্য করা।\nআদব, তলিব, লাজিম ও খিদমাহ বিভাগে ধাপে ধাপে শিক্ষার সুষ্ঠু কাঠামো নিশ্চিত করা।\nনৈতিকতা, ইলম ও কর্মদক্ষতার সমন্বয়ে আদর্শ মানুষ গড়ে তোলা।\nপরীক্ষা ও ফলাফল ব্যবস্থাকে স্বচ্ছ ও সহজ করা।',1],
  ['h_met_x','শিক্ষা পদ্ধতি','বিবরণ শীঘ্রই যুক্ত করা হবে।',1],
  ['h_pol_x','নীতিমালা','বিবরণ শীঘ্রই যুক্ত করা হবে।',1]
 ];
@@ -1213,6 +1209,7 @@ let TXO=null;
 async function loadTX(){if(TXO)return;const v=await site('texts',{});TXO=v&&typeof v==='object'?v:{}}
 const tx=k=>{const v=TXO&&TXO[k];return typeof v==='string'&&v.trim()!==''?v:(TXD[k]??'')};
 const txe=k=>esc(tx(k));
+const objHTML=()=>{const L=tx('h_obj').split('\n').map(s=>s.trim()).filter(Boolean),a=L.slice(0,2),b=L.slice(2);return `<ul style="margin:0;padding-left:1.2em">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+(b.length?`<details class="bmore"><summary><span class="mo">আরও ${bnum(b.length)} টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch">${b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:'')};
 
 const LISTS={book:['books',b=>`${b.title} (${bdiv(b)} বিভাগ)`],notice:['notices',n=>n.title]};
 async function loadList(){
