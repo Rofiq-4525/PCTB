@@ -428,6 +428,23 @@ table.rtable td input{width:110px;min-width:0!important;text-align:right}
 .registration-certificate .cert-signatures,.cert-signatures{gap:10px!important}
 .registration-certificate .cert-sign,.cert-sign{white-space:normal!important;font-size:.72rem!important;height:auto!important;min-height:46px;padding:20px 2px 0!important}
 }
+.registration-certificate.result-certificate{background:radial-gradient(ellipse at 16% 10%,rgba(255,255,255,.75),transparent 34%),radial-gradient(ellipse at 84% 90%,rgba(184,146,58,.16),transparent 40%),linear-gradient(135deg,#e6f3ea,#f5fbf3 48%,#dfeee4);border:10px double #b8923a;outline:1px solid #8a6d28;outline-offset:-20px;height:auto;min-height:297mm;justify-content:flex-start;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.result-certificate::after{border-color:rgba(184,146,58,.6)}
+.result-certificate .cert-heading,.result-certificate header.cert-heading{border-bottom-color:rgba(184,146,58,.65)}
+.result-certificate .cert-title{color:#8a6d28}
+.result-certificate .cert-reg{border:1px solid #b8923a;background:rgba(255,255,255,.62)}
+.result-certificate .cert-info-title{color:#0d4a3a;border-left:3px solid #b8923a;padding-left:8px}
+.result-certificate .cert-info-row{border-bottom-color:rgba(184,146,58,.32)}
+.result-certificate .cert-info-row:nth-of-type(odd){background:rgba(13,74,58,.055)}
+.result-certificate .cert-sign::before{border-top-color:#0d4a3a}
+.cert-rtable{width:100%;max-width:640px;margin:14px auto 0;border-collapse:collapse;font-size:.9rem;text-align:center;background:rgba(255,255,255,.6)}
+.cert-rtable th{background:#0d4a3a;color:#fff;padding:7px 5px;border:1px solid #b8923a;font-weight:600;line-height:1.35}
+.cert-rtable td{padding:6px 5px;border:1px solid rgba(184,146,58,.6);color:#17261f}
+.cert-rtable td:nth-child(2){text-align:left}
+.cert-rtable tbody tr:nth-child(even) td{background:rgba(13,74,58,.055)}
+.cert-summary{width:100%;max-width:640px;margin:12px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;padding:10px 14px;border:1px solid #b8923a;background:rgba(255,255,255,.62);color:#0d4a3a;font-weight:600}
+.cert-legend{width:100%;max-width:640px;margin:8px auto 0;font-size:.78rem;color:#604b25}
+@media(max-width:600px){.registration-certificate.result-certificate{min-height:0;padding:30px 14px;border-width:8px}.cert-rtable{font-size:.74rem}.cert-rtable th,.cert-rtable td{padding:4px 2px}}
 </style>
 <script>
 /* লোগো ফাইল: logo.* ও seal.* (png, jpg, jpeg, webp যেকোনোটা চলবে) */
@@ -593,6 +610,24 @@ async function completeApprovedTeacherAccount(account){
   await setDoc(doc(db,'teachers',account.uid),{name:application.name,mobile:application.mobile,inst:application.institutionName,institutionCode:application.institutionCode,email:account.email.toLowerCase(),approved:true,t:Date.now()});
 }
 
+const RESULT_CERT_CSS=`.registration-certificate.result-certificate{background:radial-gradient(ellipse at 16% 10%,rgba(255,255,255,.75),transparent 34%),radial-gradient(ellipse at 84% 90%,rgba(184,146,58,.16),transparent 40%),linear-gradient(135deg,#e6f3ea,#f5fbf3 48%,#dfeee4);border:10px double #b8923a;outline:1px solid #8a6d28;outline-offset:-20px;height:auto;min-height:297mm;justify-content:flex-start;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.result-certificate::after{border-color:rgba(184,146,58,.6)}
+.result-certificate .cert-heading,.result-certificate header.cert-heading{border-bottom-color:rgba(184,146,58,.65)}
+.result-certificate .cert-title{color:#8a6d28}
+.result-certificate .cert-reg{border:1px solid #b8923a;background:rgba(255,255,255,.62)}
+.result-certificate .cert-info-title{color:#0d4a3a;border-left:3px solid #b8923a;padding-left:8px}
+.result-certificate .cert-info-row{border-bottom-color:rgba(184,146,58,.32)}
+.result-certificate .cert-info-row:nth-of-type(odd){background:rgba(13,74,58,.055)}
+.result-certificate .cert-sign::before{border-top-color:#0d4a3a}
+.cert-rtable{width:100%;max-width:640px;margin:14px auto 0;border-collapse:collapse;font-size:.9rem;text-align:center;background:rgba(255,255,255,.6)}
+.cert-rtable th{background:#0d4a3a;color:#fff;padding:7px 5px;border:1px solid #b8923a;font-weight:600;line-height:1.35}
+.cert-rtable td{padding:6px 5px;border:1px solid rgba(184,146,58,.6);color:#17261f}
+.cert-rtable td:nth-child(2){text-align:left}
+.cert-rtable tbody tr:nth-child(even) td{background:rgba(13,74,58,.055)}
+.cert-summary{width:100%;max-width:640px;margin:12px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;padding:10px 14px;border:1px solid #b8923a;background:rgba(255,255,255,.62);color:#0d4a3a;font-weight:600}
+.cert-legend{width:100%;max-width:640px;margin:8px auto 0;font-size:.78rem;color:#604b25}
+@media(max-width:600px){.registration-certificate.result-certificate{min-height:0;padding:30px 14px;border-width:8px}.cert-rtable{font-size:.74rem}.cert-rtable th,.cert-rtable td{padding:4px 2px}}
+`;
 function registrationCertificate(student,id='registrationCertificate'){
   const issued=new Date().toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});
   const detail=(label,value)=>`<div class="cert-info-row"><span class="cert-info-label">${label}</span><span class="cert-info-value">${esc(value||'—')}</span></div>`;
@@ -625,6 +660,34 @@ function registrationCertificate(student,id='registrationCertificate'){
   </article>`;
 }
 
+function resultCertificate(r,instName,id='resultCertificate'){
+  const issued=new Date().toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});
+  const detail=(label,value)=>`<div class="cert-info-row"><span class="cert-info-label">${label}</span><span class="cert-info-value">${esc(value||'—')}</span></div>`;
+  const subs=r.subjects||[],n=subs.length,total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(n?total/n:0),fail=subs.filter(x=>x.m<50).length,v=x=>x??'–';
+  return `<article id="${esc(id)}" class="registration-certificate result-certificate" style="--cert-watermark:url('${cloudImage('logo')}')">
+    <header class="cert-heading">
+      <img class="cert-logo" src="${cloudImage('logo-short-web')}" alt="PCTB লোগো">
+      <p class="cert-board-ar" lang="ar" dir="rtl">مجلس المناهج النبوية والكتب المدرسية</p>
+      <h2 class="cert-board">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</h2>
+      <p class="cert-board-en" lang="en">Prophetic Curriculum and Textbook Board</p>
+      <img class="cert-seal-top" src="${cloudImage('seal')}" alt="PCTB সিল">
+    </header>
+    <h1 class="cert-title">সামগ্রিক ফলাফল সনদ</h1>
+    <div class="cert-reg">রেজিস্ট্রেশন নম্বর: ${esc(r.reg||'')}</div>
+    <section class="cert-info-group"><h3 class="cert-info-title">শিক্ষার্থীর তথ্য</h3>
+      ${detail('শিক্ষার্থীর নাম',r.name)}
+      ${detail('পিতার নাম',r.father)}
+      ${detail('বিভাগ',bdiv(r))}
+      ${detail('রোল নম্বর',rollOf(r)?bnum(rollOf(r)):'')}
+      ${detail('প্রতিষ্ঠান',instName)}
+      ${detail('পরীক্ষা',r.exam)}
+    </section>
+    <table class="cert-rtable"><thead><tr><th>ক্রম</th><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]}<br>(${bnum(p[2])})</th>`).join('')}<th>মোট<br>(১০০)</th><th>মন্তব্য</th></tr></thead><tbody>${subs.map((x,i)=>`<tr><td>${bnum(i+1)}</td><td>${esc(x.n)}</td>${PARTS.map(p=>`<td>${v(x[p[0]])}</td>`).join('')}<td><b>${x.m}</b></td><td${x.m<50?' style="color:#a3281f;font-weight:600"':''}>${remark(x.m)}</td></tr>`).join('')}</tbody></table>
+    <div class="cert-summary"><span>সর্বমোট: ${bnum(total)} / ${bnum(n*100)}</span><span>গড় নম্বর: ${bnum(avg.toFixed(1))}</span><span>সার্বিক মন্তব্য: ${remark(avg)}</span>${fail?`<span style="color:#a3281f">অকৃতকার্য বিষয়: ${bnum(fail)}টি</span>`:''}</div>
+    <p class="cert-legend">৯০–১০০ সর্বোত্তম · ৮০–৯০ উত্তম · ৭০–৮০ মধ্যমান · ৫০–৭০ উন্নতি প্রয়োজন · ৫০-এর নিচে অকৃতকার্য · সনদ প্রদানের তারিখ: ${issued}</p>
+    <footer class="cert-footer"><div class="cert-signatures"><div class="cert-sign">প্রতিষ্ঠান প্রধানের স্বাক্ষর</div><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div></footer>
+  </article>`;
+}
 function certificateDate(value){
   const date=value?new Date(value):new Date();
   return Number.isNaN(date.getTime())?'—':date.toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});
@@ -701,7 +764,7 @@ function downloadCertificate(certificate,title,fileName){
     .registration-certificate .cert-sign,.cert-sign{white-space:normal!important;font-size:.72rem!important;height:auto!important;min-height:46px;padding:20px 2px 0!important}
     }
   </style>`;
-  const styledHtml=html.replace('</head>',`${certificateStyles}<style>.certificate-actions{display:none!important}</style></head>`);
+  const styledHtml=html.replace('</head>',`${certificateStyles}<style>${RESULT_CERT_CSS}</style><style>.certificate-actions{display:none!important}</style></head>`);
   const frame=document.createElement('iframe');
   frame.setAttribute('aria-hidden','true');
   frame.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
@@ -1241,13 +1304,13 @@ async function renderInstitutionResultEntry(box,institution,database){
   const MIN=5,EXAMS=['সাপ্তাহিক মূল্যায়ন','মাসিক মূল্যায়ন','অর্ধবার্ষিক মূল্যায়ন','বার্ষিক মূল্যায়ন','পর্ব উন্নয়ন','বিভাগ উন্নয়ন'];
   const divisions=(institution.divisions||[]).filter(d=>DIVS.some(x=>x[0]===d));
   const order=[];SUBJ.forEach(g=>g[1].forEach(n=>order.push(n)));
-  box.innerHTML='<h4>বিষয়ভিত্তিক ফলাফল</h4><p class="muted">শিক্ষার্থীর তালিকা লোড হচ্ছে…</p>';
+  box.innerHTML='<h4>ফলাফল তৈরি</h4><p class="muted">শিক্ষার্থীর তালিকা লোড হচ্ছে…</p>';
   let students=[];
   try{
     const snap=await getDocs(query(collection(database,'students'),where('institutionCode','==',institution.code)));
     students=snap.docs.map(d=>({...d.data(),reg:d.id})).map(s=>({...s,div:bdiv(s),roll:rollOf(s)}));
   }catch(error){box.innerHTML=`<p class="msg bad">শিক্ষার্থীর তালিকা আনা যায়নি: ${esc(error.message)}</p>`;return}
-  box.innerHTML=`<h4>বিষয়ভিত্তিক ফলাফল</h4>
+  box.innerHTML=`<h4>ফলাফল তৈরি</h4>
   <div class="row"><div><label for="rsDiv">বিভাগ *</label><select id="rsDiv"><option value="" selected disabled>বিভাগ নির্বাচন করুন</option>${divisions.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div>
   <div><label for="rsTerm">পর্ব *</label><select id="rsTerm"><option value="" selected disabled>পর্ব নির্বাচন করুন</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div>
   <div class="row"><div><label for="rsExam">পরীক্ষার নাম *</label><select id="rsExam"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option>${EXAMS.map(e=>`<option>${esc(e)}</option>`).join('')}</select></div>
@@ -1338,7 +1401,7 @@ async function renderInstitutionStudentList(box,institution,database){
   $('#slq').oninput=draw;draw();
 }
 async function renderInstitutionAllResults(box,institution,database){
-  box.innerHTML='<h4>রেজাল্ট শিট</h4><p class="muted">ফলাফল লোড হচ্ছে…</p>';
+  box.innerHTML='<h4>ফলাফল দেখুন</h4><p class="muted">ফলাফল লোড হচ্ছে…</p>';
   let rows=[];
   try{
     const [rs,ss]=await Promise.all([
@@ -1349,20 +1412,40 @@ async function renderInstitutionAllResults(box,institution,database){
     rows=rs.docs.map(d=>({...d.data(),id:d.id})).filter(r=>String(r.institutionCode||'')===String(institution.code)||regs.has(r.reg)).map(r=>({...r,_div:bdiv(r)||bdiv(stMap.get(r.reg)||{})}));
   }catch(error){box.innerHTML=`<p class="msg bad">ফলাফল আনা যায়নি: ${esc(error.message)}</p>`;return}
   const exams=[...new Set(rows.map(r=>r.exam).filter(Boolean))],dvs=DIVS.map(d=>d[0]).filter(d=>rows.some(r=>r._div===d));
-  box.innerHTML=`<h4>রেজাল্ট শিট</h4><div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div></div><input id="irQ" placeholder="নাম বা রেজিস্ট্রেশন নম্বর দিয়ে খুঁজুন" aria-label="ফলাফল খুঁজুন"><div id="irList"></div><div id="irSheet"></div>`;
-  const draw=()=>{
-    const fd=$('#irDiv').value,fe=$('#irExam').value,q=norm($('#irQ').value).toLowerCase();
-    const f=rows.filter(r=>(!fd||r._div===fd)&&(!fe||r.exam===fe)&&(!q||String(r.name||'').toLowerCase().includes(q)||String(r.reg||'').toLowerCase().includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
-    $('#irList').innerHTML=rows.length?`<p>মোট ${bnum(f.length)} টি ফলাফল</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>নাম</th><th>পরীক্ষা</th><th>বিভাগ</th><th>মোট</th><th>মন্তব্য</th><th></th></tr>${f.map(r=>{const subs=r.subjects||[],total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(subs.length?total/subs.length:0);return `<tr><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(r.exam||'')}</td><td>${esc(r._div)}</td><td>${bnum(total)}</td><td>${remark(avg)}</td><td><button class="alt" data-ir-view="${esc(r.id)}" style="margin:0">দেখুন</button></td></tr>`}).join('')}</table></div>`:'<p class="muted">এই প্রতিষ্ঠানের এখনও কোনো ফলাফল নেই।</p>';
-    $('#irList').querySelectorAll('[data-ir-view]').forEach(b=>b.onclick=()=>{
-      const r=rows.find(x=>x.id===b.dataset.irView),out=$('#irSheet');
-      out.innerHTML=card(r);
-      out.querySelector('.result-print').onclick=()=>{const c=out.querySelector('.card');c.classList.add('print-target');addEventListener('afterprint',()=>c.classList.remove('print-target'),{once:true});print()};
-      out.querySelector('.result-download').onclick=()=>downloadResult(r);
-      out.scrollIntoView({behavior:'smooth',block:'start'});
-    });
+  const printCard=el=>{el.classList.add('print-target');addEventListener('afterprint',()=>el.classList.remove('print-target'),{once:true});print()};
+  box.innerHTML=`<h4>ফলাফল দেখুন</h4><div class="chips" id="irMode" style="margin-bottom:10px"><button type="button" class="on" data-m="sub">বিষয়ভিত্তিক</button><button type="button" data-m="all">সামগ্রিক সনদ</button></div><div id="irBody"></div>`;
+  const body=$('#irBody');
+  const drawSub=()=>{
+    body.innerHTML=`<div class="row"><div><label for="isDiv">বিভাগ</label><select id="isDiv"><option value="" selected disabled>বিভাগ নির্বাচন করুন</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="isExam">পরীক্ষা</label><select id="isExam"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div></div><label for="isSub">বিষয়</label><select id="isSub"><option value="" selected disabled>বিষয় নির্বাচন করুন</option>${SUBJ.map(g=>`<optgroup label="${esc(g[0])}">${g[1].map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}</optgroup>`).join('')}</select><div id="isOut"></div>`;
+    const draw=()=>{
+      const fd=$('#isDiv').value,fe=$('#isExam').value,fs=$('#isSub').value,out=$('#isOut');
+      if(!fd||!fe||!fs){out.innerHTML='<p class="muted">বিভাগ, পরীক্ষা ও বিষয় নির্বাচন করলে ওই বিষয়ের সকল শিক্ষার্থীর নম্বর দেখা যাবে।</p>';return}
+      const list=rows.filter(r=>r._div===fd&&r.exam===fe).map(r=>({r,s:(r.subjects||[]).find(x=>x.n===fs)})).filter(x=>x.s).sort((p,q)=>String(p.r.reg).localeCompare(String(q.r.reg)));
+      const v=x=>x??'–';
+      out.innerHTML=list.length?`<div class="card" id="isCard" style="margin-top:12px"><h3>${esc(fs)} — ${esc(fd)} বিভাগ</h3><p class="muted">${esc(fe)} · ${esc(institution.name)} · মোট ${bnum(list.length)} জন</p><div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট (১০০)</th><th>মন্তব্য</th></tr>${list.map(({r,s})=>`<tr><td>${bnum(rollOf(r)||'')}</td><td>${esc(r.reg)}</td><td>${esc(r.name)}</td>${PARTS.map(p=>`<td>${v(s[p[0]])}</td>`).join('')}<td><b>${s.m}</b></td><td><span style="${s.m<50?'color:var(--err);font-weight:600':''}">${remark(s.m)}</span></td></tr>`).join('')}</table></div><button type="button" class="alt noprint" id="isPrint">প্রিন্ট করুন</button></div>`:'<p class="muted">এই বিভাগ, পরীক্ষা ও বিষয়ে এখনও কোনো নম্বর জমা হয়নি।</p>';
+      const pb=$('#isPrint');if(pb)pb.onclick=()=>printCard($('#isCard'));
+    };
+    ['isDiv','isExam','isSub'].forEach(id=>$('#'+id).onchange=draw);draw();
   };
-  $('#irDiv').onchange=draw;$('#irExam').onchange=draw;$('#irQ').oninput=draw;draw();
+  const drawAll=()=>{
+    const done=rows.filter(r=>!r.draft);
+    body.innerHTML=`<div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div></div><input id="irQ" placeholder="নাম বা রেজিস্ট্রেশন নম্বর দিয়ে খুঁজুন" aria-label="ফলাফল খুঁজুন"><div id="irList"></div><div id="irSheet"></div>`;
+    const draw=()=>{
+      const fd=$('#irDiv').value,fe=$('#irExam').value,q=norm($('#irQ').value).toLowerCase();
+      const f=done.filter(r=>(!fd||r._div===fd)&&(!fe||r.exam===fe)&&(!q||String(r.name||'').toLowerCase().includes(q)||String(r.reg||'').toLowerCase().includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
+      $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি সামগ্রিক ফলাফল</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>নাম</th><th>পরীক্ষা</th><th>বিভাগ</th><th>মোট</th><th>মন্তব্য</th><th></th></tr>${f.map(r=>{const subs=r.subjects||[],total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(subs.length?total/subs.length:0);return `<tr><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(r.exam||'')}</td><td>${esc(r._div)}</td><td>${bnum(total)}</td><td>${remark(avg)}</td><td><button class="alt" data-ir-view="${esc(r.id)}" style="margin:0">সনদ দেখুন</button></td></tr>`}).join('')}</table></div>`:'<p class="muted">এখনও কোনো সামগ্রিক ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
+      $('#irList').querySelectorAll('[data-ir-view]').forEach(b=>b.onclick=()=>{
+        const r=done.find(x=>x.id===b.dataset.irView),out=$('#irSheet');
+        out.innerHTML=resultCertificate(r,institution.name)+`<div class="noprint" style="text-align:center;margin:8px 0 18px"><button type="button" class="alt" id="irPrint">প্রিন্ট / PDF</button> <button type="button" class="alt" id="irDl">ডাউনলোড (HTML)</button></div>`;
+        out.querySelector('#irPrint').onclick=()=>printCard(out.querySelector('.registration-certificate'));
+        out.querySelector('#irDl').onclick=()=>downloadCertificate(resultCertificate(r,institution.name),'PCTB ফলাফল সনদ - '+(r.reg||''),`PCTB-result-certificate-${r.reg||'result'}-${String(r.exam||'').replace(/[^\w-]/g,'_')}.html`);
+        out.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    };
+    $('#irDiv').onchange=draw;$('#irExam').onchange=draw;$('#irQ').oninput=draw;draw();
+  };
+  $('#irMode').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#irMode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));b.dataset.m==='sub'?drawSub():drawAll()});
+  drawSub();
 }
 function bindDash(){
   const dashboard=$('#institutionDashboardContent');
@@ -1392,7 +1475,7 @@ function bindDash(){
     if(institutions.length>1)throw new Error('এই ইমেইল একাধিক প্রতিষ্ঠানের সঙ্গে যুক্ত। প্রতিটি প্রতিষ্ঠানের জন্য আলাদা দায়িত্বশীল ইমেইল ব্যবহার করুন।');
     const institution=institutions[0];
     const divisions=(institution.divisions||[]).filter(division=>DIVS.some(item=>item[0]===division));
-    const IG=[['শিক্ষার্থী ব্যবস্থাপনা',[['student','শিক্ষার্থী নিবন্ধন আবেদন'],['list','শিক্ষার্থী তালিকা']]],['প্রতিষ্ঠান ব্যবস্থাপনা',[['info','প্রতিষ্ঠানের তথ্য']]],['ফলাফল ব্যবস্থাপনা',[['result','বিষয়ভিত্তিক ফলাফল'],['allresults','রেজাল্ট শিট']]]];
+    const IG=[['শিক্ষার্থী ব্যবস্থাপনা',[['student','শিক্ষার্থী নিবন্ধন আবেদন'],['list','শিক্ষার্থী তালিকা']]],['প্রতিষ্ঠান ব্যবস্থাপনা',[['info','প্রতিষ্ঠানের তথ্য']]],['ফলাফল ব্যবস্থাপনা',[['result','ফলাফল তৈরি'],['allresults','ফলাফল দেখুন']]]];
     const instBar=`<div class="adm-bar">${IG.map((g,i)=>`<button type="button" data-ig="${i}" aria-expanded="false" class="${g[1].some(x=>x[0]==='result')?'on':''}"><span>${g[0].replace(' ','<br>')}</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`).join('')}</div>${IG.map((g,i)=>`<div class="adm-gp" data-igp="${i}" hidden>${g[1].map(x=>`<button type="button" data-institution-tab="${x[0]}" class="${x[0]==='result'?'on':''}">${x[1]}</button>`).join('')}${i==IG.length-1?'<button type="button" class="alt" id="institutionLogout">লগআউট</button>':''}</div>`).join('')}`;
     dashboard.innerHTML=`<div class="inst-head"><h2 class="inst-name">${esc(institution.name)}</h2><div class="inst-sub"><span>${esc(institution.tagline||'একটি বহুমুখী কারিগরি মাদরাসা')}</span></div></div>${instBar}<div id="institutionDashboardForm"></div>`;
     $('#institutionLogout').onclick=()=>signOut(instAuth);
