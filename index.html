@@ -391,7 +391,7 @@ function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|se
 <p>নববী আদর্শে গড়া শিক্ষাক্রম ও পাঠ্যপুস্তকের নির্ভরযোগ্য ঠিকানা।</p>
 </div>
 <div class="fcols">
-<details><summary>কুইক লিংক<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><ul><li><a href="#/">হোম</a></li><li><a href="#/about">বোর্ড পরিচিতি</a></li><li><a href="#/board">পরিচালনা পরিষদ</a></li><li><a href="#/textbook">পাঠ্যপুস্তক</a></li><li><a href="#/notice">নোটিশ</a></li><li><a href="#/institution">শিক্ষা প্রতিষ্ঠান সমূহ</a></li><li><a href="#/result">ফলাফল</a></li></ul></details>
+<details><summary>কুইক লিংক<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><ul><li><a href="#/">হোম</a></li><li><a href="#/about">বোর্ড পরিচিতি</a></li><li><a href="#/board">পরিচালনা পরিষদ</a></li><li><a href="#/textbook">পাঠ্যপুস্তক</a></li><li><a href="#/notice">নোটিশ</a></li><li><a href="#/institution">নতুন প্রতিষ্ঠান নিবন্ধন</a></li><li><a href="#/institutions">নিবন্ধিত প্রতিষ্ঠান তালিকা</a></li><li><a href="#/dashboard">প্রতিষ্ঠান লগইন করুন</a></li><li><a href="#/result">ফলাফল</a></li></ul></details>
 <details><summary>সহায়তা<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><ul><li><a href="#/dashboard">প্রতিষ্ঠান ড্যাশবোর্ড</a></li><li><a href="#/student">শিক্ষার্থী ফলাফল</a></li><li><a href="#/result">ফলাফল দেখুন</a></li><li><a href="#/teacher">শিক্ষক প্যানেল</a></li><li><a href="#/admin">অ্যাডমিন প্যানেল</a></li></ul></details>
 <details><summary>যোগাযোগের তথ্য<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><ul class="fct"><li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>example@email.com</span></li><li><svg class="fl" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 00-8.5 15l-1.4 5 5.1-1.3A9.9 9.9 0 1012.04 2zm5.8 14c-.2.7-1.4 1.3-1.9 1.3-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.6-1.2-3s.8-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.3.5-.4.5c-.1.2-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg><span>+880 1XXXXXXXXX</span></li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>এখানে ঠিকানা লিখুন</span></li></ul></details>
 </div>
@@ -477,7 +477,7 @@ onAuthStateChanged(auth,async u=>{
 
 onAuthStateChanged(instAuth,u=>{instUser=u;if(/^#\/(institution|dashboard)/.test(location.hash||''))route()});
 
-const pages=[['','হোম'],['about','পরিচিতি'],['board','পর্ষদ'],['textbook','পাঠ্যপুস্তক'],['curriculum','কারিকুলাম'],['notice','নোটিশ'],['institution','প্রতিষ্ঠান'],['dashboard','প্রতিষ্ঠান ড্যাশবোর্ড'],['result','ফলাফল'],['student','শিক্ষার্থী ফলাফল'],['teacher','শিক্ষক'],['admin','অ্যাডমিন প্যানেল'],['sorry','দুঃখিত']];
+const pages=[['','হোম'],['about','পরিচিতি'],['board','পর্ষদ'],['textbook','পাঠ্যপুস্তক'],['curriculum','কারিকুলাম'],['notice','নোটিশ'],['institution','নতুন প্রতিষ্ঠান নিবন্ধন'],['institutions','নিবন্ধিত প্রতিষ্ঠান তালিকা'],['dashboard','প্রতিষ্ঠান লগইন'],['result','ফলাফল'],['student','শিক্ষার্থী ফলাফল'],['teacher','শিক্ষক'],['admin','অ্যাডমিন প্যানেল'],['sorry','দুঃখিত']];
 const BOARD=[['চেয়ারম্যান','নাম এখানে লিখুন'],['সদস্য সচিব','নাম এখানে লিখুন'],['সদস্য (শিক্ষাক্রম)','নাম এখানে লিখুন'],['সদস্য (পাঠ্যপুস্তক)','নাম এখানে লিখুন'],['সদস্য (পরীক্ষা)','নাম এখানে লিখুন']];
 const SUBJ=[['দ্বীন শিক্ষা',['ইমান শিক্ষা','কুরআন শিক্ষা','সীরাত শিক্ষা','হাদিস শিক্ষা','ব্যবহারিক ইসলাম শিক্ষা','সাহাবিদের জীবনি','ইতিহাস শিক্ষা','উম্মাহর রাহবা','আদব ও আখলাখ']],['কর্ম ও জীবিকা শিক্ষা',['বাংলা শিক্ষা','গনিত শিক্ষা','ইংরেজি শিক্ষা','ব্যাবহারিক বিজ্ঞান','বিশ্ব-পরিচয়','কর্ম-জীবিকা শিক্ষা','ব্যবসা ও উদ্যোগ শিক্ষা','প্রাথমিক-দক্ষতা','আত্ম-উন্নয়ন']]];
 const PARTS=[['w','লিখিত',30],['p','ব্যবহারিক',30],['o','মৌখিক',20],['a','আদব',20]];
@@ -818,8 +818,7 @@ async notice(){
   return `${pageHead('নোটিশ বোর্ড','নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ডের বিজ্ঞপ্তি ও নির্দেশনা')}${SHOW_DEMO_NOTICES?`<div class="card" style="padding:12px 16px;margin-bottom:16px"><span class="demo-tag">ডেমো</span> নমুনা নোটিশগুলো শুধু ডিজাইন ও ডাউনলোড সুবিধা দেখানোর জন্য। এগুলো বাস্তব/অনুমোদিত বিজ্ঞপ্তি নয়।</div>`:''}${r.err?errBox(r.err):''}${items.map(n=>`<article class="card notice-card"><div class="notice-seal">${seal}</div><div class="notice-info"><h3>${esc(n.title)}</h3><p>${esc(n.body)}</p><div class="notice-meta"><span>তারিখ: ${esc(n.date)}</span><span class="demo-tag">${n.isLive?'প্রকাশিত':'নমুনা'}</span></div></div><a class="notice-download" download="PCTB-${esc(n.id)}.html" href="data:text/html;charset=utf-8,${encodeURIComponent(makeDoc(n))}" title="নোটিশ ডাউনলোড"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 12v6m-3-3 3 3 3-3"/></svg><span>ডাউনলোড</span></a></article>`).join('')}`},
 dashboard(){return pageHead('প্রতিষ্ঠান ড্যাশবোর্ড','নিবন্ধিত প্রতিষ্ঠানের ফলাফল ও শিক্ষার্থী ব্যবস্থাপনা','school')+`<section class="card cc" id="institutionDashboard" style="margin-bottom:22px"><h3>নিবন্ধিত প্রতিষ্ঠানের ড্যাশবোর্ড</h3><div id="institutionDashboardContent"></div></section>`},
 async institution(){
-  const r=await safeAll('institutions'),l=r.l||[];
-  return pageHead('শিক্ষা প্রতিষ্ঠান সমূহ','বোর্ডভুক্ত প্রতিষ্ঠানের তালিকা','school')
+  return pageHead('নতুন প্রতিষ্ঠান নিবন্ধন','প্রতিষ্ঠান নিবন্ধনের আবেদন ও আবেদনের অবস্থা','school')
   +`<div class="card cc" style="margin-bottom:22px;text-align:center;padding:24px 18px">
     <p lang="ar" dir="rtl" style="font:600 1.45rem/1.8 'Noto Naskh Arabic',serif;color:var(--g);margin:0">السلام عليكم ورحمة الله وبركاته</p>
     <p style="font-size:1.15rem;color:var(--g);font-weight:600;margin:2px 0 14px">আসসালামু আলাইকুম ওয়া রাহমাতুল্লাহি ওয়া বারাকাতুহু</p>
@@ -847,7 +846,10 @@ async institution(){
     <button id="institutionAppSubmit">আবেদন জমা দিন</button><div id="institutionAppMessage" aria-live="polite"></div>
   </div>
     <section class="card cc" style="margin-bottom:22px"><h3>আবেদনের অবস্থা / সনদ</h3><p class="muted">আবেদনের সময় দেওয়া বিশ্ব অঞ্চল, দেশ ও দায়িত্বশীলের ইমেইল দিন।</p><label for="institutionTrackingArea">বিশ্ব অঞ্চল</label><select id="institutionTrackingArea"><option value="" selected disabled>অঞ্চল নির্বাচন করুন</option>${WORLD_AREAS.map(a=>`<option value="${esc(a[0])}">${esc(a[1])}</option>`).join('')}</select><label for="institutionTrackingCountry">দেশ</label><select id="institutionTrackingCountry" disabled><option value="" selected disabled>আগে বিশ্ব অঞ্চল নির্বাচন করুন</option></select><label for="institutionTrackingEmail">দায়িত্বশীলের ইমেইল</label><input id="institutionTrackingEmail" type="email" autocomplete="email"><button id="institutionLookup">আবেদন খুঁজুন</button><div id="institutionLookupResult" aria-live="polite"></div></section>
-  `
+  `},
+async institutions(){
+  const r=await safeAll('institutions'),l=r.l||[];
+  return pageHead('নিবন্ধিত প্রতিষ্ঠান তালিকা','বোর্ডভুক্ত প্রতিষ্ঠানের তালিকা','school')
   +(r.err?errBox(r.err):l.length?`<div class="tbar"><div class="muted" id="icnt">মোট ${bnum(l.length)} টি প্রতিষ্ঠান</div><div class="srch"><span>${ic('search')}</span><input id="iq" placeholder="নাম, দেশ বা ঠিকানা দিয়ে খুঁজুন…" aria-label="প্রতিষ্ঠান খুঁজুন"></div></div><div class="grid" id="ilist">${l.map(i=>`<div class="card cc ins" data-s="${esc((i.name+' '+(i.address||'')+' '+(i.code||'')+' '+(i.country||'')+' '+(i.area||'')+' '+(i.divisions||[]).join(' ')+' '+(i.division||'')+' '+(i.language||'')).toLowerCase())}"><span class="bvn">${ic('school')}</span><h3>${esc(i.name)}</h3>${i.address?`<div class="muted adr">${ic('pin')}<span>${esc(i.address)}</span></div>`:''}${i.country?`<span class="pill">${esc(WORLD_AREAS.find(a=>a[0]===i.area)?.[1]||i.area)} · ${esc(i.country)}</span>`:''}${(i.divisions||[]).length?`<span class="pill">${esc(i.divisions.join(', '))} বিভাগ</span>`:i.division?`<span class="pill">${esc(i.division)} বিভাগ</span>`:''}${i.language?`<div class="muted">স্থানীয় ভাষা: ${esc(i.language)}</div>`:''}${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div><div class="card cc emp" id="inone" hidden>কোনো প্রতিষ্ঠান পাওয়া যায়নি।</div>`:emptyBox('school','এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।','প্রতিষ্ঠান যুক্ত হলে এখানে তালিকা দেখা যাবে।'))},
 result:()=>pageHead('ফলাফল','রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন','result')
   +`<div class="rgrid"><div class="card cc"><h3>ফলাফল অনুসন্ধান</h3><label for="rd">বিভাগ (ঐচ্ছিক)</label><select id="rd"><option value="">সব বিভাগ</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="rr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"><button id="rb">ফলাফল দেখুন</button></div>`
@@ -1287,6 +1289,10 @@ function bindDash(){
     $('#institutionLogout').onclick=()=>signOut(instAuth);
   });
 }
+function bindInstList(){
+  const q=$('#iq');
+  if(q)q.oninput=()=>{const t=q.value.trim().toLowerCase();let n=0;document.querySelectorAll('#ilist .ins').forEach(c=>{const m=!t||c.dataset.s.includes(t);c.hidden=!m;if(m)n++});$('#icnt').textContent=(t?'পাওয়া গেছে ':'মোট ')+bnum(n)+' টি প্রতিষ্ঠান';$('#inone').hidden=n>0};
+}
 function bindInst(){
   const applicationDocumentId=(area,country,email)=>`${area}|${country}|${email.trim().toLowerCase()}`;
   const q=$('#iq');
@@ -1431,11 +1437,11 @@ logo:'<path d="M12 6.5v13M12 6.5C10 4.9 6.5 4.5 3 5v13c3.5-.5 7-.1 9 1.5 2-1.6 5
 const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 const NAV=[
  {p:'',t:'হোম',i:'home'},
- {t:'পিসিটিবি',i:'logo',c:[{p:'about',t:'বোর্ড পরিচিতি',i:'info'},{p:'board',t:'পরিচালনা পরিষদ',i:'users'},{p:'notice',t:'নোটিশ',i:'bell'},{p:'institution',t:'শিক্ষা প্রতিষ্ঠান সমূহ',i:'school'},{p:'admin',t:'অ্যাডমিন প্যানেল',i:'shield'}]},
+ {t:'পিসিটিবি',i:'logo',c:[{p:'about',t:'বোর্ড পরিচিতি',i:'info'},{p:'board',t:'পরিচালনা পরিষদ',i:'users'},{p:'notice',t:'নোটিশ',i:'bell'},{p:'institution',t:'নতুন প্রতিষ্ঠান নিবন্ধন',i:'school'},{p:'institutions',t:'নিবন্ধিত প্রতিষ্ঠান তালিকা',i:'users'},{p:'dashboard',t:'প্রতিষ্ঠান লগইন করুন',i:'login'},{p:'admin',t:'অ্যাডমিন প্যানেল',i:'shield'}]},
  {p:'textbook',t:'পাঠ্যপুস্তক',i:'book'},{p:'curriculum',t:'কারিকুলাম',i:'read'},{p:'result',t:'ফলাফল',i:'result'}];
 const nIc=n=>n==='logo'?'<img class="ic nimg" src="logo-icon.png" data-f="logo-icon" data-i="1" onerror="pick(this)" alt="">':ic(n);
 const navHTML=k=>NAV.map(n=>n.c?`<div class="ni${n.c.some(c=>c.p==k)?' on':''}"><button class="nb" aria-haspopup="true">${nIc(n.i)}${n.t}${ic('chev','chev')}</button><div class="dd">${n.c.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`:`<div class="ni${n.p==k?' on':''}"><a href="#/${n.p}">${ic(n.i)}${n.t}</a></div>`).join('');
-const MP=[{p:'about',t:'বোর্ড পরিচিতি',i:'info'},{p:'board',t:'পরিচালনা পরিষদ',i:'users'},{p:'textbook',t:'পাঠ্যপুস্তক',i:'book'},{p:'curriculum',t:'কারিকুলাম',i:'read'},{p:'notice',t:'নোটিশ',i:'bell'},{p:'institution',t:'শিক্ষা প্রতিষ্ঠান সমূহ',i:'school'},{p:'result',t:'ফলাফল',i:'result'}],ML=[{p:'admin',t:'অ্যাডমিন লগইন',i:'shield'}];
+const MP=[{p:'about',t:'বোর্ড পরিচিতি',i:'info'},{p:'board',t:'পরিচালনা পরিষদ',i:'users'},{p:'textbook',t:'পাঠ্যপুস্তক',i:'book'},{p:'curriculum',t:'কারিকুলাম',i:'read'},{p:'notice',t:'নোটিশ',i:'bell'},{p:'institution',t:'নতুন প্রতিষ্ঠান নিবন্ধন',i:'school'},{p:'institutions',t:'নিবন্ধিত প্রতিষ্ঠান তালিকা',i:'users'},{p:'dashboard',t:'প্রতিষ্ঠান লগইন করুন',i:'login'},{p:'result',t:'ফলাফল',i:'result'}],ML=[{p:'admin',t:'অ্যাডমিন লগইন',i:'shield'}];
 const mdd=(l,k,ico,lbl)=>`<div class="mi"><button class="mb${l.some(c=>c.p==k)?' on':''}${ico==='logo'?' pctb':''}" aria-haspopup="true" aria-label="${lbl}">${ico==='logo'?'<span>PCTB</span>':ic(ico)}</button><div class="md">${l.map(c=>`<a href="#/${c.p}" class="${c.p==k?'cur':''}">${ic(c.i)}${c.t}</a>`).join('')}</div></div>`;
 const loginBtn=k=>{const d=tstat==='admin'?'admin':'teacher';
   const items=[user?{p:d,t:tstat==='admin'?'অ্যাডমিন প্যানেল':'শিক্ষক প্যানেল',i:'shield'}:{p:'admin',t:'অ্যাডমিন লগইন',i:'shield'},{p:'dashboard',t:'প্রতিষ্ঠান ড্যাশবোর্ড',i:'school'}];
@@ -1456,7 +1462,7 @@ async function route(){
   $('#demoB').hidden=!DEMO;$('#nav').innerHTML=cloudMarkup(navHTML(k));$('#mnav').innerHTML=mnavHTML(k);document.querySelector('header').classList.remove('menu-open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));
   const app=$('#app');app.innerHTML='<p class="muted">লোড হচ্ছে…</p>';
   try{const content=await (k?V[k]():V.home(routeToken));if(routeToken!==routeVersion)return;app.innerHTML=cloudMarkup(content);document.body.classList.remove('page-loading')}catch(e){if(routeToken!==routeVersion)return;app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;document.body.classList.remove('page-loading');return}
-  ({'':bindHome,result:bindResult,student:bindStudent,teacher:bindTeacher,admin:bindAdmin,textbook:bindTextbook,institution:bindInst,dashboard:bindDash}[k]||(()=>{}))();if((k=='teacher'||k=='admin')&&user)loadList();
+  ({'':bindHome,result:bindResult,student:bindStudent,teacher:bindTeacher,admin:bindAdmin,textbook:bindTextbook,institution:bindInst,institutions:bindInstList,dashboard:bindDash}[k]||(()=>{}))();if((k=='teacher'||k=='admin')&&user)loadList();
   scrollTo(0,0);{const r=document.getElementById('scr');if(r)r.scrollTop=0}
 }
 addEventListener('hashchange',route);route();
