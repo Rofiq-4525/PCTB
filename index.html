@@ -1184,7 +1184,7 @@ async function bindTeacher(){
         return {...tracker,...(details.exists()?details.data():{})};
       }));
       list.className='';
-      list.innerHTML=applications.length?`<div style="overflow-x:auto"><table><tr><th>প্রতিষ্ঠান</th><th>দেশ / চালু বিভাগ</th><th>দায়িত্বশীলের ইমেইল</th><th>আবেদনের তারিখ</th><th>অবস্থা</th><th>কাজ</th></tr>${applications.map(a=>`<tr><td>${esc(a.name||'—')}</td><td>${esc(a.country||'—')} / ${esc((a.divisions||[]).join(', ')||'—')}</td><td>${esc(a.responsibleEmail||'—')}</td><td>${esc(certificateDate(a.t))}</td><td>${a.status==='approved'?'<span class="pill">অনুমোদিত</span>':a.status==='rejected'?'<b style="color:var(--err)">অনুমোদিত নয়</b>':a.status==='verified'?'<b style="color:var(--gold)">যাচাই পাস · অনুমোদনের অপেক্ষায়</b>':'<b style="color:var(--gold)">যাচাই অপেক্ষমাণ</b>'}</td><td>${a.status==='verified'?`<button data-approve-inst="${esc(a.id)}" style="margin:0 4px 4px 0">অনুমোদন</button><button class="alt" data-reject-inst="${esc(a.id)}" style="margin:0">প্রত্যাখ্যান</button>`:a.status==='pending'?'<span class="muted">দায়িত্বশীলের যাচাই বাকি</span>':a.status==='approved'?'<span class="muted">সনদ বিশ্ব অঞ্চল, দেশ ও ইমেইল দিয়ে পাওয়া যাবে</span>':'—'}</td></tr>`).join('')}</table></div>`:'<p>এখনও কোনো আবেদন জমা পড়েনি।</p>';
+      list.innerHTML=applications.length?`<div style="overflow-x:auto"><table><tr><th>প্রতিষ্ঠান</th><th>দেশ / চালু বিভাগ</th><th>দায়িত্বশীলের ইমেইল</th><th>আবেদনের তারিখ</th><th>অবস্থা</th><th>কাজ</th></tr>${applications.map(a=>`<tr><td>${esc(a.name||'—')}</td><td>${esc(a.country||'—')} / ${esc((a.divisions||[]).join(', ')||'—')}</td><td>${esc(a.responsibleEmail||'—')}</td><td>${esc(certificateDate(a.t))}</td><td>${a.status==='approved'?'<span class="pill">অনুমোদিত</span>':a.status==='rejected'?'<b style="color:var(--err)">অনুমোদিত নয়</b>':a.status==='verified'?'<b style="color:var(--gold)">যাচাই পাস · অনুমোদনের অপেক্ষায়</b>':'<b style="color:var(--gold)">যাচাই অপেক্ষমাণ</b>'}</td><td>${a.status==='verified'?`<button data-approve-inst="${esc(a.id)}" style="margin:0 4px 4px 0">অনুমোদন</button><button class="alt" data-reject-inst="${esc(a.id)}" style="margin:0">প্রত্যাখ্যান</button>`:a.status==='pending'?'<span class="muted">দায়িত্বশীলের যাচাই বাকি</span>':a.status==='approved'?'<span class="muted">সনদ বিশ্ব অঞ্চল, দেশ ও ইমেইল দিয়ে পাওয়া যাবে</span>':'—'} <button class="alt" data-delete-inst="${esc(a.id)}" data-inst-code="${esc(a.code||'')}" style="margin:0 0 4px 0;color:var(--err);border-color:var(--err)">মুছুন</button></td></tr>`).join('')}</table></div>`:'<p>এখনও কোনো আবেদন জমা পড়েনি।</p>';
       list.querySelectorAll('[data-approve-inst]').forEach(button=>button.onclick=async()=>{
         button.disabled=true;
         try{
@@ -1229,6 +1229,18 @@ async function bindTeacher(){
           say(message,'আবেদন প্রত্যাখ্যান করা হয়েছে।',true);
           await loadApplications();
         }catch(e){say(message,'প্রত্যাখ্যান করা যায়নি: '+e.message);button.disabled=false}
+      });
+      list.querySelectorAll('[data-delete-inst]').forEach(button=>button.onclick=async()=>{
+        const id=button.dataset.deleteInst,code=button.dataset.instCode;
+        if(!confirm(code?'এই প্রতিষ্ঠানটি (কোড: '+code+') এবং এর আবেদন মুছে ফেলা হবে। প্রতিষ্ঠান আর লগইন করতে পারবে না ও সনদ পাওয়া যাবে না। মুছে ফেলবেন?':'এই প্রতিষ্ঠান আবেদনটি মুছে ফেলবেন?'))return;
+        button.disabled=true;
+        try{
+          if(code)await deleteDoc(doc(db,'institutions',code));
+          try{await deleteDoc(doc(db,'institutionApplicationDetails',id))}catch(e){}
+          await deleteDoc(doc(db,'institutionApplications',id));
+          say(message,'প্রতিষ্ঠান মুছে ফেলা হয়েছে।',true);
+          await loadApplications();
+        }catch(e){say(message,'মুছে ফেলা যায়নি: '+e.message);button.disabled=false}
       });
     };
     loadApplications().catch(e=>say(list,'আবেদন তালিকা আনা যায়নি: '+e.message));
