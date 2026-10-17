@@ -217,6 +217,13 @@ input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{out
 button{font:inherit;font-weight:600;background:var(--g);color:#fff;border:0;padding:9px 18px;border-radius:7px;cursor:pointer;margin-top:12px}
 button:hover{background:var(--g2)}button.alt{background:#fff;color:var(--g);border:1px solid var(--g)}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.inst-head{margin:0 0 14px;padding:12px 14px;border-left:4px solid var(--gold);background:#f4f9f5;border-radius:8px}
+.inst-name{margin:0 0 6px;font-size:1.55rem;line-height:1.35;color:var(--g)}
+.inst-sub{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.9rem;color:var(--mut);line-height:1.5}
+.inst-sub span{overflow-wrap:anywhere}
+.inst-sub .inst-code{font-weight:700;color:var(--g)}
+@media(max-width:760px){.inst-head{padding:10px 12px}.inst-name{font-size:1.25rem}.inst-sub{font-size:.82rem;gap:2px 10px}}
+
 .tabs button{margin:0;background:#fff;color:var(--g);border:1px solid var(--line)}.tabs button.on{background:var(--g);color:#fff}
 .msg{margin-top:10px;font-weight:500}.msg.ok{color:var(--g2)}.msg.bad{color:var(--err)}
 table{width:100%;border-collapse:collapse}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
@@ -699,12 +706,18 @@ function downloadCertificate(certificate,title,fileName){
     .registration-certificate .cert-sign,.cert-sign{white-space:normal!important;font-size:.72rem!important;height:auto!important;min-height:46px;padding:20px 2px 0!important}
     }
   </style>`;
-  const styledHtml=html.replace('</head>',`${certificateStyles}</head>`);
-  const url=URL.createObjectURL(new Blob([styledHtml],{type:'text/html;charset=utf-8'}));
-  const link=document.createElement('a');
-  link.href=url;link.download=fileName;
-  document.body.append(link);link.click();link.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const styledHtml=html.replace('</head>',`${certificateStyles}<style>.certificate-actions{display:none!important}</style></head>`);
+  const frame=document.createElement('iframe');
+  frame.setAttribute('aria-hidden','true');
+  frame.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+  const cleanup=()=>setTimeout(()=>frame.remove(),1500);
+  frame.onload=()=>{
+    const w=frame.contentWindow;
+    const go=()=>{try{w.focus();w.addEventListener('afterprint',cleanup,{once:true});w.print()}catch(e){frame.remove();const p=window.open('','_blank');if(p){p.document.write(styledHtml);p.document.close();p.onload=()=>p.print()}}};
+    (w.document.fonts&&w.document.fonts.ready?w.document.fonts.ready:Promise.resolve()).then(()=>setTimeout(go,250),()=>setTimeout(go,250));
+  };
+  frame.srcdoc=styledHtml;
+  document.body.append(frame);
 }
 function downloadRegistrationCertificate(student){
   downloadCertificate(registrationCertificate(student),'PCTB শিক্ষার্থী নিবন্ধন সনদ - '+(student.reg||''),`PCTB-registration-${student.reg||'certificate'}.html`);
@@ -1183,10 +1196,16 @@ async function bindTeacher(){
             if(!detailsSnapshot.exists())throw new Error('প্রতিষ্ঠানের আবেদন-তথ্য পাওয়া যাচ্ছে না।');
             const application={...detailsSnapshot.data(),...snapshot.data()};
             if(application.status!=='verified')throw new Error('দায়িত্বশীলের যাচাই সম্পন্ন না হলে আবেদন অনুমোদন করা যাবে না।');
-            const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);
-            const code='PCTB-I-'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
-            const institutionRef=doc(db,'institutions',code);
-            if((await tx.get(institutionRef)).exists())throw new Error('এই নিবন্ধন নম্বরটি আগে থেকেই ব্যবহৃত হচ্ছে।');
+            const counterRef=doc(db,'meta','institutionCounter'),counterSnapshot=await tx.get(counterRef);
+            let serial=Math.max(313,counterSnapshot.exists()?Number(counterSnapshot.data().n)||313:313)+1,institutionRef,tries=0;
+            while(true){
+              institutionRef=doc(db,'institutions',String(serial));
+              if(!(await tx.get(institutionRef)).exists())break;
+              if(++tries>50)throw new Error('প্রতিষ্ঠান কোড তৈরি করা যায়নি। আবার চেষ্টা করুন।');
+              serial++;
+            }
+            const code=String(serial);
+            tx.set(counterRef,{n:serial});
             const approvedAt=Date.now();
             tx.set(institutionRef,{name:application.name,address:application.address||'',area:application.area||'',country:application.country||'',language:application.language||'',email:application.email||'',phone:application.phone||'',website:application.website||'',divisions:application.divisions||[],responsibleEmail:application.responsibleEmail||'',code,approvedAt,t:approvedAt});
             tx.set(applicationRef,{...snapshot.data(),status:'approved',code,approvedAt});
@@ -1348,7 +1367,7 @@ async function renderInstitutionStudentList(box,institution,database){
   ${apps.length?`<h4 style="margin-top:22px">অনুমোদনের অপেক্ষায় / প্রত্যাখ্যাত আবেদন</h4><div style="overflow-x:auto"><table><tr><th>নাম</th><th>পিতা</th><th>বিভাগ</th><th>পর্ব</th><th>মোবাইল</th><th>অবস্থা</th></tr>${apps.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.father)}</td><td>${esc(x.div)}</td><td>${bnum(x.term||'')}</td><td>${esc(x.mobile)}</td><td>${x.status==='rejected'?'<b style="color:var(--err)">প্রত্যাখ্যাত</b>':'<b style="color:var(--gold)">অপেক্ষমাণ</b>'}</td></tr>`).join('')}</table></div>`:''}`;
   const draw=()=>{
     const q=norm($('#slq').value).toLowerCase(),f=students.filter(x=>!q||[x.name,x.father,x.mobile,x.reg,rollOf(x)].join(' ').toLowerCase().includes(q));
-    $('#slTable').innerHTML=students.length?`<p>মোট ${bnum(f.length)} জন</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>রোল</th><th>নাম</th><th>পিতা</th><th>বিভাগ</th><th>পর্ব</th><th>সনদ</th></tr>${f.map(x=>`<tr><td>${esc(x.reg)}</td><td>${bnum(rollOf(x))}</td><td>${esc(x.name)}</td><td>${esc(x.father)}</td><td>${esc(x.div)}</td><td>${bnum(x.term||'')}</td><td style="white-space:nowrap"><button class="alt" data-sl-dl="${esc(x.reg)}" style="margin:0">ডাউনলোড</button></td></tr>`).join('')}</table></div>`:'<p class="muted">এখনও কোনো অনুমোদিত শিক্ষার্থী নেই। আবেদন অনুমোদিত হলে এখানে সনদসহ আসবে।</p>';
+    $('#slTable').innerHTML=students.length?`<p>মোট ${bnum(f.length)} জন</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>রোল</th><th>নাম</th><th>পিতা</th><th>বিভাগ</th><th>পর্ব</th><th>সনদ</th></tr>${f.map(x=>`<tr><td>${esc(x.reg)}</td><td>${bnum(rollOf(x))}</td><td>${esc(x.name)}</td><td>${esc(x.father)}</td><td>${esc(x.div)}</td><td>${bnum(x.term||'')}</td><td style="white-space:nowrap"><button class="alt" data-sl-dl="${esc(x.reg)}" style="margin:0">প্রিন্ট / PDF</button></td></tr>`).join('')}</table></div>`:'<p class="muted">এখনও কোনো অনুমোদিত শিক্ষার্থী নেই। আবেদন অনুমোদিত হলে এখানে সনদসহ আসবে।</p>';
     $('#slTable').querySelectorAll('[data-sl-dl]').forEach(b=>b.onclick=()=>downloadRegistrationCertificate(students.find(s=>s.reg===b.dataset.slDl)));
   };
   $('#slq').oninput=draw;draw();
@@ -1381,7 +1400,8 @@ function bindDash(){
     if(institutions.length>1)throw new Error('এই ইমেইল একাধিক প্রতিষ্ঠানের সঙ্গে যুক্ত। প্রতিটি প্রতিষ্ঠানের জন্য আলাদা দায়িত্বশীল ইমেইল ব্যবহার করুন।');
     const institution=institutions[0];
     const divisions=(institution.divisions||[]).filter(division=>DIVS.some(item=>item[0]===division));
-    dashboard.innerHTML=`<div class="msg ok">${esc(institution.name)} · প্রতিষ্ঠান কোড: ${esc(institution.code)}</div><div class="tabs"><button class="on" data-institution-tab="result">ফলাফল তৈরি</button><button data-institution-tab="student">শিক্ষার্থী নিবন্ধন আবেদন</button><button data-institution-tab="list">শিক্ষার্থী তালিকা</button><button class="alt" id="institutionLogout" style="margin-left:auto">লগআউট</button></div><div id="institutionDashboardForm"></div>`;
+    const instInfo=[institution.address,institution.area,institution.country,institution.language&&('ভাষা: '+institution.language),institution.phone,institution.email,institution.website,divisions.length&&('বিভাগ: '+divisions.join(', '))].filter(Boolean);
+    dashboard.innerHTML=`<div class="inst-head"><h2 class="inst-name">${esc(institution.name)}</h2><div class="inst-sub"><span class="inst-code">PCTB কোড: ${esc(institution.code)}</span>${instInfo.map(x=>`<span>${esc(x)}</span>`).join('')}</div></div><div class="tabs"><button class="on" data-institution-tab="result">ফলাফল তৈরি</button><button data-institution-tab="student">শিক্ষার্থী নিবন্ধন আবেদন</button><button data-institution-tab="list">শিক্ষার্থী তালিকা</button><button class="alt" id="institutionLogout" style="margin-left:auto">লগআউট</button></div><div id="institutionDashboardForm"></div>`;
     $('#institutionLogout').onclick=()=>signOut(instAuth);
     const form=$('#institutionDashboardForm');
     const drawInstitutionTab=tab=>{
@@ -1536,7 +1556,7 @@ function bindInst(){
       if(!detailsSnapshot.exists())throw new Error('অনুমোদিত প্রতিষ্ঠানের তথ্য পাওয়া যায়নি।');
       const certificateRecord={...detailsSnapshot.data(),...application};
       lookupResult.className='';
-      lookupResult.innerHTML=`<p class="msg ok">আবেদন অনুমোদিত। নিচের বাটন থেকে প্রতিষ্ঠান নিবন্ধন সনদ ডাউনলোড করুন।</p><div class="certificate-actions"><button type="button" id="institutionCertDownload">সনদ ডাউনলোড</button></div>`;
+      lookupResult.innerHTML=`<p class="msg ok">আবেদন অনুমোদিত। নিচের বাটন চাপলে প্রিন্ট / PDF সেভের অপশন খুলবে।</p><div class="certificate-actions"><button type="button" id="institutionCertDownload">সনদ প্রিন্ট / PDF সেভ</button></div>`;
       $('#institutionCertDownload').onclick=()=>downloadInstitutionCertificate(certificateRecord);
     }catch(e){say(lookupResult,'আবেদন খোঁজা যায়নি: '+e.message)}
   };
