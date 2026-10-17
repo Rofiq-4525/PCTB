@@ -1253,7 +1253,7 @@ async function renderInstitutionResultEntry(box,institution,database){
   <div class="row"><div><label for="rsExam">পরীক্ষার নাম *</label><select id="rsExam"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option>${EXAMS.map(e=>`<option>${esc(e)}</option>`).join('')}</select></div>
   <div><label for="rsSub">বিষয় *</label><select id="rsSub"><option value="" selected disabled>বিষয় নির্বাচন করুন</option>${SUBJ.map(g=>`<optgroup label="${esc(g[0])}">${g[1].map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}</optgroup>`).join('')}</select></div></div>
   <div id="rsStatus" class="muted" aria-live="polite">বিভাগ, পর্ব, পরীক্ষা ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।</div>
-  <div id="rsTable"></div><div id="rsMsg" aria-live="polite"></div><div id="rsSheet"></div>`;
+  <div id="rsTable"></div><div id="rsMsg" aria-live="polite"></div>`;
   let results=new Map(),list=[],loadVersion=0;
   const sel=()=>({d:$('#rsDiv').value,t:$('#rsTerm').value,exam:$('#rsExam').value,sub:$('#rsSub').value});
   const resRef=(s,exam)=>doc(database,'results',s.reg+'__'+exam);
@@ -1267,24 +1267,17 @@ async function renderInstitutionResultEntry(box,institution,database){
     const {d,t,exam,sub}=sel();
     if(!list.length){$('#rsTable').innerHTML='';return}
     $('#rsTable').innerHTML=`<h4 style="margin-top:16px">${esc(sub)} — ${esc(d)} বিভাগ, পর্ব ${bnum(t)}</h4><p class="muted">প্রতিটি শিক্ষার্থীর ঘরে নম্বর দিন। যে শিক্ষার্থীর সব ঘর ফাঁকা থাকবে তার নম্বর জমা হবে না; আংশিক লিখলে ফাঁকা ঘর ০ ধরা হবে।</p>
-    <div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট</th><th>জমা বিষয়</th><th>রেজাল্ট শিট</th></tr>
+    <div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট</th><th>জমা বিষয়</th></tr>
     ${list.map(s=>{const saved=(results.get(s.reg)?.subjects||[]).find(x=>x.n===sub),n=(results.get(s.reg)?.subjects||[]).length;
-      return `<tr data-reg="${esc(s.reg)}" data-had="${saved?1:0}"><td>${bnum(s.roll)}</td><td>${esc(s.reg)}</td><td>${esc(s.name)}</td>${PARTS.map(p=>`<td><input type="number" min="0" max="${p[2]}" inputmode="numeric" data-k="${p[0]}" value="${saved?saved[p[0]]??'':''}" style="min-width:64px" aria-label="${esc(s.name)} ${p[1]}"></td>`).join('')}<td class="rs-tt" style="text-align:center">0</td><td class="rs-cnt">${countCell(s.reg)}</td><td style="white-space:nowrap">${n>=MIN?`<button class="alt" data-rs-view="${esc(s.reg)}" style="margin:0 4px 0 0">দেখুন</button><button class="alt" data-rs-dl="${esc(s.reg)}" style="margin:0">ডাউনলোড</button>`:'<span class="muted">৫টি বিষয় লাগবে</span>'}</td></tr>`}).join('')}</table></div>
+      return `<tr data-reg="${esc(s.reg)}" data-had="${saved?1:0}"><td>${bnum(s.roll)}</td><td>${esc(s.reg)}</td><td>${esc(s.name)}</td>${PARTS.map(p=>`<td><input type="number" min="0" max="${p[2]}" inputmode="numeric" data-k="${p[0]}" value="${saved?saved[p[0]]??'':''}" style="min-width:64px" aria-label="${esc(s.name)} ${p[1]}"></td>`).join('')}<td class="rs-tt" style="text-align:center">0</td><td class="rs-cnt">${countCell(s.reg)}</td></tr>`}).join('')}</table></div>
     <button id="rsSave">সকল শিক্ষার্থীর নম্বর সংরক্ষণ করুন</button>`;
     $('#rsTable').querySelectorAll('tr[data-reg]').forEach(rowTotal);
     $('#rsTable').oninput=e=>{const el=e.target;if(!el.dataset.k)return;const p=PARTS.find(x=>x[0]===el.dataset.k);if(+el.value>p[2])el.value=p[2];if(+el.value<0)el.value=0;rowTotal(el.closest('tr'))};
-    $('#rsTable').querySelectorAll('[data-rs-view]').forEach(b=>b.onclick=()=>{
-      const r=results.get(b.dataset.rsView),out=$('#rsSheet');out.innerHTML=card(r);
-      out.querySelector('.result-print').onclick=()=>{const c=out.querySelector('.card');c.classList.add('print-target');addEventListener('afterprint',()=>c.classList.remove('print-target'),{once:true});print()};
-      out.querySelector('.result-download').onclick=()=>downloadResult(r);
-      out.scrollIntoView({behavior:'smooth',block:'start'});
-    });
-    $('#rsTable').querySelectorAll('[data-rs-dl]').forEach(b=>b.onclick=()=>downloadResult(results.get(b.dataset.rsDl)));
     $('#rsSave').onclick=save;
   };
   const load=async()=>{
     const {d,t,exam,sub}=sel();
-    $('#rsMsg').textContent='';$('#rsSheet').innerHTML='';
+    $('#rsMsg').textContent='';
     if(!d||!t||!exam||!sub){list=[];$('#rsTable').innerHTML='';$('#rsStatus').textContent='বিভাগ, পর্ব, পরীক্ষা ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।';return}
     list=students.filter(s=>s.div===d&&String(s.term)===t).sort((a,b)=>String(a.reg).localeCompare(String(b.reg)));
     if(!list.length){$('#rsTable').innerHTML='';$('#rsStatus').textContent='এই বিভাগ ও পর্বে কোনো নিবন্ধিত শিক্ষার্থী নেই।';return}
