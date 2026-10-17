@@ -1,8 +1,255 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /students/{id} { allow read, create: if true; allow update, delete: if request.auth != null; }
-    match /meta/{id} { allow read, write: if true; }
-    match /{col}/{id} { allow read: if true; allow write: if request.auth != null; }
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'a.rofiq4525@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function isApprovedTeacher() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/teachers/$(request.auth.uid))
+        && get(/databases/$(database)/documents/teachers/$(request.auth.uid)).data.approved == true;
+    }
+
+    function isApprovedInstitution(institutionCode) {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && institutionCode is string
+        && exists(/databases/$(database)/documents/institutions/$(institutionCode))
+        && (
+          get(/databases/$(database)/documents/institutions/$(institutionCode)).data.get('responsibleEmail', '') == request.auth.token.email
+          || get(/databases/$(database)/documents/institutions/$(institutionCode)).data.get('email', '') == request.auth.token.email
+        );
+    }
+
+    // Public content is readable by everyone and writable only by the admin.
+    match /site/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /books/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /notices/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /institutions/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    function institutionAnswersMatch(expected) {
+      return expected is list
+        && expected.size() == 6
+        && request.resource.data.answers is list
+        && request.resource.data.answers.size() == 6
+        && request.resource.data.answers[0] == expected[0]
+        && request.resource.data.answers[1] == expected[1]
+        && request.resource.data.answers[2] == expected[2]
+        && request.resource.data.answers[3] == expected[3]
+        && request.resource.data.answers[4] == expected[4]
+        && request.resource.data.answers[5] == expected[5];
+    }
+
+    match /institutionVerificationQuestions/{id} {
+      allow get: if id == 'current';
+      allow list: if isAdmin();
+      allow write: if isAdmin()
+        && id == 'current'
+        && request.resource.data.questions is list
+        && request.resource.data.questions.size() == 6;
+    }
+
+    match /institutionVerificationAnswers/{id} {
+      allow read, write: if isAdmin() && id == 'current';
+    }
+
+    match /institutionVerificationAttempts/{applicationId} {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys().hasAll(['applicationId','answers','t'])
+        && request.resource.data.keys().hasOnly(['applicationId','answers','t'])
+        && request.resource.data.applicationId == applicationId
+        && request.resource.data.t is int
+        && exists(/databases/$(database)/documents/institutionApplications/$(applicationId))
+        && get(/databases/$(database)/documents/institutionApplications/$(applicationId)).data.status == 'pending'
+        && institutionAnswersMatch(get(/databases/$(database)/documents/institutionVerificationAnswers/current).data.answers);
+      allow update, delete: if isAdmin();
+    }
+
+    match /institutionApplications/{applicationId} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if request.resource.data.keys().hasAll(['area','country','responsibleEmail','status','t'])
+        && request.resource.data.keys().hasOnly(['area','country','responsibleEmail','status','t'])
+        && request.resource.data.area in ['Asia','Africa','Europe','North America','South America','Oceania','Antarctica']
+        && request.resource.data.country is string
+        && request.resource.data.country.size() >= 2
+        && request.resource.data.country.size() <= 100
+        && request.resource.data.responsibleEmail is string
+        && request.resource.data.responsibleEmail.size() <= 254
+        && request.resource.data.responsibleEmail.matches('^[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$')
+        && request.resource.data.status == 'pending'
+        && request.resource.data.t is int
+        && applicationId == request.resource.data.area + '|' + request.resource.data.country + '|' + request.resource.data.responsibleEmail
+        && getAfter(/databases/$(database)/documents/institutionApplicationDetails/$(applicationId)).data.area == request.resource.data.area
+        && getAfter(/databases/$(database)/documents/institutionApplicationDetails/$(applicationId)).data.country == request.resource.data.country
+        && getAfter(/databases/$(database)/documents/institutionApplicationDetails/$(applicationId)).data.responsibleEmail == request.resource.data.responsibleEmail
+        && getAfter(/databases/$(database)/documents/institutionApplicationDetails/$(applicationId)).data.t == request.resource.data.t;
+      allow update: if isAdmin() || (
+        resource.data.status == 'pending'
+        && request.resource.data.status == 'verified'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','verifiedAt'])
+        && request.resource.data.verifiedAt is int
+        && getAfter(/databases/$(database)/documents/institutionVerificationAttempts/$(applicationId)).data.applicationId == applicationId
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /institutionApplicationDetails/{applicationId} {
+      allow get: if isAdmin() || (
+        exists(/databases/$(database)/documents/institutionApplications/$(applicationId))
+        && get(/databases/$(database)/documents/institutionApplications/$(applicationId)).data.status == 'approved'
+      );
+      allow list: if isAdmin();
+      allow create: if request.resource.data.keys().hasAll(['area','country','language','name','address','email','phone','website','divisions','responsibleEmail','t'])
+        && request.resource.data.keys().hasOnly(['area','country','language','name','address','email','phone','website','divisions','responsibleEmail','t'])
+        && request.resource.data.area in ['Asia','Africa','Europe','North America','South America','Oceania','Antarctica']
+        && request.resource.data.country is string
+        && request.resource.data.country.size() >= 2
+        && request.resource.data.country.size() <= 100
+        && request.resource.data.language is string
+        && request.resource.data.language.size() >= 2
+        && request.resource.data.language.size() <= 80
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.address is string
+        && request.resource.data.address.size() >= 3
+        && request.resource.data.address.size() <= 300
+        && request.resource.data.email is string
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.email.matches('^[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$')
+        && request.resource.data.phone is string
+        && request.resource.data.phone.matches('^[+]?[0-9][0-9 ().-]{6,24}$')
+        && request.resource.data.website is string
+        && request.resource.data.website.size() <= 200
+        && (request.resource.data.website == '' || request.resource.data.website.matches('^https?://.+$'))
+        && request.resource.data.divisions is list
+        && request.resource.data.divisions.size() >= 1
+        && request.resource.data.divisions.toSet().hasOnly(['আদব','তলিব','লাজিম','খিদমাহ'])
+        && request.resource.data.responsibleEmail is string
+        && request.resource.data.responsibleEmail.size() <= 254
+        && request.resource.data.responsibleEmail.matches('^[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$')
+        && request.resource.data.t is int
+        && applicationId == request.resource.data.area + '|' + request.resource.data.country + '|' + request.resource.data.responsibleEmail
+        && getAfter(/databases/$(database)/documents/institutionApplications/$(applicationId)).data.area == request.resource.data.area
+        && getAfter(/databases/$(database)/documents/institutionApplications/$(applicationId)).data.country == request.resource.data.country
+        && getAfter(/databases/$(database)/documents/institutionApplications/$(applicationId)).data.responsibleEmail == request.resource.data.responsibleEmail
+        && getAfter(/databases/$(database)/documents/institutionApplications/$(applicationId)).data.status == 'pending'
+        && getAfter(/databases/$(database)/documents/institutionApplications/$(applicationId)).data.t == request.resource.data.t;
+      allow update, delete: if isAdmin();
+    }
+
+    match /results/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin() || isApprovedTeacher();
+      allow delete: if isAdmin();
+    }
+
+    match /students/{reg} {
+      allow get: if isAdmin() || isApprovedTeacher()
+        || (resource == null && request.auth != null && request.auth.token.email_verified == true)
+        || isApprovedInstitution(resource.data.get('institutionCode', ''));
+      allow list: if isAdmin() || isApprovedTeacher() || isApprovedInstitution(resource.data.get('institutionCode', ''));
+      allow create: if request.resource.data.keys().hasAll(['name','father','div','dob','term','inst','guardian','mobile','reg','t'])
+        && request.resource.data.keys().hasOnly(['name','father','div','dob','term','inst','guardian','mobile','institutionCode','reg','t'])
+        && request.resource.data.reg == reg
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.father is string
+        && request.resource.data.father.size() >= 2
+        && request.resource.data.div in ['আদব','তলিব','লাজিম','খিদমাহ']
+        && request.resource.data.term in ['1','2','3']
+        && request.resource.data.dob is string
+        && request.resource.data.inst is string
+        && request.resource.data.guardian is string
+        && request.resource.data.guardian.size() >= 2
+        && request.resource.data.mobile.matches('^01[3-9][0-9]{8}$')
+        && request.resource.data.t is int
+        && (isAdmin() || (
+          request.resource.data.institutionCode is string
+          && isApprovedInstitution(request.resource.data.institutionCode)
+          && request.resource.data.inst == get(/databases/$(database)/documents/institutions/$(request.resource.data.institutionCode)).data.name
+          && request.resource.data.div in get(/databases/$(database)/documents/institutions/$(request.resource.data.institutionCode)).data.divisions
+          && reg.matches('^(233|333|433|533)' + request.resource.data.term + '[0-9]{3}$')
+        ));
+      allow update, delete: if isAdmin();
+    }
+
+    match /meta/{id} {
+      allow read: if true;
+      allow create: if id.matches('^counter_(233|333|433|533)_[123]$')
+        && request.resource.data.n is int && request.resource.data.n >= 1 && request.resource.data.n <= 999
+        && (isAdmin() || isApprovedInstitution(request.resource.data.get('institutionCode', '')));
+      allow update: if id.matches('^counter_(233|333|433|533)_[123]$')
+        && request.resource.data.n is int
+        && request.resource.data.n == resource.data.n + 1
+        && (isAdmin() || isApprovedInstitution(request.resource.data.get('institutionCode', '')));
+      allow delete: if isAdmin();
+    }
+
+    match /teacherApplications/{email} {
+      allow get: if isAdmin() || (
+        request.auth != null
+        && request.auth.token.email == email
+        && request.auth.token.email_verified == true
+      );
+      allow list: if isAdmin();
+      allow create: if request.resource.data.keys().hasAll(['name','mobile','email','institutionCode','institutionName','status','t'])
+        && request.resource.data.keys().hasOnly(['name','mobile','email','institutionCode','institutionName','status','t'])
+        && email == request.resource.data.email
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.mobile.matches('^01[3-9][0-9]{8}$')
+        && request.resource.data.email is string
+        && request.resource.data.email.matches('^[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}$')
+        && request.resource.data.institutionCode is string
+        && isApprovedInstitution(request.resource.data.institutionCode)
+        && request.resource.data.institutionName == get(/databases/$(database)/documents/institutions/$(request.resource.data.institutionCode)).data.name
+        && request.resource.data.status == 'pending'
+        && request.resource.data.t is int;
+      allow update: if isAdmin()
+        && resource.data.status == 'pending'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','decisionAt'])
+        && request.resource.data.status in ['approved','rejected']
+        && request.resource.data.decisionAt is int;
+      allow delete: if isAdmin();
+    }
+
+    match /teachers/{uid} {
+      allow read: if isAdmin() || (request.auth != null && request.auth.uid == uid);
+      allow create: if (
+        isAdmin()
+        && request.auth.uid == uid
+        && request.resource.data.approved == true
+        && request.resource.data.isAdmin == true
+      ) || (
+        request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.email_verified == true
+        && request.resource.data.approved == true
+        && request.resource.data.email == request.auth.token.email
+        && exists(/databases/$(database)/documents/teacherApplications/$(request.auth.token.email))
+        && get(/databases/$(database)/documents/teacherApplications/$(request.auth.token.email)).data.status == 'approved'
+        && request.resource.data.institutionCode == get(/databases/$(database)/documents/teacherApplications/$(request.auth.token.email)).data.institutionCode
+      );
+      allow update, delete: if isAdmin();
+    }
   }
 }
