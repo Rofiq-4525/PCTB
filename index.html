@@ -537,9 +537,9 @@ async function register(d,database=db){
       serial++;
     }
     if(serial>999)throw new Error('এই বিভাগ ও পর্বের ৩ অঙ্কের সিরিয়াল শেষ হয়েছে। অ্যাডমিনের সঙ্গে যোগাযোগ করুন।');
-    const rec={...d,div:division,reg,t:Date.now(),...(roll?{roll}:{})};
+    const rec={...d,div:division,reg,t:Date.now()};
     tx.set(cr,d.institutionCode?{n:serial,institutionCode:d.institutionCode}:{n:serial});tx.set(studentRef,rec);
-    return rec;
+    return roll?{...rec,roll}:rec;
   });
 }
 async function approvedInstitutionsForEmail(email){
