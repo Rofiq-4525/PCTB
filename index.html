@@ -1241,13 +1241,13 @@ async function renderInstitutionResultEntry(box,institution,database){
   const MIN=5,EXAMS=['সাপ্তাহিক মূল্যায়ন','মাসিক মূল্যায়ন','অর্ধবার্ষিক মূল্যায়ন','বার্ষিক মূল্যায়ন','পর্ব উন্নয়ন','বিভাগ উন্নয়ন'];
   const divisions=(institution.divisions||[]).filter(d=>DIVS.some(x=>x[0]===d));
   const order=[];SUBJ.forEach(g=>g[1].forEach(n=>order.push(n)));
-  box.innerHTML='<h4>ফলাফল তৈরি</h4><p class="muted">শিক্ষার্থীর তালিকা লোড হচ্ছে…</p>';
+  box.innerHTML='<h4>বিষয়ভিত্তিক ফলাফল</h4><p class="muted">শিক্ষার্থীর তালিকা লোড হচ্ছে…</p>';
   let students=[];
   try{
     const snap=await getDocs(query(collection(database,'students'),where('institutionCode','==',institution.code)));
     students=snap.docs.map(d=>({...d.data(),reg:d.id})).map(s=>({...s,div:bdiv(s),roll:rollOf(s)}));
   }catch(error){box.innerHTML=`<p class="msg bad">শিক্ষার্থীর তালিকা আনা যায়নি: ${esc(error.message)}</p>`;return}
-  box.innerHTML=`<h4>ফলাফল তৈরি</h4>
+  box.innerHTML=`<h4>বিষয়ভিত্তিক ফলাফল</h4>
   <div class="row"><div><label for="rsDiv">বিভাগ *</label><select id="rsDiv"><option value="" selected disabled>বিভাগ নির্বাচন করুন</option>${divisions.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div>
   <div><label for="rsTerm">পর্ব *</label><select id="rsTerm"><option value="" selected disabled>পর্ব নির্বাচন করুন</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div>
   <div class="row"><div><label for="rsExam">পরীক্ষার নাম *</label><select id="rsExam"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option>${EXAMS.map(e=>`<option>${esc(e)}</option>`).join('')}</select></div>
@@ -1338,7 +1338,7 @@ async function renderInstitutionStudentList(box,institution,database){
   $('#slq').oninput=draw;draw();
 }
 async function renderInstitutionAllResults(box,institution,database){
-  box.innerHTML='<h4>সকল ফলাফল</h4><p class="muted">ফলাফল লোড হচ্ছে…</p>';
+  box.innerHTML='<h4>রেজাল্ট শিট</h4><p class="muted">ফলাফল লোড হচ্ছে…</p>';
   let rows=[];
   try{
     const [rs,ss]=await Promise.all([
@@ -1349,7 +1349,7 @@ async function renderInstitutionAllResults(box,institution,database){
     rows=rs.docs.map(d=>({...d.data(),id:d.id})).filter(r=>String(r.institutionCode||'')===String(institution.code)||regs.has(r.reg)).map(r=>({...r,_div:bdiv(r)||bdiv(stMap.get(r.reg)||{})}));
   }catch(error){box.innerHTML=`<p class="msg bad">ফলাফল আনা যায়নি: ${esc(error.message)}</p>`;return}
   const exams=[...new Set(rows.map(r=>r.exam).filter(Boolean))],dvs=DIVS.map(d=>d[0]).filter(d=>rows.some(r=>r._div===d));
-  box.innerHTML=`<h4>সকল ফলাফল</h4><div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div></div><input id="irQ" placeholder="নাম বা রেজিস্ট্রেশন নম্বর দিয়ে খুঁজুন" aria-label="ফলাফল খুঁজুন"><div id="irList"></div><div id="irSheet"></div>`;
+  box.innerHTML=`<h4>রেজাল্ট শিট</h4><div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div></div><input id="irQ" placeholder="নাম বা রেজিস্ট্রেশন নম্বর দিয়ে খুঁজুন" aria-label="ফলাফল খুঁজুন"><div id="irList"></div><div id="irSheet"></div>`;
   const draw=()=>{
     const fd=$('#irDiv').value,fe=$('#irExam').value,q=norm($('#irQ').value).toLowerCase();
     const f=rows.filter(r=>(!fd||r._div===fd)&&(!fe||r.exam===fe)&&(!q||String(r.name||'').toLowerCase().includes(q)||String(r.reg||'').toLowerCase().includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
@@ -1392,7 +1392,7 @@ function bindDash(){
     if(institutions.length>1)throw new Error('এই ইমেইল একাধিক প্রতিষ্ঠানের সঙ্গে যুক্ত। প্রতিটি প্রতিষ্ঠানের জন্য আলাদা দায়িত্বশীল ইমেইল ব্যবহার করুন।');
     const institution=institutions[0];
     const divisions=(institution.divisions||[]).filter(division=>DIVS.some(item=>item[0]===division));
-    const IG=[['শিক্ষার্থী ব্যবস্থাপনা',[['student','শিক্ষার্থী নিবন্ধন আবেদন'],['list','শিক্ষার্থী তালিকা']]],['প্রতিষ্ঠান ব্যবস্থাপনা',[['info','প্রতিষ্ঠানের তথ্য']]],['ফলাফল ব্যবস্থাপনা',[['result','ফলাফল তৈরি'],['allresults','সকল ফলাফল']]]];
+    const IG=[['শিক্ষার্থী ব্যবস্থাপনা',[['student','শিক্ষার্থী নিবন্ধন আবেদন'],['list','শিক্ষার্থী তালিকা']]],['প্রতিষ্ঠান ব্যবস্থাপনা',[['info','প্রতিষ্ঠানের তথ্য']]],['ফলাফল ব্যবস্থাপনা',[['result','বিষয়ভিত্তিক ফলাফল'],['allresults','রেজাল্ট শিট']]]];
     const instBar=`<div class="adm-bar">${IG.map((g,i)=>`<button type="button" data-ig="${i}" aria-expanded="false" class="${g[1].some(x=>x[0]==='result')?'on':''}"><span>${g[0].replace(' ','<br>')}</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`).join('')}</div>${IG.map((g,i)=>`<div class="adm-gp" data-igp="${i}" hidden>${g[1].map(x=>`<button type="button" data-institution-tab="${x[0]}" class="${x[0]==='result'?'on':''}">${x[1]}</button>`).join('')}${i==IG.length-1?'<button type="button" class="alt" id="institutionLogout">লগআউট</button>':''}</div>`).join('')}`;
     dashboard.innerHTML=`<div class="inst-head"><h2 class="inst-name">${esc(institution.name)}</h2><div class="inst-sub"><span>${esc(institution.tagline||'একটি বহুমুখী কারিগরি মাদরাসা')}</span></div></div>${instBar}<div id="institutionDashboardForm"></div>`;
     $('#institutionLogout').onclick=()=>signOut(instAuth);
