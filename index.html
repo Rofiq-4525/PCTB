@@ -437,10 +437,13 @@ if(DEMO)useDemo();else try{
   ({getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut,GoogleAuthProvider,signInWithPopup,sendEmailVerification}=U);({getStorage,ref,uploadBytes,getDownloadURL}=S);
 }catch(e){console.warn('Firebase load failed, demo mode',e);DEMO=true;useDemo()}
 const fa=initializeApp(firebaseConfig),db=getFirestore(fa),auth=getAuth(fa),st=getStorage(fa);
+/* প্রতিষ্ঠান লগইন: আলাদা সেশন, তাই অ্যাডমিন বা শিক্ষক লগইন থাকলেও চলে */
+const ifa=initializeApp(firebaseConfig,'institution'),instAuth=getAuth(ifa),instDb=getFirestore(ifa);
 const $=s=>document.querySelector(s);
 const norm=x=>String(x).trim().replace(/[০-৯]/g,d=>'০১২৩৪৫৬৭৮৯'.indexOf(d)).toUpperCase();
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const say=(el,t,ok)=>{el.className='msg '+(ok?'ok':'bad');el.textContent=t};
+let instUser=null;
 let user=null,tTab='result',authMode='login',tstat=null,userRole='',gBusy=false,adminTeacherSyncError='';
 async function ensureAdminTeacherProfile(u){
   const r=doc(db,'teachers',u.uid),d=await getDoc(r),p=d.exists()?d.data():{},email=(u.email||'').toLowerCase();
@@ -472,6 +475,8 @@ onAuthStateChanged(auth,async u=>{
   const x=await calcStat(u);user=u;tstat=x;route()
 });
 
+onAuthStateChanged(instAuth,u=>{instUser=u;if((location.hash||'').startsWith('#/institution'))route()});
+
 const pages=[['','হোম'],['about','পরিচিতি'],['board','পর্ষদ'],['textbook','পাঠ্যপুস্তক'],['curriculum','কারিকুলাম'],['notice','নোটিশ'],['institution','প্রতিষ্ঠান'],['result','ফলাফল'],['student','শিক্ষার্থী ফলাফল'],['teacher','শিক্ষক'],['admin','অ্যাডমিন প্যানেল'],['sorry','দুঃখিত']];
 const BOARD=[['চেয়ারম্যান','নাম এখানে লিখুন'],['সদস্য সচিব','নাম এখানে লিখুন'],['সদস্য (শিক্ষাক্রম)','নাম এখানে লিখুন'],['সদস্য (পাঠ্যপুস্তক)','নাম এখানে লিখুন'],['সদস্য (পরীক্ষা)','নাম এখানে লিখুন']];
 const SUBJ=[['দ্বীন শিক্ষা',['ইমান শিক্ষা','কুরআন শিক্ষা','সীরাত শিক্ষা','হাদিস শিক্ষা','ব্যবহারিক ইসলাম শিক্ষা','সাহাবিদের জীবনি','ইতিহাস শিক্ষা','উম্মাহর রাহবা','আদব ও আখলাখ']],['কর্ম ও জীবিকা শিক্ষা',['বাংলা শিক্ষা','গনিত শিক্ষা','ইংরেজি শিক্ষা','ব্যাবহারিক বিজ্ঞান','বিশ্ব-পরিচয়','কর্ম-জীবিকা শিক্ষা','ব্যবসা ও উদ্যোগ শিক্ষা','প্রাথমিক-দক্ষতা','আত্ম-উন্নয়ন']]];
@@ -496,21 +501,21 @@ async function all(c){return (await getDocs(collection(db,c))).docs.map(d=>({id:
 const empty=t=>`<div class="card muted">${t}</div>`;
 
 /* ---------- রেজিস্ট্রেশন ---------- */
-async function register(d){
+async function register(d,database=db){
   const studentQuery=d.institutionCode
-    ?query(collection(db,'students'),where('institutionCode','==',d.institutionCode))
-    :query(collection(db,'students'),where('mobile','==',d.mobile));
+    ?query(collection(database,'students'),where('institutionCode','==',d.institutionCode))
+    :query(collection(database,'students'),where('mobile','==',d.mobile));
   const dup=await getDocs(studentQuery);
   const same=dup.docs.map(x=>x.data()).find(x=>x.mobile===d.mobile&&x.name.trim().toLowerCase()==d.name.toLowerCase()&&x.dob==d.dob);
   if(same)return {existing:same};
-  return runTransaction(db,async tx=>{
+  return runTransaction(database,async tx=>{
     const division=bdiv(d),code=DIV_CODES[division],term=String(d.term||'');
     if(!code||!['1','2','3'].includes(term))throw new Error('বিভাগ ও পর্ব নির্বাচন করে আবার চেষ্টা করুন।');
-    const cr=doc(db,'meta',`counter_${code}_${term}`),c=await tx.get(cr),n=(c.exists()?c.data().n:0)+1;
+    const cr=doc(database,'meta',`counter_${code}_${term}`),c=await tx.get(cr),n=(c.exists()?c.data().n:0)+1;
     let serial=n,reg='',studentRef;
     while(serial<=999){
       reg=code+term+String(serial).padStart(3,'0');
-      studentRef=doc(db,'students',reg);
+      studentRef=doc(database,'students',reg);
       if(!(await tx.get(studentRef)).exists())break;
       serial++;
     }
@@ -1126,7 +1131,7 @@ function bindInst(){
   if(q)q.oninput=()=>{const t=q.value.trim().toLowerCase();let n=0;document.querySelectorAll('#ilist .ins').forEach(c=>{const m=!t||c.dataset.s.includes(t);c.hidden=!m;if(m)n++});$('#icnt').textContent=(t?'পাওয়া গেছে ':'মোট ')+bnum(n)+' টি প্রতিষ্ঠান';$('#inone').hidden=n>0};
   const dashboard=$('#institutionDashboardContent');
   const showInstitutionLogin=(mode='login')=>{
-    dashboard.innerHTML=`<p class="muted">অনুমোদিত প্রতিষ্ঠানের ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন। প্রথমবার হলে প্রতিষ্ঠানের নিবন্ধিত ইমেইল দিয়ে অ্যাকাউন্ট তৈরি করে ইমেইল যাচাই করুন।</p><label for="institutionAccountEmail">প্রতিষ্ঠানের নিবন্ধিত ইমেইল</label><input id="institutionAccountEmail" type="email" autocomplete="username"><label for="institutionAccountPassword">পাসওয়ার্ড</label><input id="institutionAccountPassword" type="password" autocomplete="${mode==='create'?'new-password':'current-password'}"><button id="institutionAccountSubmit">${mode==='create'?'অ্যাকাউন্ট তৈরি করুন':'লগইন'}</button> <button class="alt" id="institutionAccountToggle">${mode==='create'?'আগে অ্যাকাউন্ট আছে? লগইন':'প্রথমবার? অ্যাকাউন্ট তৈরি করুন'}</button><div id="institutionAccountMessage" aria-live="polite"></div>`;
+    dashboard.innerHTML=`<p class="muted">অনুমোদিত প্রতিষ্ঠানের ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন। প্রথমবার হলে &quot;অ্যাকাউন্ট তৈরি করুন&quot; চাপুন। অ্যাডমিন বা শিক্ষক হিসেবে লগইন থাকলেও এখানে আলাদাভাবে ঢোকা যাবে।</p><label for="institutionAccountEmail">প্রতিষ্ঠানের নিবন্ধিত ইমেইল</label><input id="institutionAccountEmail" type="email" autocomplete="username"><label for="institutionAccountPassword">পাসওয়ার্ড</label><input id="institutionAccountPassword" type="password" autocomplete="${mode==='create'?'new-password':'current-password'}"><button id="institutionAccountSubmit">${mode==='create'?'অ্যাকাউন্ট তৈরি করুন':'লগইন'}</button> <button class="alt" id="institutionAccountToggle">${mode==='create'?'আগে অ্যাকাউন্ট আছে? লগইন':'প্রথমবার? অ্যাকাউন্ট তৈরি করুন'}</button><div id="institutionAccountMessage" aria-live="polite"></div>`;
     $('#institutionAccountToggle').onclick=()=>showInstitutionLogin(mode==='create'?'login':'create');
     $('#institutionAccountSubmit').onclick=async()=>{
       const email=$('#institutionAccountEmail').value.trim().toLowerCase(),password=$('#institutionAccountPassword').value,message=$('#institutionAccountMessage'),button=$('#institutionAccountSubmit');
@@ -1134,34 +1139,25 @@ function bindInst(){
       if(password.length<6)return say(message,'পাসওয়ার্ড অন্তত ৬ অক্ষরের দিন।');
       button.disabled=true;say(message,'যাচাই হচ্ছে…',true);
       try{
-        if(mode==='create'){
-          const institutions=await approvedInstitutionsForEmail(email);
-          if(!institutions.length)throw new Error('এই ইমেইলে কোনো অনুমোদিত প্রতিষ্ঠান পাওয়া যায়নি।');
-          const credential=await createUserWithEmailAndPassword(auth,email,password);
-          await sendEmailVerification(credential.user);
-          say(message,'যাচাইকরণ ইমেইল পাঠানো হয়েছে। ইমেইলের লিংকে চাপ দিয়ে তারপর লগইন করুন।',true);
-          await signOut(auth);
-        }else await signInWithEmailAndPassword(auth,email,password);
-      }catch(error){say(message,'অ্যাকাউন্টে প্রবেশ করা যায়নি: '+(error.message||String(error)));button.disabled=false}
+        const institutions=await approvedInstitutionsForEmail(email);
+        if(!institutions.length)throw new Error('এই ইমেইলে কোনো অনুমোদিত প্রতিষ্ঠান পাওয়া যায়নি।');
+        if(mode==='create')await createUserWithEmailAndPassword(instAuth,email,password);
+        else await signInWithEmailAndPassword(instAuth,email,password);
+      }catch(error){const c=error.code||'';say(message,['auth/invalid-credential','auth/wrong-password','auth/user-not-found'].includes(c)?'ইমেইল বা পাসওয়ার্ড ঠিক নয়। প্রথমবার হলে "অ্যাকাউন্ট তৈরি করুন" চাপুন।':c==='auth/email-already-in-use'?'এই ইমেইলে অ্যাকাউন্ট আগেই আছে, লগইন করুন।':c==='auth/weak-password'?'পাসওয়ার্ড অন্তত ৬ অক্ষরের দিন।':c==='auth/too-many-requests'?'অনেকবার ভুল হয়েছে, কিছুক্ষণ পর আবার চেষ্টা করুন।':'অ্যাকাউন্টে প্রবেশ করা যায়নি: '+(error.message||String(error)));button.disabled=false}
     };
   };
   const showInstitutionDashboard=async()=>{
-    if(!user){showInstitutionLogin();return}
-    if(!user.emailVerified){
-      dashboard.innerHTML=`<p class="msg bad">প্রতিষ্ঠানের ড্যাশবোর্ড ব্যবহারের আগে ${esc(user.email)} ইমেইলটি যাচাই করুন।</p><button id="institutionResendVerification">যাচাইকরণ ইমেইল আবার পাঠান</button> <button class="alt" id="institutionLogout">লগআউট</button><div id="institutionAccountMessage"></div>`;
-      $('#institutionResendVerification').onclick=async()=>{try{await sendEmailVerification(user);say($('#institutionAccountMessage'),'যাচাইকরণ ইমেইল পাঠানো হয়েছে।',true)}catch(e){say($('#institutionAccountMessage'),'ইমেইল পাঠানো যায়নি: '+e.message)}};
-      $('#institutionLogout').onclick=()=>signOut(auth);return;
-    }
-    const institutions=await approvedInstitutionsForEmail(user.email||'');
+    if(!instUser){showInstitutionLogin();return}
+    const institutions=await approvedInstitutionsForEmail(instUser.email||'');
     if(!institutions.length){
       dashboard.innerHTML=`<p class="msg bad">এই ইমেইল কোনো অনুমোদিত প্রতিষ্ঠানের সঙ্গে মেলেনি।</p><button class="alt" id="institutionLogout">লগআউট</button>`;
-      $('#institutionLogout').onclick=()=>signOut(auth);return;
+      $('#institutionLogout').onclick=()=>signOut(instAuth);return;
     }
     if(institutions.length>1)throw new Error('এই ইমেইল একাধিক প্রতিষ্ঠানের সঙ্গে যুক্ত। প্রতিটি প্রতিষ্ঠানের জন্য আলাদা দায়িত্বশীল ইমেইল ব্যবহার করুন।');
     const institution=institutions[0];
     const divisions=(institution.divisions||[]).filter(division=>DIVS.some(item=>item[0]===division));
     dashboard.innerHTML=`<div class="msg ok">${esc(institution.name)} · প্রতিষ্ঠান কোড: ${esc(institution.code)}</div><div class="tabs"><button class="on" data-institution-tab="student">শিক্ষার্থী নিবন্ধন</button><button data-institution-tab="teacher">শিক্ষক আবেদন</button><button class="alt" id="institutionLogout" style="margin-left:auto">লগআউট</button></div><div id="institutionDashboardForm"></div>`;
-    $('#institutionLogout').onclick=()=>signOut(auth);
+    $('#institutionLogout').onclick=()=>signOut(instAuth);
     const form=$('#institutionDashboardForm');
     const drawInstitutionTab=tab=>{
       dashboard.querySelectorAll('[data-institution-tab]').forEach(button=>button.classList.toggle('on',button.dataset.institutionTab===tab));
@@ -1174,7 +1170,7 @@ function bindInst(){
           if(!divisions.includes(student.div))return say(message,'এই বিভাগটি প্রতিষ্ঠানের জন্য চালু নেই।');
           button.disabled=true;say(message,'নিবন্ধন হচ্ছে…',true);
           try{
-            const registered=await register(student),saved=registered.existing||registered;
+            const registered=await register(student,instDb),saved=registered.existing||registered;
             say(message,`${registered.existing?'এই শিক্ষার্থী আগেই নিবন্ধিত।':'শিক্ষার্থী নিবন্ধন সম্পন্ন।'} রেজিস্ট্রেশন নম্বর: ${saved.reg}`,true);
             if(!registered.existing)['dashStudentName','dashStudentFather','dashStudentDob','dashStudentGuardian','dashStudentMobile'].forEach(id=>$('#'+id).value='');
           }catch(error){say(message,'নিবন্ধন হয়নি: '+error.message)}
@@ -1190,7 +1186,7 @@ function bindInst(){
           if(!/^[A-Za-z0-9._+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email))return say(message,'শিক্ষকের সঠিক ইমেইল দিন।');
           button.disabled=true;say(message,'আবেদন জমা হচ্ছে…',true);
           try{
-            const applicationRef=doc(db,'teacherApplications',email);
+            const applicationRef=doc(instDb,'teacherApplications',email);
             await setDoc(applicationRef,application);
             say(message,'শিক্ষক আবেদন বোর্ডে পাঠানো হয়েছে। অনুমোদনের পর শিক্ষক নিজে অ্যাকাউন্ট তৈরি করতে পারবেন।',true);
             ['dashTeacherName','dashTeacherMobile','dashTeacherEmail'].forEach(id=>$('#'+id).value='');
@@ -1202,10 +1198,10 @@ function bindInst(){
     dashboard.querySelectorAll('[data-institution-tab]').forEach(button=>button.onclick=()=>drawInstitutionTab(button.dataset.institutionTab));
     drawInstitutionTab('student');
   };
-  if(!user)showInstitutionLogin();
+  if(!instUser)showInstitutionLogin();
   else showInstitutionDashboard().catch(error=>{
     dashboard.innerHTML=`<div class="msg bad">প্রতিষ্ঠান ড্যাশবোর্ড খোলা যায়নি: ${esc(error.message)}</div><button class="alt" id="institutionLogout">লগআউট</button>`;
-    $('#institutionLogout').onclick=()=>signOut(auth);
+    $('#institutionLogout').onclick=()=>signOut(instAuth);
   });
   const area=$('#institutionArea'),country=$('#institutionCountry'),language=$('#institutionLanguage'),otherLanguageWrap=$('#institutionOtherLanguageWrap');
   if(area)area.onchange=()=>{
