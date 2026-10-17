@@ -1030,12 +1030,16 @@ async function bindTeacher(){
       tv=tv&&typeof tv==='object'?tv:{};
       const cur=k=>typeof tv[k]==='string'&&tv[k].trim()?tv[k]:TXD[k];
       const ta=(k,l,r)=>`<label for="tx_${k}">${l}</label><textarea id="tx_${k}" data-k="${k}" rows="${r||2}">${esc(cur(k))}</textarea>`;
+      const oi=(v,i)=>`<input data-o placeholder="উদ্দেশ্য ${bnum(i+1)}" aria-label="উদ্দেশ্য ${bnum(i+1)}" value="${esc(v)}" style="margin-top:8px">`;
+      const oItems=cur('h_obj').split('\n').map(s=>s.trim()).filter(Boolean);while(oItems.length<5)oItems.push('');
       const nm=i=>{const n=String(bd[i]?.[1]||'').trim();return n==='নাম এখানে লিখুন'?'':n};
-      box.innerHTML=`<h3>সাইটের তথ্য</h3><label for="ab">পরিচিতি</label><textarea id="ab" rows="5">${esc(ab)}</textarea><h3 style="margin-top:18px">আমাদের লক্ষ্য ও উদ্দেশ্য</h3>${ta('h_goal_x','আমাদের লক্ষ্য',3)}${ta('h_obj','উদ্দেশ্য (প্রতি লাইনে একটি করে লিখুন)',7)}<h3 style="margin-top:18px">শিক্ষা পদ্ধতি ও নীতিমালা</h3>${ta('h_met_x','শিক্ষা পদ্ধতি',3)}${ta('h_pol_x','নীতিমালা',3)}<h3 style="margin-top:18px">পরিচালনা পরিষদ — দায়িত্বশীলদের নাম</h3>${[...Array(8).keys()].map(i=>`<input data-p="${i}" placeholder="দায়িত্বশীল ${i+1}-এর নাম" aria-label="দায়িত্বশীল ${i+1}-এর নাম" value="${esc(nm(i))}" style="margin-bottom:8px">`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
+      box.innerHTML=`<h3>সাইটের তথ্য</h3><label for="ab">পরিচিতি</label><textarea id="ab" rows="5">${esc(ab)}</textarea><h3 style="margin-top:18px">আমাদের লক্ষ্য ও উদ্দেশ্য</h3>${ta('h_goal_x','আমাদের লক্ষ্য',3)}<div class="txg" style="padding:10px 12px"><b>আমাদের উদ্দেশ্য</b><div id="objList">${oItems.map(oi).join('')}</div><button type="button" class="alt" id="objAdd" style="margin-top:8px">+ আরেকটি উদ্দেশ্য যোগ করুন</button></div><h3 style="margin-top:18px">শিক্ষা পদ্ধতি ও নীতিমালা</h3>${ta('h_met_x','শিক্ষা পদ্ধতি',3)}${ta('h_pol_x','নীতিমালা',3)}<h3 style="margin-top:18px">পরিচালনা পরিষদ — দায়িত্বশীলদের নাম</h3>${[...Array(8).keys()].map(i=>`<input data-p="${i}" placeholder="দায়িত্বশীল ${i+1}-এর নাম" aria-label="দায়িত্বশীল ${i+1}-এর নাম" value="${esc(nm(i))}" style="margin-bottom:8px">`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
+      $('#objAdd').onclick=()=>{const l=$('#objList');l.insertAdjacentHTML('beforeend',oi('',l.children.length))};
       $('#ss').onclick=async()=>{try{await setDoc(doc(db,'site','about'),{v:$('#ab').value});
         const b=[...Array(8).keys()].map(i=>['দায়িত্বশীল',$(`[data-p="${i}"]`).value.trim()]).filter(x=>x[1]);
         await setDoc(doc(db,'site','board'),{v:b});
         const o={};box.querySelectorAll('[data-k]').forEach(el=>{const v=el.value.trim();if(v&&v!==TXD[el.dataset.k])o[el.dataset.k]=v});
+        const ov=[...box.querySelectorAll('[data-o]')].map(e=>e.value.trim()).filter(Boolean).join('\n');if(ov&&ov!==TXD.h_obj)o.h_obj=ov;
         await setDoc(doc(db,'site','texts'),{v:o});TXO=o;
         say($('#tm'),'সংরক্ষিত হয়েছে।',1)}catch(e){say($('#tm'),'সংরক্ষণ হয়নি: '+e.message)}};
     });
