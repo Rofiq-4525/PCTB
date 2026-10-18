@@ -445,6 +445,16 @@ table.rtable td input{width:110px;min-width:0!important;text-align:right}
 .cert-summary{width:100%;max-width:640px;margin:12px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;padding:10px 14px;border:1px solid #b8923a;background:rgba(255,255,255,.62);color:#0d4a3a;font-weight:600}
 .cert-legend{width:100%;max-width:640px;margin:8px auto 0;font-size:.78rem;color:#604b25}
 @media(max-width:600px){.registration-certificate.result-certificate{min-height:0;padding:30px 14px;border-width:8px}.cert-rtable{font-size:.74rem}.cert-rtable th,.cert-rtable td{padding:4px 2px}}
+#splash{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;background:radial-gradient(ellipse at 50% 38%,#fbfdf9 0%,#e7f3ea 55%,#d2e8d9 100%);transition:opacity .45s ease,visibility .45s ease}
+#splash.out{opacity:0;visibility:hidden;pointer-events:none}
+#splash::before{content:"";position:absolute;inset:14px;border:1px solid rgba(184,146,58,.55);border-radius:6px;pointer-events:none}
+#splash img{width:min(62vw,270px);height:auto;max-height:40vh;object-fit:contain;animation:splashPulse 1.8s ease-in-out infinite}
+#splash .sp-name{font:600 1rem/1.5 'Noto Serif Bengali',serif;color:#0d4a3a;margin:0}
+#splash .sp-bar{width:min(52vw,180px);height:3px;border-radius:3px;background:rgba(13,74,58,.14);overflow:hidden}
+#splash .sp-bar::after{content:"";display:block;width:40%;height:100%;border-radius:3px;background:linear-gradient(90deg,#0d4a3a,#b8923a);animation:splashBar 1.15s ease-in-out infinite}
+@keyframes splashPulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.035);opacity:1}}
+@keyframes splashBar{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+@media(prefers-reduced-motion:reduce){#splash img,#splash .sp-bar::after{animation:none}#splash{transition:none}}
 </style>
 <script>
 /* লোগো ফাইল: logo.* ও seal.* (png, jpg, jpeg, webp যেকোনোটা চলবে) */
@@ -454,6 +464,7 @@ function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|se
 </script>
 </head>
 <body class="page-loading">
+<div id="splash" role="status" aria-live="polite" aria-label="লোড হচ্ছে"><img src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_380,c_limit/logo" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p class="sp-name">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</p><div class="sp-bar" aria-hidden="true"></div></div>
 <div id="scr">
 <header><div class="bar">
 <a class="logo" href="#/">
@@ -857,12 +868,12 @@ home(routeToken){
   const head=(t,p,l='সব দেখুন')=>`<div class="shd"><h2>${t}</h2>${p?`<a href="#/${p}">${l} →</a>`:''}</div>`;
   const first=`<div class="hlw"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div>
   ${head('পরিচিতি','about','বিস্তারিত').replace('class="shd"','class="shd ln"')}<div class="card" id="homeAbout">${esc(DEF_ABOUT).replace(/\n/g,'<br>')}</div>
-  <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div><div id="homeRest"></div>`;
-  const staticStage=`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
+  <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0" data-txh="h_goal_x">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc" data-txo><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div><div id="homeRest"></div>`;
+  const staticStage=()=>`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0" data-txh="h_met_x">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0" data-txh="h_pol_x">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
   const staticReady=new Promise(resolve=>requestAnimationFrame(()=>{
     const rest=document.getElementById('homeRest');
     if(routeToken!==routeVersion||!rest){resolve(false);return}
-    rest.insertAdjacentHTML('beforeend',cloudMarkup(staticStage));
+    rest.insertAdjacentHTML('beforeend',cloudMarkup(staticStage()));
     bindHome();
     resolve(true);
   }));
@@ -897,11 +908,11 @@ home(routeToken){
   });
   return first;
 },
-async about(){const t=await site('about',DEF_ABOUT);
+async about(){const [t]=await Promise.all([site('about',DEF_ABOUT),loadTX()]);
   return pageHead('বোর্ড পরিচিতি','নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড','info')
   +`<div class="card cc abt"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p>${esc(t).replace(/\n/g,'<br>')}</p></div>`
-  +`<hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div>`
-  +`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div>`
+  +`<hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0" data-txh="h_goal_x">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc" data-txo><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div>`
+  +`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0" data-txh="h_met_x">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0" data-txh="h_pol_x">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div>`
   +`<hr class="dv">`+head('বিভাগ পরিচিতি','')+divCards()},
 async board(){
   const bd=await site('board',null),rows=Array.isArray(bd)&&bd.length?bd:Array.from({length:6},()=>['দায়িত্বশীল','']);
@@ -1274,10 +1285,15 @@ const TX=[
  ['h_pol_x','নীতিমালা','বিবরণ শীঘ্রই যুক্ত করা হবে।',1]
 ];
 const TXD={};TX.forEach(x=>TXD[x[0]]=x[2]);
-let TXO=null;
-async function loadTX(){if(TXO)return;const v=await site('texts',{});TXO=v&&typeof v==='object'?v:{}}
+let TXO=null,TXP=null;
+function loadTX(){return TXP||(TXP=site('texts',{}).then(v=>{TXO=v&&typeof v==='object'?v:{}}).catch(()=>{TXO={}}))}
+loadTX();
 const tx=k=>{const v=TXO&&TXO[k];return typeof v==='string'&&v.trim()!==''?v:(TXD[k]??'')};
 const txe=k=>esc(tx(k));
+function refreshTX(){
+  document.querySelectorAll('[data-txh]').forEach(e=>e.innerHTML=txe(e.dataset.txh).replace(/\n/g,'<br>'));
+  document.querySelectorAll('[data-txo]').forEach(e=>e.innerHTML='<h3>আমাদের উদ্দেশ্য</h3>'+objHTML());
+}
 const objHTML=()=>{const L=tx('h_obj').split('\n').map(s=>s.trim()).filter(Boolean),a=L.slice(0,2),b=L.slice(2);return `<ul style="margin:0;padding-left:1.2em">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+(b.length?`<details class="bmore"><summary><span class="mo">আরও ${bnum(b.length)} টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch">${b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:'')};
 
 const LISTS={book:['books',b=>`${b.title} (${bdiv(b)} বিভাগ)`],notice:['notices',n=>n.title]};
@@ -1691,14 +1707,16 @@ $('#mb').onclick=()=>{const h=document.querySelector('header'),o=h.classList.tog
 
 document.querySelectorAll('.fcols details').forEach(d=>d.open=true);
 /* ---------- রাউটার ---------- */
+function hideSplash(){const s=document.getElementById('splash');if(!s||s.dataset.h)return;s.dataset.h='1';setTimeout(()=>{s.classList.add('out');setTimeout(()=>s.remove(),520)},Math.max(0,700-performance.now()))}
+setTimeout(hideSplash,8000);
 async function route(){ 
   const routeToken=++routeVersion;
   document.body.classList.add('page-loading');
   const p=(location.hash.replace(/^#\/?/,'').split('?')[0])||'';
   const k=pages.some(x=>x[0]==p)?p:'';
   $('#demoB').hidden=!DEMO;$('#nav').innerHTML=cloudMarkup(navHTML(k));$('#mnav').innerHTML=mnavHTML(k);document.querySelector('header').classList.remove('menu-open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));
-  const app=$('#app');app.innerHTML='<p class="muted">লোড হচ্ছে…</p>';await loadTX();if(routeToken!==routeVersion)return;
-  try{const content=await (k?V[k]():V.home(routeToken));if(routeToken!==routeVersion)return;app.innerHTML=cloudMarkup(content);document.body.classList.remove('page-loading')}catch(e){if(routeToken!==routeVersion)return;app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;document.body.classList.remove('page-loading');return}
+  const app=$('#app');app.innerHTML='<p class="muted">লোড হচ্ছে…</p>';loadTX().then(()=>{if(routeToken===routeVersion)setTimeout(refreshTX,0)});
+  try{const content=await (k?V[k]():V.home(routeToken));if(routeToken!==routeVersion)return;app.innerHTML=cloudMarkup(content);document.body.classList.remove('page-loading');hideSplash()}catch(e){if(routeToken!==routeVersion)return;app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;document.body.classList.remove('page-loading');hideSplash();return}
   ({'':bindHome,result:bindResult,student:bindStudent,teacher:bindTeacher,admin:bindAdmin,textbook:bindTextbook,institution:bindInst,institutions:bindInstList,curriculum:bindCurriculum,dashboard:bindDash}[k]||(()=>{}))();if((k=='teacher'||k=='admin')&&user)loadList();
   scrollTo(0,0);{const r=document.getElementById('scr');if(r)r.scrollTop=0}
 }
