@@ -866,12 +866,12 @@ const MON=['জানুয়ারি','ফেব্রুয়ারি','�
 let routeVersion=0;
 const V={
 home(routeToken){
-  const homeData=Promise.all([site('about',DEF_ABOUT),all('books').catch(()=>[]),all('notices').catch(()=>[])]);
+  const homeData=Promise.all([Promise.resolve(DEF_ABOUT),all('books').catch(()=>[]),all('notices').catch(()=>[])]);
   const head=(t,p,l='সব দেখুন')=>`<div class="shd"><h2>${t}</h2>${p?`<a href="#/${p}">${l} →</a>`:''}</div>`;
   const first=`<div class="hlw"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div>
   ${head('পরিচিতি','about','বিস্তারিত').replace('class="shd"','class="shd ln"')}<div class="card" id="homeAbout">${esc(DEF_ABOUT).replace(/\n/g,'<br>')}</div>
-  <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0" data-txh="h_goal_x">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc" data-txo><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div><div id="homeRest"></div>`;
-  const staticStage=()=>`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0" data-txh="h_met_x">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0" data-txh="h_pol_x">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
+  <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${esc(SITE_TEXT.goal).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div><div id="homeRest"></div>`;
+  const staticStage=()=>`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${esc(SITE_TEXT.method).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${esc(SITE_TEXT.policy).replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
   const staticReady=new Promise(resolve=>requestAnimationFrame(()=>{
     const rest=document.getElementById('homeRest');
     if(routeToken!==routeVersion||!rest){resolve(false);return}
@@ -910,11 +910,11 @@ home(routeToken){
   });
   return first;
 },
-async about(){const [t]=await Promise.all([site('about',DEF_ABOUT),loadTX()]);
+async about(){const t=DEF_ABOUT;
   return pageHead('বোর্ড পরিচিতি','নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড','info')
   +`<div class="card cc abt"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p>${esc(t).replace(/\n/g,'<br>')}</p></div>`
-  +`<hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0" data-txh="h_goal_x">${txe('h_goal_x').replace(/\n/g,'<br>')}</p></div><div class="card cc" data-txo><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div>`
-  +`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0" data-txh="h_met_x">${txe('h_met_x').replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0" data-txh="h_pol_x">${txe('h_pol_x').replace(/\n/g,'<br>')}</p></div></div>`
+  +`<hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${esc(SITE_TEXT.goal).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div>`
+  +`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${esc(SITE_TEXT.method).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${esc(SITE_TEXT.policy).replace(/\n/g,'<br>')}</p></div></div>`
   +`<hr class="dv">`+head('বিভাগ পরিচিতি','')+divCards()},
 async board(){
   const bd=await site('board',null),rows=Array.isArray(bd)&&bd.length?bd:Array.from({length:6},()=>['দায়িত্বশীল','']);
@@ -1102,23 +1102,12 @@ async function bindTeacher(){
       }catch(e){say(body,'ফলাফল আনা যায়নি: '+e.message)}
     })();
   }else if(tTab=='site'){
-    Promise.all([site('about',DEF_ABOUT),site('board',BOARD),site('texts',{})]).then(([ab,bd,tv])=>{
-      tv=tv&&typeof tv==='object'?tv:{};
-      const cur=k=>typeof tv[k]==='string'&&tv[k].trim()?tv[k]:TXD[k];
-      const ta=(k,l,r)=>`<label for="tx_${k}">${l}</label><textarea id="tx_${k}" data-k="${k}" rows="${r||2}">${esc(cur(k))}</textarea>`;
-      const oi=(v,i)=>`<div class="orow" style="display:flex;gap:6px;align-items:center;margin-top:8px"><input data-o placeholder="উদ্দেশ্য ${bnum(i+1)}" aria-label="উদ্দেশ্য ${bnum(i+1)}" value="${esc(v)}" style="flex:1;margin:0"><button type="button" class="alt odel" aria-label="মুছুন" title="মুছুন" style="margin:0;white-space:nowrap">মুছুন</button></div>`;
-      const oItems=cur('h_obj').split('\n').map(s=>s.trim()).filter(Boolean);while(oItems.length<5)oItems.push('');
+    site('board',BOARD).then(bd=>{
       const nm=i=>{const n=String(bd[i]?.[1]||'').trim();return n==='নাম এখানে লিখুন'?'':n};
-      box.innerHTML=`<h3>সাইটের তথ্য</h3><label for="ab">পরিচিতি</label><textarea id="ab" rows="5">${esc(ab)}</textarea><h3 style="margin-top:18px">আমাদের লক্ষ্য ও উদ্দেশ্য</h3>${ta('h_goal_x','আমাদের লক্ষ্য',3)}<div class="txg" style="padding:10px 12px"><b>আমাদের উদ্দেশ্য</b><div id="objList">${oItems.map(oi).join('')}</div><button type="button" class="alt" id="objAdd" style="margin-top:8px">+ আরেকটি উদ্দেশ্য যোগ করুন</button></div><h3 style="margin-top:18px">শিক্ষা পদ্ধতি ও নীতিমালা</h3>${ta('h_met_x','শিক্ষা পদ্ধতি',3)}${ta('h_pol_x','নীতিমালা',3)}<h3 style="margin-top:18px">পরিচালনা পরিষদ — দায়িত্বশীলদের নাম</h3>${[...Array(8).keys()].map(i=>`<input data-p="${i}" placeholder="দায়িত্বশীল ${i+1}-এর নাম" aria-label="দায়িত্বশীল ${i+1}-এর নাম" value="${esc(nm(i))}" style="margin-bottom:8px">`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
-      const renum=()=>[...$('#objList').querySelectorAll('input[data-o]')].forEach((el,k)=>{el.placeholder='উদ্দেশ্য '+bnum(k+1);el.setAttribute('aria-label',el.placeholder)});
-      $('#objAdd').onclick=()=>{const l=$('#objList');l.insertAdjacentHTML('beforeend',oi('',l.children.length))};
-      $('#objList').onclick=e=>{const b=e.target.closest('.odel');if(!b)return;b.closest('.orow').remove();renum()};
-      $('#ss').onclick=async()=>{try{await setDoc(doc(db,'site','about'),{v:$('#ab').value});
+      box.innerHTML=`<h3>সাইটের তথ্য</h3><h4 style="margin-top:6px">পরিচালনা পরিষদ — দায়িত্বশীলদের নাম</h4><p class="muted">নামগুলো পরিচালনা পরিষদ পেজে "দায়িত্বশীল" পদবির সাথে দেখাবে। ঘর ফাঁকা রাখলে সেই কার্ড দেখাবে না।</p>${[...Array(8).keys()].map(i=>`<input data-p="${i}" placeholder="দায়িত্বশীল ${bnum(i+1)}-এর নাম" aria-label="দায়িত্বশীল ${bnum(i+1)}-এর নাম" value="${esc(nm(i))}" style="margin-bottom:8px">`).join('')}<button id="ss">সংরক্ষণ করুন</button><div id="tm"></div>`;
+      $('#ss').onclick=async()=>{try{
         const b=[...Array(8).keys()].map(i=>['দায়িত্বশীল',$(`[data-p="${i}"]`).value.trim()]).filter(x=>x[1]);
         await setDoc(doc(db,'site','board'),{v:b});
-        const o={};box.querySelectorAll('[data-k]').forEach(el=>{const v=el.value.trim();if(v&&v!==TXD[el.dataset.k])o[el.dataset.k]=v});
-        const ov=[...box.querySelectorAll('[data-o]')].map(e=>e.value.trim()).filter(Boolean).join('\n');if(ov&&ov!==TXD.h_obj)o.h_obj=ov;
-        await setDoc(doc(db,'site','texts'),{v:o});TXO=o;
         say($('#tm'),'সংরক্ষিত হয়েছে।',1)}catch(e){say($('#tm'),'সংরক্ষণ হয়নি: '+e.message)}};
     });
   }else if(tTab=='studentapps'){
@@ -1277,26 +1266,25 @@ async function bindTeacher(){
   }
 }
 
-const DEF_ABOUT='PCTB (নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড) রাসুলুল্লাহ ﷺ-এর আদর্শের আলোকে শিক্ষাক্রম প্রণয়ন, পাঠ্যপুস্তক প্রকাশ এবং পরীক্ষার ফলাফল ব্যবস্থাপনার দায়িত্ব পালন করে।';
+/* ===================== সাইটের লেখা — এখান থেকেই সম্পাদনা করুন =====================
+   নতুন লাইন দিতে \n লিখুন। উদ্দেশ্যের তালিকায় প্রতিটি উদ্দেশ্য আলাদা লাইনে, কমা দিয়ে লিখুন।
+   এই লেখাগুলো হোম পেজ ও বোর্ড পরিচিতি পেজ — দুই জায়গাতেই দেখায়। */
+const SITE_TEXT={
+  about:'PCTB (নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড) রাসুলুল্লাহ ﷺ-এর আদর্শের আলোকে শিক্ষাক্রম প্রণয়ন, পাঠ্যপুস্তক প্রকাশ এবং পরীক্ষার ফলাফল ব্যবস্থাপনার দায়িত্ব পালন করে।',
+  goal:'নববী আদর্শের আলোকে একটি সুসংহত, যুগোপযোগী ও মানসম্মত শিক্ষাব্যবস্থা গড়ে তোলা, যেখানে প্রতিটি শিক্ষার্থী জ্ঞান, চরিত্র ও দক্ষতায় সমৃদ্ধ হয়ে উঠবে।',
+  objectives:[
+    'নববী শিক্ষাক্রমের আলোকে সময়োপযোগী পাঠ্যক্রম প্রণয়ন ও হালনাগাদ করা।',
+    'মানসম্মত পাঠ্যপুস্তক প্রকাশ করা ও সহজলভ্য করা।',
+    'আদব, তলিব, লাজিম ও খিদমাহ বিভাগে ধাপে ধাপে শিক্ষার সুষ্ঠু কাঠামো নিশ্চিত করা।',
+    'নৈতিকতা, ইলম ও কর্মদক্ষতার সমন্বয়ে আদর্শ মানুষ গড়ে তোলা।',
+    'পরীক্ষা ও ফলাফল ব্যবস্থাকে স্বচ্ছ ও সহজ করা।'
+  ],
+  method:'বিবরণ শীঘ্রই যুক্ত করা হবে।',
+  policy:'বিবরণ শীঘ্রই যুক্ত করা হবে।'
+};
+const DEF_ABOUT=SITE_TEXT.about;
 async function site(k,def){try{const d=await getDoc(doc(db,'site',k));return d.exists()?d.data().v:def}catch{return def}}
-/* সম্পাদনাযোগ্য লেখা (অ্যাডমিন → সাইট তথ্য) */
-const TX=[
- ['h_goal_x','আমাদের লক্ষ্য','নববী আদর্শের আলোকে একটি সুসংহত, যুগোপযোগী ও মানসম্মত শিক্ষাব্যবস্থা গড়ে তোলা, যেখানে প্রতিটি শিক্ষার্থী জ্ঞান, চরিত্র ও দক্ষতায় সমৃদ্ধ হয়ে উঠবে।',1],
- ['h_obj','উদ্দেশ্য','নববী শিক্ষাক্রমের আলোকে সময়োপযোগী পাঠ্যক্রম প্রণয়ন ও হালনাগাদ করা।\nমানসম্মত পাঠ্যপুস্তক প্রকাশ করা ও সহজলভ্য করা।\nআদব, তলিব, লাজিম ও খিদমাহ বিভাগে ধাপে ধাপে শিক্ষার সুষ্ঠু কাঠামো নিশ্চিত করা।\nনৈতিকতা, ইলম ও কর্মদক্ষতার সমন্বয়ে আদর্শ মানুষ গড়ে তোলা।\nপরীক্ষা ও ফলাফল ব্যবস্থাকে স্বচ্ছ ও সহজ করা।',1],
- ['h_met_x','শিক্ষা পদ্ধতি','বিবরণ শীঘ্রই যুক্ত করা হবে।',1],
- ['h_pol_x','নীতিমালা','বিবরণ শীঘ্রই যুক্ত করা হবে।',1]
-];
-const TXD={};TX.forEach(x=>TXD[x[0]]=x[2]);
-let TXO=null,TXP=null;
-function loadTX(){return TXP||(TXP=site('texts',{}).then(v=>{TXO=v&&typeof v==='object'?v:{}}).catch(()=>{TXO={}}))}
-loadTX();
-const tx=k=>{const v=TXO&&TXO[k];return typeof v==='string'&&v.trim()!==''?v:(TXD[k]??'')};
-const txe=k=>esc(tx(k));
-function refreshTX(){
-  document.querySelectorAll('[data-txh]').forEach(e=>e.innerHTML=txe(e.dataset.txh).replace(/\n/g,'<br>'));
-  document.querySelectorAll('[data-txo]').forEach(e=>e.innerHTML='<h3>আমাদের উদ্দেশ্য</h3>'+objHTML());
-}
-const objHTML=()=>{const L=tx('h_obj').split('\n').map(s=>s.trim()).filter(Boolean),a=L.slice(0,2),b=L.slice(2);return `<ul style="margin:0;padding-left:1.2em">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+(b.length?`<details class="bmore"><summary><span class="mo">আরও ${bnum(b.length)} টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch">${b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:'')};
+const objHTML=()=>{const L=SITE_TEXT.objectives.map(s=>String(s).trim()).filter(Boolean),a=L.slice(0,2),b=L.slice(2);return `<ul style="margin:0;padding-left:1.2em">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+(b.length?`<details class="bmore"><summary><span class="mo">আরও ${bnum(b.length)} টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch">${b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:'')};
 
 const LISTS={book:['books',b=>`${b.title} (${bdiv(b)} বিভাগ)`],notice:['notices',n=>n.title]};
 async function loadList(){
@@ -1717,8 +1705,7 @@ async function route(){
   const p=(location.hash.replace(/^#\/?/,'').split('?')[0])||'';
   const k=pages.some(x=>x[0]==p)?p:'';
   $('#demoB').hidden=!DEMO;$('#nav').innerHTML=cloudMarkup(navHTML(k));$('#mnav').innerHTML=mnavHTML(k);document.querySelector('header').classList.remove('menu-open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));
-  const app=$('#app');app.innerHTML='<p class="muted">লোড হচ্ছে…</p>';loadTX().then(()=>{if(routeToken===routeVersion)setTimeout(refreshTX,0)});
-  try{const content=await (k?V[k]():V.home(routeToken));if(routeToken!==routeVersion)return;app.innerHTML=cloudMarkup(content);document.body.classList.remove('page-loading');hideSplash()}catch(e){if(routeToken!==routeVersion)return;app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;document.body.classList.remove('page-loading');hideSplash();return}
+  const app=$('#app');app.innerHTML='<p class="muted">লোড হচ্ছে…</p>';try{const content=await (k?V[k]():V.home(routeToken));if(routeToken!==routeVersion)return;app.innerHTML=cloudMarkup(content);document.body.classList.remove('page-loading');hideSplash()}catch(e){if(routeToken!==routeVersion)return;app.innerHTML=`<div class="card"><span class="msg bad">ডেটা আনতে সমস্যা হয়েছে: ${esc(e.message)}</span><p class="muted">Firebase কনফিগ ও Firestore রুলস ঠিক আছে কি না দেখুন।</p></div>`;document.body.classList.remove('page-loading');hideSplash();return}
   ({'':bindHome,result:bindResult,student:bindStudent,teacher:bindTeacher,admin:bindAdmin,textbook:bindTextbook,institution:bindInst,institutions:bindInstList,curriculum:bindCurriculum,dashboard:bindDash}[k]||(()=>{}))();if((k=='teacher'||k=='admin')&&user)loadList();
   scrollTo(0,0);{const r=document.getElementById('scr');if(r)r.scrollTop=0}
 }
