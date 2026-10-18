@@ -911,7 +911,7 @@ home(routeToken){
   const first=`<div class="hlw"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div>
   ${head('পরিচিতি','about','বিস্তারিত').replace('class="shd"','class="shd ln"')}<div class="card" id="homeAbout">${esc(DEF_ABOUT).replace(/\n/g,'<br>')}</div>
   <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${esc(SITE_TEXT.goal).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div><div id="homeRest"></div>`;
-  const staticStage=()=>`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${esc(SITE_TEXT.method).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${esc(SITE_TEXT.policy).replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
+  const staticStage=()=>`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p style="margin:0">${esc(SITE_TEXT.method).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p style="margin:0">${esc(SITE_TEXT.policy).replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
   const staticReady=new Promise(resolve=>requestAnimationFrame(()=>{
     const rest=document.getElementById('homeRest');
     if(routeToken!==routeVersion||!rest){resolve(false);return}
@@ -954,7 +954,7 @@ async about(){const t=DEF_ABOUT;
   return pageHead('বোর্ড পরিচিতি','নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড','info')
   +`<div class="card cc abt"><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p>${esc(t).replace(/\n/g,'<br>')}</p></div>`
   +`<hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${esc(SITE_TEXT.goal).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div>`
-  +`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p class="muted" style="margin:0">${esc(SITE_TEXT.method).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p class="muted" style="margin:0">${esc(SITE_TEXT.policy).replace(/\n/g,'<br>')}</p></div></div>`
+  +`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p style="margin:0">${esc(SITE_TEXT.method).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p style="margin:0">${esc(SITE_TEXT.policy).replace(/\n/g,'<br>')}</p></div></div>`
   +`<hr class="dv">`+head('বিভাগ পরিচিতি','')+divCards()},
 async board(){
   const bd=await psite('board',null),rows=Array.isArray(bd)&&bd.length?bd:Array.from({length:6},()=>['দায়িত্বশীল','']);
@@ -1310,17 +1310,13 @@ async function bindTeacher(){
    নতুন লাইন দিতে \n লিখুন। উদ্দেশ্যের তালিকায় প্রতিটি উদ্দেশ্য আলাদা লাইনে, কমা দিয়ে লিখুন।
    এই লেখাগুলো হোম পেজ ও বোর্ড পরিচিতি পেজ — দুই জায়গাতেই দেখায়। */
 const SITE_TEXT={
-  about:'PCTB (নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড) রাসুলুল্লাহ ﷺ-এর আদর্শের আলোকে শিক্ষাক্রম প্রণয়ন, পাঠ্যপুস্তক প্রকাশ এবং পরীক্ষার ফলাফল ব্যবস্থাপনার দায়িত্ব পালন করে।',
-  goal:'নববী আদর্শের আলোকে একটি সুসংহত, যুগোপযোগী ও মানসম্মত শিক্ষাব্যবস্থা গড়ে তোলা, যেখানে প্রতিটি শিক্ষার্থী জ্ঞান, চরিত্র ও দক্ষতায় সমৃদ্ধ হয়ে উঠবে।',
+  about:'পিসিটিবি (PCTB) – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড একটি স্বাধীন ও উন্মুক্ত শিক্ষা বোর্ড। নববী যুগের শিক্ষাপদ্ধতির মূল ধারাকে অক্ষুণ্ণ রেখেই এটি প্রতিষ্ঠিত ও পরিচালিত।\n\nনববী যুগের মতোই এখানে দ্বীনের শিক্ষা গ্রহণ করা হয় বিনিময় ছাড়া, আবার দ্বীনের শিক্ষা ও দাওয়াতও দেওয়া হয় বিনিময় ছাড়া। একই সঙ্গে প্রত্যেকে জীবিকার জন্য আলাদা কর্মজীবন গড়ে নেওয়ার মানসিকতা ও চেষ্টা রাখেন। দ্বীনের শিক্ষা ও দাওয়াতকে উপার্জনের মাধ্যম বানানো আমাদের কাছে তীব্রভাবে অপছন্দনীয়।\n\nআমাদের শিক্ষকদের জীবিকার জন্য রয়েছে স্বতন্ত্র কর্মজীবন; তার পাশাপাশি তাঁরা বিনিময় ছাড়াই দ্বীনের শিক্ষা ও দাওয়াত দিয়ে থাকেন। শিক্ষার্থীদেরও দ্বীন শিক্ষার পাশাপাশি উপযুক্ত কর্মজীবন গড়ে তুলতে প্রশিক্ষণ ও সহযোগিতা দেওয়া হয়, যাতে তারা দ্বীনের শিক্ষা ও দাওয়াতকে জীবিকার উৎস বানিয়ে না নেয়।',
+  goal:'সাহাবায়ে কেরামের মতো একদল মানুষ তৈরি করা, যাঁরা দ্বীনের শিক্ষা, দাওয়াতসহ যাবতীয় কাজ বিনিময় ছাড়া করবেন এবং নিজের জীবিকার জন্য সামর্থ্য অনুযায়ী কর্মজীবন পরিচালনা করবেন।',
   objectives:[
-    'নববী শিক্ষাক্রমের আলোকে সময়োপযোগী পাঠ্যক্রম প্রণয়ন ও হালনাগাদ করা।',
-    'মানসম্মত পাঠ্যপুস্তক প্রকাশ করা ও সহজলভ্য করা।',
-    'আদব, তলিব, লাজিম ও খিদমাহ বিভাগে ধাপে ধাপে শিক্ষার সুষ্ঠু কাঠামো নিশ্চিত করা।',
-    'নৈতিকতা, ইলম ও কর্মদক্ষতার সমন্বয়ে আদর্শ মানুষ গড়ে তোলা।',
-    'পরীক্ষা ও ফলাফল ব্যবস্থাকে স্বচ্ছ ও সহজ করা।'
+    'বিনিময় ছাড়া দ্বীনের শিক্ষা আদান-প্রদান করা এবং জীবিকার জন্য নিজ সামর্থ্য ও যোগ্যতায় কর্মজীবন পরিচালনা করার মানসিকতাসম্পন্ন একটি প্রজন্ম তৈরি করা।',
   ],
-  method:'বিবরণ শীঘ্রই যুক্ত করা হবে।',
-  policy:'বিবরণ শীঘ্রই যুক্ত করা হবে।'
+  method:'আমাদের শিক্ষকগণ অবশ্যই নিজ নিজ কর্মজীবনে স্বাবলম্বী থাকবেন এবং বিনিময় ছাড়া শিক্ষা প্রদান করবেন। আমাদের শিক্ষার্থীরাও কর্মজীবনে স্বাবলম্বী হয়ে ভবিষ্যতে বিনিময় ছাড়া দ্বীনের শিক্ষা ও দাওয়াতের কাজ করবে।',
+  policy:'আমাদের সকল কাজ হবে শুধুমাত্র আল্লাহ তাআলার জন্য এবং তাঁরই কাছে প্রতিদান পাওয়ার আশায়। দ্বীনের শিক্ষা ও দাওয়াতের মাধ্যমে আমরা দুনিয়াবি কোনো বিনিময় চাই না, যেমন সাহাবায়ে কেরামও চাননি।'
 };
 const DEF_ABOUT=SITE_TEXT.about;
 async function site(k,def){try{const d=await getDoc(doc(db,'site',k));return d.exists()?d.data().v:def}catch{return def}}
