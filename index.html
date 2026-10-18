@@ -409,6 +409,14 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 .emp{text-align:center;padding:30px 20px}.emp b{display:block;margin-bottom:2px}
 .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.rgrid .card{margin:0}
 .lookup{max-width:560px;margin-left:auto;margin-right:auto}.rgrid .lookup{margin:0 auto;width:100%}.lookup h3{text-align:center;margin-bottom:14px}.lookup button{width:100%;margin-top:12px}
+.lookup .row{grid-template-columns:1.5fr 1fr;gap:12px;align-items:end}
+.lookup .row label{white-space:nowrap;margin-bottom:4px}
+.lookup input[inputmode=numeric]{min-height:48px;font-size:1.05rem;font-weight:600;letter-spacing:.1em;color:var(--g);background:#fff;border:1.5px solid #c5d9cb;border-radius:12px;box-shadow:inset 0 1px 2px rgba(13,74,58,.06)}
+.lookup input[inputmode=numeric]::placeholder{font-weight:400;letter-spacing:.06em;color:#9bb0a5}
+.lookup input[inputmode=numeric]:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(13,74,58,.14)}
+.lookup select{min-height:48px;border:1.5px solid #c5d9cb;border-radius:12px}
+.mgate{margin-top:12px}.mgate label{display:block}.mgate .mq{color:var(--g);font-size:1.1rem;letter-spacing:.04em}.mgate .mrow{display:flex;gap:8px;align-items:center}.mgate .mrow input{flex:1;margin:0;min-width:0}.lookup .mgate .mr{width:44px;min-width:44px;margin:0;padding:0;background:#fff;color:var(--g);border:1px solid var(--line);box-shadow:none;font-size:1.2rem}
+.lookup{padding:24px 20px 30px!important;margin-bottom:30px}.rgrid{margin-bottom:30px}#rout,#srout{margin-bottom:20px}
 .lookup{background:linear-gradient(180deg,#fff 0%,#f4f9f6 100%);border:1px solid var(--line);border-top:4px solid var(--g);border-radius:14px;box-shadow:0 6px 18px rgba(13,74,58,.08);padding:22px 20px}
 .lookup h3{color:var(--g)}.lookup h3::after{content:"";display:block;width:46px;height:3px;border-radius:3px;background:var(--gold);margin:8px auto 0}
 .lookup label{font-weight:600;color:var(--g2);font-size:.92rem}
@@ -1023,10 +1031,10 @@ async institutions(){
   return pageHead('নিবন্ধিত প্রতিষ্ঠান তালিকা','বোর্ডভুক্ত প্রতিষ্ঠানের তালিকা','school')
   +(r.err?errBox(r.err):l.length?`<div class="tbar"><div class="muted" id="icnt">মোট ${bnum(l.length)} টি প্রতিষ্ঠান</div><div class="srch"><span>${ic('search')}</span><input id="iq" placeholder="নাম, দেশ বা ঠিকানা দিয়ে খুঁজুন…" aria-label="প্রতিষ্ঠান খুঁজুন"></div></div><div class="grid" id="ilist">${l.map(i=>`<div class="card cc ins" data-s="${esc((i.name+' '+(i.address||'')+' '+(i.code||'')+' '+(i.country||'')+' '+(i.area||'')+' '+(i.divisions||[]).join(' ')+' '+(i.division||'')+' '+(i.language||'')).toLowerCase())}"><span class="bvn">${ic('school')}</span><h3>${esc(i.name)}</h3>${i.address?`<div class="muted adr">${ic('pin')}<span>${esc(i.address)}</span></div>`:''}${i.country?`<span class="pill">${esc(WORLD_AREAS.find(a=>a[0]===i.area)?.[1]||i.area)} · ${esc(i.country)}</span>`:''}${(i.divisions||[]).length?`<span class="pill">${esc(i.divisions.join(', '))} বিভাগ</span>`:i.division?`<span class="pill">${esc(i.division)} বিভাগ</span>`:''}${i.language?`<div class="muted">স্থানীয় ভাষা: ${esc(i.language)}</div>`:''}${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div><div class="card cc emp" id="inone" hidden>কোনো প্রতিষ্ঠান পাওয়া যায়নি।</div>`:emptyBox('school','এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।','প্রতিষ্ঠান যুক্ত হলে এখানে তালিকা দেখা যাবে।'))},
 result:()=>pageHead('ফলাফল','রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন','result')
-  +`<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup"><h3>ফলাফল অনুসন্ধান</h3><label for="rd">বিভাগ</label><select id="rd"><option value="">সব বিভাগ</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><div class="row"><div><label for="rr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"></div><div><label for="rl">রোল নম্বর</label><input id="rl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><button id="rb">ফলাফল দেখুন</button></div></div>`
+  +`<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup"><h3>ফলাফল অনুসন্ধান</h3><label for="rd">বিভাগ</label><select id="rd"><option value="">সব বিভাগ</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><div class="row"><div><label for="rr">রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="2331001"></div><div><label for="rl">রোল নম্বর</label><input id="rl" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="111"></div></div><div id="rmath"></div><button id="rb">ফলাফল দেখুন</button></div></div>`
   +`<div id="rout"></div>`,
 student:()=>pageHead('শিক্ষার্থী ফলাফল','শিক্ষার্থীরা এখানে শুধু ফলাফল দেখতে ও ডাউনলোড করতে পারবে','student')
-  +`<div class="card cc lookup" style="max-width:620px"><h3>ফলাফল দেখুন</h3><label for="sr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><button id="svb">ফলাফল দেখুন</button></div><div id="srout"></div>`,
+  +`<div class="card cc lookup" style="max-width:620px"><h3>ফলাফল দেখুন</h3><label for="sr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><div id="smath"></div><button id="svb">ফলাফল দেখুন</button></div><div id="srout"></div>`,
 async sorry(){const q=new URLSearchParams(location.hash.split('?')[1]||'').get('b');return `<div class="card" style="text-align:center;padding:40px 20px"><div style="color:var(--gold)"><svg class="ic" style="width:54px;height:54px" viewBox="0 0 24 24" aria-hidden="true">${ICONS.book}</svg></div><h2 style="margin:10px 0 6px">দুঃখিত!</h2><p>${q?'“'+esc(q)+'” বইটি':'এই বইটি'} এখনো যুক্ত করা হয়নি। অনুগ্রহ করে কিছুদিন পরে আবার চেষ্টা করুন।</p><p><a href="#/">← হোমে ফিরে যান</a></p></div>`},
 admin(){
   if(!user)return `${pageHead('অ্যাডমিন প্যানেল','','shield')}<div class="card" style="max-width:420px"><p class="muted">অ্যাডমিন অ্যাকাউন্ট দিয়ে লগইন করুন।</p><button id="gl" class="alt" style="width:100%;margin:0">Google দিয়ে লগইন</button><p class="muted" style="text-align:center;margin:8px 0 0">অথবা ইমেইল দিয়ে</p><label for="em">ইমেইল</label><input id="em" type="email" autocomplete="username"><label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password"><button id="lg">লগইন</button><div id="lm"></div></div>`;
@@ -1039,14 +1047,35 @@ teacher(){return `${pageHead('শিক্ষক নিবন্ধন আবে
 };
 
 /* ---------- ইভেন্ট বাইন্ডিং ---------- */
-function bindHome(){const hb=$('#hb'),hr=$('#hr'),hd=$('#hd');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'');hb.onclick=go;hr.onkeydown=e=>e.key=='Enter'&&go()}
+function bindHome(){const hb=$('#hb'),hr=$('#hr'),hd=$('#hd');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'');hb.onclick=go;hr.onkeydown=e=>{if(e.key==='Enter')go()}}
   const cb=document.querySelectorAll('#cchips button');cb.forEach(b=>b.onclick=()=>{cb.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.cvw').forEach(w=>w.hidden=w.dataset.d!=b.dataset.d)})}
+// ফলাফল দেখার আগে যোগ-বিয়োগের ধাঁধা (স্প্যাম/স্বয়ংক্রিয় অনুসন্ধান কমাতে)
+function mountMathGate(slot){
+  let p;
+  const make=()=>{
+    const op=Math.random()<.5?'+':'−';let a=3+Math.floor(Math.random()*17),b=1+Math.floor(Math.random()*9);
+    if(op==='−'&&b>a)[a,b]=[b,a];
+    p={a,b,op,ans:op==='+'?a+b:a-b};
+    slot.querySelector('.mq').textContent=`${bnum(a)} ${op} ${bnum(b)}`;
+    slot.querySelector('.ma').value='';
+  };
+  slot.classList.add('mgate');
+  slot.innerHTML='<label>নিরাপত্তা যাচাই: <b class="mq"></b> = ?</label><div class="mrow"><input class="ma" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন" aria-label="যোগ-বিয়োগের উত্তর"><button type="button" class="alt mr" aria-label="নতুন প্রশ্ন" title="নতুন প্রশ্ন">↻</button></div>';
+  slot.querySelector('.mr').onclick=make;
+  make();
+  return {
+    input:slot.querySelector('.ma'),
+    verify(){const ok=norm(slot.querySelector('.ma').value)===String(p.ans);make();return ok},
+    focus(){slot.querySelector('.ma').focus()}
+  };
+}
+function mathFail(out){out.innerHTML='<div class="card"><span class="msg bad">যোগ-বিয়োগের উত্তর ঠিক হয়নি। নতুন প্রশ্নের উত্তর দিয়ে আবার চেষ্টা করুন।</span></div>'}
 function bindResult(){
   const [q0,d0]=(location.hash.split('?')[1]||'').split('&d='),q=decodeURIComponent(q0||''),dv=d0?decodeURIComponent(d0):'',i=$('#rr'),o=$('#rout'),rd=$('#rd');
-  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value);$('#rb').onclick=()=>go();i.onkeydown=e=>e.key=='Enter'&&go();rl.onkeydown=e=>e.key=='Enter'&&go();
-  if(q){i.value=q;if(dv)rd.value=dv;go(dv)}
+  const rl=$('#rl'),gate=mountMathGate($('#rmath')),go=d=>{if(!gate.verify())return mathFail(o);showResults(i.value,o,d===undefined?rd.value:d,rl.value)};$('#rb').onclick=()=>go();i.onkeydown=e=>{if(e.key==='Enter')go()};rl.onkeydown=e=>{if(e.key==='Enter')go()};gate.input.onkeydown=e=>{if(e.key==='Enter')go()};
+  if(q){i.value=q;if(dv)rd.value=dv;o.innerHTML='<p class="muted" style="text-align:center">ফলাফল দেখতে যোগ-বিয়োগের উত্তর দিয়ে "ফলাফল দেখুন" চাপুন।</p>';gate.focus()}
 }
-function bindStudent(){const go=()=>showResults($('#sr').value,$('#srout'));$('#svb').onclick=go;$('#sr').onkeydown=e=>e.key==='Enter'&&go()}
+function bindStudent(){const o=$('#srout'),gate=mountMathGate($('#smath')),go=()=>{if(!gate.verify())return mathFail(o);showResults($('#sr').value,o)};$('#svb').onclick=go;$('#sr').onkeydown=e=>{if(e.key==='Enter')go()};gate.input.onkeydown=e=>{if(e.key==='Enter')go()}}
 function renderResultEntryForm(box,institution=null){
   box.innerHTML=`<h3>ফলাফল তৈরি</h3><div class="row"><div><label for="rg">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rg" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="2331001"></div><div><label for="ex">পরীক্ষার নাম</label><select id="ex"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option><option>সাপ্তাহিক মূল্যায়ন</option><option>মাসিক মূল্যায়ন</option><option>অর্ধবার্ষিক মূল্যায়ন</option><option>বার্ষিক মূল্যায়ন</option><option>পর্ব উন্নয়ন</option><option>বিভাগ উন্নয়ন</option></select></div></div>
   <div class="row"><div><label for="studentName">শিক্ষার্থীর নাম</label><input id="studentName" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div><label for="studentFather">পিতার নাম</label><input id="studentFather" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div></div><div><label for="studentDivision">বিভাগ</label><input id="studentDivision" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div id="sn2" class="muted" aria-live="polite">রেজিস্ট্রেশন নম্বর লিখে যাচাই করুন।</div>
