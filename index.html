@@ -448,7 +448,7 @@ table.rtable td input{width:110px;min-width:0!important;text-align:right}
 #splash{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;background:radial-gradient(ellipse at 50% 38%,#fbfdf9 0%,#e7f3ea 55%,#d2e8d9 100%);transition:opacity .45s ease,visibility .45s ease}
 #splash.out{opacity:0;visibility:hidden;pointer-events:none}
 #splash::before{content:"";position:absolute;inset:14px;border:1px solid rgba(184,146,58,.55);border-radius:6px;pointer-events:none}
-#splash img{width:min(62vw,270px);height:auto;max-height:40vh;object-fit:contain;animation:splashPulse 1.8s ease-in-out infinite}
+#splash img{width:min(62vw,270px);height:auto;max-height:40vh;object-fit:contain;background:transparent;mix-blend-mode:multiply;animation:splashPulse 1.8s ease-in-out infinite}
 #splash .sp-name{font:600 1rem/1.5 'Noto Serif Bengali',serif;color:#0d4a3a;margin:0}
 #splash .sp-bar{width:min(52vw,180px);height:3px;border-radius:3px;background:rgba(13,74,58,.14);overflow:hidden}
 #splash .sp-bar::after{content:"";display:block;width:40%;height:100%;border-radius:3px;background:linear-gradient(90deg,#0d4a3a,#b8923a);animation:splashBar 1.15s ease-in-out infinite}
