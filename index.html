@@ -14,16 +14,33 @@
 @keyframes splashPulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.035);opacity:1}}
 @keyframes splashBar{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
 @media(prefers-reduced-motion:reduce){#splash img,#splash .sp-bar::after{animation:none}#splash{transition:none}}
-.appbtn{display:inline-flex;align-items:center;gap:12px;margin:14px auto 0;padding:9px 20px 9px 10px;border:0;border-radius:16px;background:linear-gradient(135deg,#c9a24a,#e3c778 55%,#c9a24a);color:#06241b;text-align:left;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .18s ease,box-shadow .18s ease;font-family:inherit}
-.appbtn[hidden]{display:none}
-.appbtn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.5)}
-.appbtn:active{transform:translateY(0)}
-.appbtn:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.appbtn .ab-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#0b3a2d;color:#e3c778;flex-shrink:0}
-.appbtn .ab-ic svg{width:26px;height:26px}
-.appbtn .ab-tx{display:flex;flex-direction:column;line-height:1.25}
-.appbtn .ab-tx small{font-size:.72rem;font-weight:500;opacity:.8;letter-spacing:.02em}
-.appbtn .ab-tx b{font-size:1.02rem;font-weight:700;color:#06241b;letter-spacing:.01em}
+.appbtn{display:inline-flex;align-items:center;gap:7px;margin:12px 0 0;padding:4px 0;border:0;background:none;box-shadow:none;color:#eaf3ee;font:inherit;font-size:.9rem;font-weight:600;line-height:1.3;cursor:pointer;transition:opacity .15s}
+.appbtn:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.appbtn:focus-visible{outline:2px solid rgba(207,227,216,.6);outline-offset:3px;border-radius:4px}
+.appbtn .ab-ic{display:inline-flex;flex-shrink:0}
+.appbtn .ab-ic svg{width:20px;height:20px}
+.appbtn .ab-tx b{font-weight:inherit;color:inherit}
+/* ফলাফল অনুসন্ধান ফর্ম: মিনিমাল ও প্রিমিয়াম */
+.card.rlk{background:#fff;border:1px solid #e1ebe5;border-top:4px solid var(--gold);border-radius:18px;box-shadow:0 1px 2px rgba(13,74,58,.04),0 14px 36px rgba(13,74,58,.08);padding:26px 22px 22px;max-width:560px}
+.card.rlk h3{position:relative;margin:0 0 20px;padding-bottom:14px;text-align:center;color:var(--g);font-family:'Noto Sans Bengali','Noto Serif Bengali',serif;font-size:1.2rem;letter-spacing:.01em}
+.card.rlk h3::after{content:"";position:absolute;left:50%;bottom:0;width:34px;height:2px;border-radius:2px;background:var(--gold);transform:translateX(-50%)}
+.card.rlk label{margin:14px 0 6px;font-size:.95rem;font-weight:700;color:#17412f;letter-spacing:0}
+.card.rlk label b{color:var(--g);font-weight:700;letter-spacing:.02em}
+.card.rlk input,.card.rlk select{height:40px;padding:0 12px;font-size:.92rem;border:1px solid #d6e2db;border-radius:10px;background:#fafcfb;color:var(--ink);transition:border-color .15s,box-shadow .15s,background .15s}
+.card.rlk input::placeholder{color:#a9b8b0}
+.card.rlk select:has(option[value=""]:checked){color:#8a9a91}
+.card.rlk select option{color:var(--ink)}
+.card.rlk input:hover,.card.rlk select:hover{border-color:#b9cdc2}
+.card.rlk input:focus,.card.rlk select:focus{outline:0;background:#fff;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,146,58,.16)}
+.card.rlk .row{grid-template-columns:1fr 1fr;gap:10px;align-items:end}
+.card.rlk .row label{margin-top:14px}
+.card.rlk .row.rsel{grid-template-columns:1fr 1fr}
+.card.rlk .row>div{min-width:0}
+.card.rlk button{height:48px;margin-top:20px;padding:0 18px;border:0;border-radius:12px;background:linear-gradient(135deg,#0d4a3a,#145c49);color:#fff;font-weight:600;font-size:.98rem;letter-spacing:.02em;box-shadow:0 8px 18px rgba(13,74,58,.22);transition:transform .15s,box-shadow .15s}
+.card.rlk button:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(13,74,58,.28)}
+.card.rlk button:active{transform:translateY(0);box-shadow:0 4px 10px rgba(13,74,58,.2)}
+.card.rlk .msg{display:block;margin-top:10px;font-size:.86rem}
+@media(max-width:520px){.card.rlk{padding:22px 16px 18px;border-radius:16px}.card.rlk .row{gap:8px}.card.rlk .row label{font-size:.88rem}}
 #apphelp{position:fixed;inset:0;z-index:9500;display:grid;place-items:center;padding:20px;background:rgba(6,36,27,.62);animation:ahIn .2s ease both}
 #apphelp .ah-card{max-width:360px;width:100%;background:#fff;color:#17261f;border-radius:18px;padding:22px 20px 18px;box-shadow:0 16px 48px rgba(0,0,0,.35);text-align:left}
 #apphelp h3{margin:0 0 8px;color:#0d4a3a;font-size:1.1rem}
@@ -532,7 +549,7 @@ function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|se
 <div class="fbrand">
 <div class="flogo"><span class="fbox"><img class="fseal" src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_192,c_limit/seal" data-f="seal" data-i="1" onerror="pick(this)" alt=""></span><div><b>PCTB</b><small>নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</small></div></div>
 <p>নববী আদর্শে গড়া শিক্ষাক্রম ও পাঠ্যপুস্তকের নির্ভরযোগ্য ঠিকানা।</p>
-<button type="button" class="appbtn" id="appInstall" hidden aria-label="অ্যাপ ইনস্টল করুন">
+<button type="button" class="appbtn" id="appInstall" aria-label="অ্যাপ ইনস্টল করুন">
 <span class="ab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="2.5" width="13" height="19" rx="2.6"/><path d="M12 7v6.4M9.1 10.8l2.9 2.9 2.9-2.9"/><path d="M10.2 18h3.6"/></svg></span>
 <span class="ab-tx"><b>অ্যাপ ইনস্টল করুন</b></span>
 </button>
@@ -611,6 +628,8 @@ const BOARD=[['চেয়ারম্যান','নাম এখানে ল
 const SUBJ=[['দ্বীন শিক্ষা',['ইমান শিক্ষা','কুরআন শিক্ষা','সীরাত শিক্ষা','হাদিস শিক্ষা','ব্যবহারিক ইসলাম শিক্ষা','সাহাবিদের জীবনি','ইতিহাস শিক্ষা','উম্মাহর রাহবা','আদব ও আখলাখ']],['কর্ম ও জীবিকা শিক্ষা',['বাংলা শিক্ষা','গনিত শিক্ষা','ইংরেজি শিক্ষা','ব্যাবহারিক বিজ্ঞান','বিশ্ব-পরিচয়','কর্ম-জীবিকা শিক্ষা','ব্যবসা ও উদ্যোগ শিক্ষা','প্রাথমিক-দক্ষতা','আত্ম-উন্নয়ন']]];
 const PARTS=[['w','লিখিত',30],['p','ব্যবহারিক',30],['o','মৌখিক',20],['a','আদব',20]];
 const DIVS=[['আদব'],['তলিব'],['লাজিম'],['খিদমাহ']];
+const EXAMS=[['সাপ্তাহিক মূল্যায়ন','সাপ্তাহিক'],['মাসিক মূল্যায়ন','মাসিক'],['অর্ধবার্ষিক মূল্যায়ন','অর্ধবার্ষিক'],['বার্ষিক মূল্যায়ন','বার্ষিক'],['বিভাগ উন্নয়ন','বিভাগ উন্নয়ন']];
+const examSel=id=>`<select id="${id}"><option value="">পরীক্ষা নির্বাচন</option>${EXAMS.map(e=>`<option value="${e[0]}">${e[1]}</option>`).join('')}</select>`;
 const DIV_CODES={আদব:'233',তলিব:'333',লাজিম:'433',খিদমাহ:'533'};
 const WORLD_AREAS=[
   ['Asia','এশিয়া','AF:Afghanistan|AM:Armenia|AZ:Azerbaijan|BH:Bahrain|BD:Bangladesh|BT:Bhutan|BN:Brunei|KH:Cambodia|CN:China|CY:Cyprus|GE:Georgia|IN:India|ID:Indonesia|IR:Iran|IQ:Iraq|IL:Israel|JP:Japan|JO:Jordan|KZ:Kazakhstan|KW:Kuwait|KG:Kyrgyzstan|LA:Laos|LB:Lebanon|MY:Malaysia|MV:Maldives|MN:Mongolia|MM:Myanmar|NP:Nepal|KP:North Korea|OM:Oman|PK:Pakistan|PS:Palestine|PH:Philippines|QA:Qatar|SA:Saudi Arabia|SG:Singapore|KR:South Korea|LK:Sri Lanka|SY:Syria|TW:Taiwan|TJ:Tajikistan|TH:Thailand|TL:Timor-Leste|TR:Türkiye|TM:Turkmenistan|AE:United Arab Emirates|UZ:Uzbekistan|VN:Vietnam|YE:Yemen'],
@@ -871,15 +890,16 @@ function downloadResult(result){
   const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'})),link=document.createElement('a');
   link.href=url;link.download=`PCTB-result-${result.reg||'result'}-${String(result.exam||'').replace(/[^\w-]/g,'_')}.html`;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-async function showResults(reg,out,dv,roll){
+async function showResults(reg,out,dv,roll,exam){
   reg=norm(reg);roll=norm(roll||'');
   if(!reg){out.innerHTML='';return}
   out.innerHTML='<p class="muted">খোঁজা হচ্ছে…</p>';
   try{
     let rs=(await getDocs(query(collection(db,'results'),where('reg','==',reg)))).docs.map(d=>d.data()).sort((a,b)=>b.t-a.t).filter(r=>!r.draft);
     if(dv)rs=rs.filter(r=>r.div==dv);
+    if(exam)rs=rs.filter(r=>r.exam==exam);
     if(roll)rs=rs.filter(r=>rollMatches(r,roll));
-    if(!rs.length){out.innerHTML=`<div class="card"><span class="msg bad">${roll?'এই রেজিস্ট্রেশন ও রোল নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বর দুটি আবার দেখুন।':dv?`এই রেজিস্ট্রেশন নম্বরে ${esc(dv)} বিভাগের কোনো ফলাফল পাওয়া যায়নি।`:'এই রেজিস্ট্রেশন নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বরটি আবার দেখুন।'}</span></div>`;return}
+    if(!rs.length){out.innerHTML=`<div class="card"><span class="msg bad">${roll?'এই রেজিস্ট্রেশন ও রোল নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বর দুটি আবার দেখুন।':exam?`এই রেজিস্ট্রেশন নম্বরে ${esc(exam)}-এর কোনো ফলাফল পাওয়া যায়নি।`:dv?`এই রেজিস্ট্রেশন নম্বরে ${esc(dv)} বিভাগের কোনো ফলাফল পাওয়া যায়নি।`:'এই রেজিস্ট্রেশন নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বরটি আবার দেখুন।'}</span></div>`;return}
     out.innerHTML=rs.map(card).join('');
     out.querySelectorAll('.result-print').forEach(button=>button.onclick=()=>{
       const resultCard=button.closest('.card');resultCard.classList.add('print-target');
@@ -951,7 +971,7 @@ home(routeToken){
     const stages=[
       ()=>`<hr class="dv">${head('শিক্ষাক্রম (কারিকুলাম)','')}<div class="chips" id="cchips" style="margin-bottom:4px">${DIVS.map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div>${DIVS.map((d,i)=>`<div class="cvw" data-d="${d[0]}"${i?' hidden':''}>${curBody(d[0])}</div>`).join('')}`,
       ()=>`<hr class="dv">${head('পাঠ্যপুস্তক','textbook')}${bkTabs('hchips')}`,
-      ()=>`<hr class="dv"><section class="hero" style="margin-top:30px"><div><h2>পরীক্ষার ফলাফল</h2><p>রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন।</p></div><div class="box"><h3>ফলাফল দেখুন</h3><label for="hd">বিভাগ</label><select id="hd" required><option value="" selected disabled hidden>বিভাগ নির্বাচন করুন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="hr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"><button id="hb">ফলাফল দেখুন</button></div></section><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
+      ()=>`<hr class="dv">${head('পরীক্ষার ফলাফল','result')}<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="hd">বিভাগ</label><select id="hd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="hex">পরীক্ষা</label>${examSel('hex')}</div></div><div class="row"><div><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"></div><div><label for="hrl">রোল নম্বর</label><input id="hrl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="hcap">নিরাপত্তা যাচাই: <b id="hcapq"></b></label><input id="hcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="hcapmsg" aria-live="polite"></div><button id="hb">ফলাফল দেখুন</button></div></div><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
     ];
     const appendStage=i=>{
       if(i>=stages.length||routeToken!==routeVersion||!rest.isConnected)return;
@@ -1046,10 +1066,10 @@ async institutions(){
   return pageHead('নিবন্ধিত প্রতিষ্ঠান তালিকা','বোর্ডভুক্ত প্রতিষ্ঠানের তালিকা','school')
   +(r.err?errBox(r.err):l.length?`<div class="tbar"><div class="muted" id="icnt">মোট ${bnum(l.length)} টি প্রতিষ্ঠান</div><div class="srch"><span>${ic('search')}</span><input id="iq" placeholder="নাম, দেশ বা ঠিকানা দিয়ে খুঁজুন…" aria-label="প্রতিষ্ঠান খুঁজুন"></div></div><div class="grid" id="ilist">${l.map(i=>`<div class="card cc ins" data-s="${esc((i.name+' '+(i.address||'')+' '+(i.code||'')+' '+(i.country||'')+' '+(i.area||'')+' '+(i.divisions||[]).join(' ')+' '+(i.division||'')+' '+(i.language||'')).toLowerCase())}"><span class="bvn">${ic('school')}</span><h3>${esc(i.name)}</h3>${i.address?`<div class="muted adr">${ic('pin')}<span>${esc(i.address)}</span></div>`:''}${i.country?`<span class="pill">${esc(WORLD_AREAS.find(a=>a[0]===i.area)?.[1]||i.area)} · ${esc(i.country)}</span>`:''}${(i.divisions||[]).length?`<span class="pill">${esc(i.divisions.join(', '))} বিভাগ</span>`:i.division?`<span class="pill">${esc(i.division)} বিভাগ</span>`:''}${i.language?`<div class="muted">স্থানীয় ভাষা: ${esc(i.language)}</div>`:''}${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div><div class="card cc emp" id="inone" hidden>কোনো প্রতিষ্ঠান পাওয়া যায়নি।</div>`:emptyBox('school','এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।','প্রতিষ্ঠান যুক্ত হলে এখানে তালিকা দেখা যাবে।'))},
 result:()=>pageHead('ফলাফল','রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন','result')
-  +`<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup"><h3>ফলাফল অনুসন্ধান</h3><label for="rd">বিভাগ</label><select id="rd"><option value="">সব বিভাগ</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><div class="row"><div><label for="rr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"></div><div><label for="rl">রোল নম্বর</label><input id="rl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><button id="rb">ফলাফল দেখুন</button></div></div>`
+  +`<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="rd">বিভাগ</label><select id="rd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="rex">পরীক্ষা</label>${examSel('rex')}</div></div><div class="row"><div><label for="rr">রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"></div><div><label for="rl">রোল নম্বর</label><input id="rl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="rcap">নিরাপত্তা যাচাই: <b id="rcapq"></b></label><input id="rcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="rcapmsg" aria-live="polite"></div><button id="rb">ফলাফল দেখুন</button></div></div>`
   +`<div id="rout"></div>`,
 student:()=>pageHead('শিক্ষার্থী ফলাফল','শিক্ষার্থীরা এখানে শুধু ফলাফল দেখতে ও ডাউনলোড করতে পারবে','student')
-  +`<div class="card cc lookup" style="max-width:620px"><h3>ফলাফল দেখুন</h3><label for="sr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><button id="svb">ফলাফল দেখুন</button></div><div id="srout"></div>`,
+  +`<div class="card cc lookup rlk" style="max-width:620px"><h3>ফলাফল দেখুন</h3><label for="sr">রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><label for="sex">পরীক্ষা</label>${examSel('sex')}<label for="scap">নিরাপত্তা যাচাই: <b id="scapq"></b></label><input id="scap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="scapmsg" aria-live="polite"></div><button id="svb">ফলাফল দেখুন</button></div><div id="srout"></div>`,
 async sorry(){const q=new URLSearchParams(location.hash.split('?')[1]||'').get('b');return `<div class="card" style="text-align:center;padding:40px 20px"><div style="color:var(--gold)"><svg class="ic" style="width:54px;height:54px" viewBox="0 0 24 24" aria-hidden="true">${ICONS.book}</svg></div><h2 style="margin:10px 0 6px">দুঃখিত!</h2><p>${q?'“'+esc(q)+'” বইটি':'এই বইটি'} এখনো যুক্ত করা হয়নি। অনুগ্রহ করে কিছুদিন পরে আবার চেষ্টা করুন।</p><p><a href="#/">← হোমে ফিরে যান</a></p></div>`},
 admin(){
   if(!user)return `${pageHead('অ্যাডমিন প্যানেল','','shield')}<div class="card" style="max-width:420px"><p class="muted">অ্যাডমিন অ্যাকাউন্ট দিয়ে লগইন করুন।</p><button id="gl" class="alt" style="width:100%;margin:0">Google দিয়ে লগইন</button><p class="muted" style="text-align:center;margin:8px 0 0">অথবা ইমেইল দিয়ে</p><label for="em">ইমেইল</label><input id="em" type="email" autocomplete="username"><label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password"><button id="lg">লগইন</button><div id="lm"></div></div>`;
@@ -1062,15 +1082,17 @@ teacher(){return `${pageHead('শিক্ষক নিবন্ধন আবে
 };
 
 /* ---------- ইভেন্ট বাইন্ডিং ---------- */
-function bindHome(){const hb=$('#hb'),hr=$('#hr'),hd=$('#hd');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'');hb.onclick=go;hr.onkeydown=e=>e.key=='Enter'&&go()}
+function bindHome(){const hb=$('#hb'),hr=$('#hr'),hd=$('#hd'),hrl=$('#hrl');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'')+(hrl&&hrl.value.trim()?'&r='+encodeURIComponent(hrl.value.trim()):'')+($('#hex')&&$('#hex').value?'&e='+encodeURIComponent($('#hex').value):'');{const c=$('#hcap');if(c&&!c.dataset.ans)capNew('hcap')}const tryGo=()=>{if(capOk('hcap'))go()};hb.onclick=tryGo;hr.onkeydown=e=>e.key=='Enter'&&tryGo();if(hrl)hrl.onkeydown=e=>e.key=='Enter'&&tryGo();const hcp=$('#hcap');if(hcp)hcp.onkeydown=e=>e.key=='Enter'&&tryGo()}
   const cb=document.querySelectorAll('#cchips button');cb.forEach(b=>b.onclick=()=>{cb.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.cvw').forEach(w=>w.hidden=w.dataset.d!=b.dataset.d)});
   const hc=document.querySelectorAll('#hchips button');hc.forEach(b=>b.onclick=()=>{hc.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('#hchipsb .dvs').forEach(w=>w.hidden=w.dataset.div!=b.dataset.d)})}
+function capNew(id){const a=2+Math.floor(Math.random()*8),b=1+Math.floor(Math.random()*8),sub=Math.random()<.5&&a>b,e=document.getElementById(id),q=document.getElementById(id+'q');if(!e||!q)return;e.dataset.ans=String(sub?a-b:a+b);e.value='';q.textContent=bnum(a)+(sub?' − ':' + ')+bnum(b)+' = ?'}
+function capOk(id){const e=document.getElementById(id),m=document.getElementById(id+'msg');if(!e)return true;if(norm(e.value)===e.dataset.ans){m.className='';m.textContent='';return true}say(m,e.value.trim()?'উত্তর সঠিক হয়নি। নতুন প্রশ্নের উত্তর দিন।':'নিরাপত্তা যাচাইয়ের উত্তর লিখুন।');capNew(id);return false}
 function bindResult(){
-  const [q0,d0]=(location.hash.split('?')[1]||'').split('&d='),q=decodeURIComponent(q0||''),dv=d0?decodeURIComponent(d0):'',i=$('#rr'),o=$('#rout'),rd=$('#rd');
-  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value);$('#rb').onclick=()=>go();i.onkeydown=e=>e.key=='Enter'&&go();rl.onkeydown=e=>e.key=='Enter'&&go();
-  if(q){i.value=q;if(dv)rd.value=dv;go(dv)}
+  const [qr,e0]=(location.hash.split('?')[1]||'').split('&e='),[qd,r0]=qr.split('&r='),[q0,d0]=qd.split('&d='),q=decodeURIComponent(q0||''),dv=d0?decodeURIComponent(d0):'',rv=r0?decodeURIComponent(r0):'',ev=e0?decodeURIComponent(e0):'',i=$('#rr'),o=$('#rout'),rd=$('#rd');
+  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value,$('#rex').value);capNew('rcap');const tryGo=()=>{if(capOk('rcap')){go();capNew('rcap')}};$('#rb').onclick=tryGo;i.onkeydown=e=>e.key=='Enter'&&tryGo();rl.onkeydown=e=>e.key=='Enter'&&tryGo();$('#rcap').onkeydown=e=>e.key=='Enter'&&tryGo();
+  if(q){i.value=q;if(dv)rd.value=dv;if(rv)rl.value=rv;if(ev)$('#rex').value=ev;go(dv)}
 }
-function bindStudent(){const go=()=>showResults($('#sr').value,$('#srout'));$('#svb').onclick=go;$('#sr').onkeydown=e=>e.key==='Enter'&&go()}
+function bindStudent(){const go=()=>{if(capOk('scap')){showResults($('#sr').value,$('#srout'),'','',$('#sex').value);capNew('scap')}};capNew('scap');$('#svb').onclick=go;$('#sr').onkeydown=e=>e.key==='Enter'&&go();$('#scap').onkeydown=e=>e.key==='Enter'&&go()}
 function renderResultEntryForm(box,institution=null){
   box.innerHTML=`<h3>ফলাফল তৈরি</h3><div class="row"><div><label for="rg">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rg" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="2331001"></div><div><label for="ex">পরীক্ষার নাম</label><select id="ex"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option><option>সাপ্তাহিক মূল্যায়ন</option><option>মাসিক মূল্যায়ন</option><option>অর্ধবার্ষিক মূল্যায়ন</option><option>বার্ষিক মূল্যায়ন</option><option>পর্ব উন্নয়ন</option><option>বিভাগ উন্নয়ন</option></select></div></div>
   <div class="row"><div><label for="studentName">শিক্ষার্থীর নাম</label><input id="studentName" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div><label for="studentFather">পিতার নাম</label><input id="studentFather" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div></div><div><label for="studentDivision">বিভাগ</label><input id="studentDivision" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div id="sn2" class="muted" aria-live="polite">রেজিস্ট্রেশন নম্বর লিখে যাচাই করুন।</div>
@@ -1755,7 +1777,7 @@ $('#nav').onclick=e=>{const b=e.target.closest('.nb');if(!b)return;const li=b.pa
 document.addEventListener('click',e=>{if(!e.target.closest('.ni'))document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));if(!e.target.closest('.mi'))document.querySelectorAll('.mi.open').forEach(x=>x.classList.remove('open'))});
 $('#mb').onclick=()=>{const h=document.querySelector('header'),o=h.classList.toggle('menu-open');$('#mb').setAttribute('aria-expanded',o)};
 
-document.querySelectorAll('.fcols details').forEach(d=>d.open=true);
+{const mq=matchMedia('(min-width:900px)'),fc=()=>{if(mq.matches)document.querySelectorAll('.fcols details').forEach(d=>d.open=true)};fc();mq.addEventListener('change',fc)}
 /* ---------- রাউটার ---------- */
 function hideSplash(){const s=document.getElementById('splash');if(!s||s.dataset.h)return;s.dataset.h='1';setTimeout(()=>{s.classList.add('out');setTimeout(()=>s.remove(),900)},Math.max(0,1800-performance.now()))}
 setTimeout(hideSplash,8000);
@@ -1798,13 +1820,9 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventLis
 (()=>{
   const btn=document.getElementById('appInstall');if(!btn)return;
   const APK_URL='pctb.apk';
-  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||document.referrer.startsWith('android-app://');
-  if(standalone)return;
-  btn.hidden=false;
   const ua=navigator.userAgent,isIOS=/iphone|ipad|ipod/i.test(ua),isAndroid=/android/i.test(ua);
   let dp=null;
   addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
-  addEventListener('appinstalled',()=>{btn.hidden=true});
   const help=(title,text)=>{
     const o=document.createElement('div');o.id='apphelp';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
     o.innerHTML='<div class="ah-card"><h3></h3><p></p><button type="button">ঠিক আছে</button></div>';
