@@ -16,6 +16,8 @@ self.addEventListener('fetch',e=>{
   const r=e.request;
   if(r.method!=='GET')return;
   const u=new URL(r.url);
+  /* APK ফাইল কখনও ক্যাশ হবে না */
+  if(u.pathname.toLowerCase().endsWith('.apk'))return;
   /* ডেটাবেস/লগইন/ফাইল আপলোডের অনুরোধ কখনও ক্যাশ হবে না */
   if(u.origin!==location.origin&&!OK_HOSTS.includes(u.hostname))return;
 
