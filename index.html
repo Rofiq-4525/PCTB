@@ -388,7 +388,7 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 .pgrid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.pc{text-align:center}.pc h3{margin:10px 0 8px;font-size:1.05rem}
 .av{display:grid;place-items:center;width:64px;height:64px;margin:0 auto;border-radius:50%;background:var(--g);color:#fff;font:700 1.5rem 'Noto Sans Bengali','Noto Serif Bengali',serif;box-shadow:0 0 0 3px #e8f0eb,0 0 0 4px var(--gold)}.av .ic{width:28px;height:28px}
 .tbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
-#cchips{display:flex;flex-wrap:nowrap;gap:0;width:100%;max-width:420px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:transparent}#cchips button{flex:1 1 0;min-width:0;padding:3px 6px;font-size:.82rem;line-height:1.5;background:transparent;color:var(--mut);border:0;border-left:1px solid var(--line);border-radius:0;box-shadow:none;margin:0;white-space:nowrap}#cchips button:first-child{border-left:0}#cchips button:hover{background:#eef5f0;color:var(--g)}#cchips button.on{background:#c4e0cd;color:var(--g);font-weight:600;box-shadow:inset 0 -2px 0 var(--gold)}
+#cchips,#hchips{display:flex;flex-wrap:nowrap;gap:0;width:100%;max-width:420px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:transparent}#cchips button,#hchips button{flex:1 1 0;min-width:0;padding:3px 6px;font-size:.82rem;line-height:1.5;background:transparent;color:var(--mut);border:0;border-left:1px solid var(--line);border-radius:0;box-shadow:none;margin:0;white-space:nowrap}#cchips button:first-child,#hchips button:first-child{border-left:0}#cchips button:hover,#hchips button:hover{background:#eef5f0;color:var(--g)}#cchips button.on,#hchips button.on{background:#c4e0cd;color:var(--g);font-weight:600;box-shadow:inset 0 -2px 0 var(--gold)}
 .chips{display:flex;gap:6px;flex-wrap:wrap}.chips button{margin:0;background:#fff;color:var(--g);border:1px solid var(--line);padding:6px 16px;border-radius:20px}.chips button.on{background:var(--g);color:#fff;border-color:var(--g)}
 .tbar .chips{gap:0;flex-wrap:nowrap;border:1px solid var(--g);border-radius:12px;overflow-x:auto;background:#fff;max-width:100%;scrollbar-width:none}
 .tbar .chips::-webkit-scrollbar{display:none}
@@ -396,12 +396,12 @@ footer{text-align:center;color:var(--mut);font-size:.85rem;padding:20px}
 .tbar .chips button+button{border-left:1px solid var(--line)}
 .tbar .chips button.on{background:var(--g);color:#fff}
 @media(max-width:520px){.tbar .chips{width:100%}.tbar .chips button{padding:9px 4px;font-size:.9rem;min-width:0}}
-#cchips{width:100%;max-width:none;border:1px solid var(--g);border-radius:12px;background:#fff;overflow-x:auto;scrollbar-width:none}
-#cchips::-webkit-scrollbar{display:none}
-#cchips button{padding:8px 16px;font-size:inherit;line-height:inherit;color:var(--g);background:transparent;border:0;border-radius:0;white-space:nowrap}
-#cchips button+button{border-left:1px solid var(--line)}
-#cchips button.on{background:var(--g);color:#fff}
-@media(max-width:520px){#cchips button{padding:9px 4px;font-size:.9rem}}
+#cchips,#hchips{width:100%;max-width:none;border:1px solid var(--g);border-radius:12px;background:#fff;overflow-x:auto;scrollbar-width:none}
+#cchips::-webkit-scrollbar,#hchips::-webkit-scrollbar{display:none}
+#cchips button,#hchips button{padding:8px 16px;font-size:inherit;line-height:inherit;color:var(--g);background:transparent;border:0;border-radius:0;white-space:nowrap}
+#cchips button+button,#hchips button+button{border-left:1px solid var(--line)}
+#cchips button.on,#hchips button.on{background:var(--g);color:#fff}
+@media(max-width:520px){#cchips button,#hchips button{padding:9px 4px;font-size:.9rem}}
 .srch{position:relative;min-width:230px;flex:1;max-width:320px}.srch span{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mut);line-height:0}.srch input{padding-left:36px;border-radius:20px}
 .nlist{display:grid;gap:12px}.nt{display:flex;gap:16px;align-items:flex-start;margin:0}
 .nd{flex:none;width:68px;text-align:center;background:var(--g);color:#fff;border-radius:12px;padding:8px 4px;border-bottom:3px solid var(--gold)}
@@ -875,14 +875,15 @@ function bookUI(bk){
   const dlU=b=>`<span class="dlg"><a class="dlb" href="${esc(b.url)}" download target="_blank" rel="noopener" title="ডাউনলোড" aria-label="ডাউনলোড">${ic('download')}</a><a class="dlb" href="${esc(b.url)}" target="_blank" rel="noopener" title="পড়ুন" aria-label="পড়ুন">${ic('read')}</a></span>`;
   const sorryL=t=>{const h='#/sorry?b='+encodeURIComponent(t);return `<span class="dlg"><a class="dlb" href="${h}" title="ডাউনলোড" aria-label="ডাউনলোড">${ic('download')}</a><a class="dlb" href="${h}" title="পড়ুন" aria-label="পড়ুন">${ic('read')}</a></span>`};
   const dvIdx=n=>Math.max(0,DIVS.findIndex(d=>d[0]==n));
-  const bkey=t=>{const f=SUBJ.flatMap(g=>g[1]);let k=f.indexOf(t);if(k<0){k=0;for(const c of String(t))k=(k*31+c.charCodeAt(0))%997}return k};const bhue=t=>(bkey(t)*47)%360;
-  const cover=(t,dn)=>`<div class="bcv" style="--h:${bhue(t)}"><div class="btop"><b class="bt">${esc(t)}</b><span class="bd">${esc(dn)} বিভাগ</span></div>${bkey(t)%2?`<div class="bmid sl"><span class="fb"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#fff" stroke="#b8923a" stroke-width="2.5"/><circle cx="32" cy="32" r="25" fill="none" stroke="#0d4a3a" stroke-width="1" stroke-dasharray="2 2.4"/><g fill="#0d4a3a"><rect x="20" y="14" width="24" height="24" rx="1"/><rect x="20" y="14" width="24" height="24" rx="1" transform="rotate(45 32 26)"/></g><circle cx="32" cy="26" r="5" fill="#fff"/><text x="32" y="53" text-anchor="middle" font-size="9" font-weight="700" fill="#0d4a3a" font-family="sans-serif">PCTB</text></svg></span><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="PCTB সিল"></div>`:`<div class="bmid"><span class="fb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5v13M12 6.5C10 4.9 6.5 4.5 3 5v13c3.5-.5 7-.1 9 1.5 2-1.6 5.5-2 9-1.5V5c-3.5-.5-7-.1-9 1.5z"/></svg>PCTB</span><img src="logo%20short.png" data-f="logo short" data-i="1" onerror="pick(this)" alt="PCTB লোগো"></div>`}<div class="bft"><i>নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</i></div></div>`;
+  const bkey=t=>{const f=SUBJ.flatMap(g=>g[1]);let k=f.indexOf(t);if(k<0){k=0;for(const c of String(t))k=(k*31+c.charCodeAt(0))%997}return k};const bhue=(t,dn)=>{const f=SUBJ.flatMap(g=>g[1]),n=f.length*DIVS.length,gcd=(a,b)=>b?gcd(b,a%b):a;let st=Math.round(n*.618);while(gcd(st,n)!=1)st++;const k=f.indexOf(t),i=(dvIdx(dn)*f.length+(k<0?bkey(t)%f.length:k))%n;return Math.round(((i*st)%n)*360/n)};
+  const cover=(t,dn)=>`<div class="bcv" style="--h:${bhue(t,dn)}"><div class="btop"><b class="bt">${esc(t)}</b><span class="bd">${esc(dn)} বিভাগ</span></div>${bkey(t)%2?`<div class="bmid sl"><span class="fb"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#fff" stroke="#b8923a" stroke-width="2.5"/><circle cx="32" cy="32" r="25" fill="none" stroke="#0d4a3a" stroke-width="1" stroke-dasharray="2 2.4"/><g fill="#0d4a3a"><rect x="20" y="14" width="24" height="24" rx="1"/><rect x="20" y="14" width="24" height="24" rx="1" transform="rotate(45 32 26)"/></g><circle cx="32" cy="26" r="5" fill="#fff"/><text x="32" y="53" text-anchor="middle" font-size="9" font-weight="700" fill="#0d4a3a" font-family="sans-serif">PCTB</text></svg></span><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="PCTB সিল"></div>`:`<div class="bmid"><span class="fb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5v13M12 6.5C10 4.9 6.5 4.5 3 5v13c3.5-.5 7-.1 9 1.5 2-1.6 5.5-2 9-1.5V5c-3.5-.5-7-.1-9 1.5z"/></svg>PCTB</span><img src="logo%20short.png" data-f="logo short" data-i="1" onerror="pick(this)" alt="PCTB লোগো"></div>`}<div class="bft"><i>নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</i></div></div>`;
   const bkCard=b=>`<div class="card cc bk">${cover(b.title,bdiv(b))}<div class="bkact">${b.url?dlU(b):sorryL(b.title)}</div></div>`;
   const bkOf=(t,d)=>bk.find(b=>String(b.title).trim()==t&&bdiv(b)==d&&b.url);const dlD=(t,d)=>{const b=bkOf(t,d);return b?dlU(b):sorryL(t)};const dmCard=(t,dn)=>{const b=bkOf(t,dn);return `<div class="card cc bk">${cover(t,dn)}<div class="bkact">${b?dlU(b):sorryL(t)}</div></div>`};
   const DUMMY=DIVS.map(d=>[d[0],SUBJ]);
   const bn=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);const bgr=(l,fn,LIM=4)=>{const a=l.slice(0,LIM),r=l.slice(LIM);return `<div class="grid bgrid">${a.map(fn).join('')}</div>`+(r.length?`<details class="bmore"><summary><span class="mo">আরও ${bn(r.length)} টি বই দেখুন</span><span class="lo">কম দেখুন</span></summary><div class="grid bgrid">${r.map(fn).join('')}</div></details>`:'')};const secOf=b=>b.sec||(SUBJ.find(g=>g[1].includes(b.title))||[])[0]||'অন্যান্য';const secs=(l,fn)=>[...SUBJ.map(g=>g[0]),'অন্যান্য'].map(n=>[n,l.filter(b=>secOf(b)==n)]).filter(x=>x[1].length).map(x=>`<h4 class="ssh">${x[0]}</h4>${bgr(x[1],fn)}`).join('');const bkGroups=()=>{const known=new Set(SUBJ.flatMap(g=>g[1]));const one=(dn,extra)=>{const ex=extra.filter(b=>!(known.has(String(b.title).trim())&&DIVS.some(d=>d[0]==dn)));return [...SUBJ.map(g=>[g[0],[...g[1].map(t=>dmCard(t,dn)),...ex.filter(b=>secOf(b)==g[0]).map(bkCard)]]),['অন্যান্য',ex.filter(b=>!SUBJ.some(g=>g[0]==secOf(b))).map(bkCard)]].filter(x=>x[1].length).map(x=>`<div class="sub2"><h4 class="ssh">${x[0]}</h4>${bgr(x[1],h=>h)}</div>`).join('')};let h=DIVS.map(d=>`<section class="dvs" data-div="${d[0]}"><h3 class="sh">${d[0]} বিভাগ</h3>${one(d[0],bk.filter(b=>bdiv(b)==d[0]))}</section>`).join('');const o=bk.filter(b=>!DIVS.some(d=>d[0]==bdiv(b)));if(o.length)h+=`<section class="dvs" data-div="অন্যান্য"><h3 class="sh">অন্যান্য</h3><div class="sub2">${bgr(o.map(bkCard),x=>x)}</div></section>`;return h};
   const dlOf=t=>{const b=bk.find(x=>String(x.title).trim()==t);return b?`<span class="dlg"><a class="dlb" href="${esc(b.url)}" download target="_blank" rel="noopener" title="ডাউনলোড" aria-label="ডাউনলোড">${ic('download')}</a><a class="dlb" href="${esc(b.url)}" target="_blank" rel="noopener" title="পড়ুন" aria-label="পড়ুন">${ic('read')}</a></span>`:sorryL(t)};
-  return {dlU,sorryL,cover,bkCard,dmCard,bgr,bkGroups,dlOf,dlD,bn};
+  const bkTabs=cid=>{const g=bkGroups(),first=DIVS[0][0],extra=/data-div="অন্যান্য"/.test(g)?[['অন্যান্য']]:[];return `<div class="chips" id="${cid}" style="margin-bottom:12px">${[...DIVS,...extra].map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div><div id="${cid}b">${g.replace(/<section class="dvs" data-div="([^"]+)"/g,(m,d)=>d==first?m:m+' hidden')}</div>`};
+  return {dlU,sorryL,cover,bkCard,dmCard,bgr,bkGroups,bkTabs,dlOf,dlD,bn};
 }
 /* ---------- সব পেজের জন্য সাধারণ অংশ ---------- */
 const head=(t,p,l='সব দেখুন')=>`<div class="shd"><h2>${t}</h2>${p?`<a href="#/${p}">${l} →</a>`:''}</div>`;
@@ -909,7 +910,7 @@ home(routeToken){
   const homeData=Promise.all([Promise.resolve(DEF_ABOUT),pall('books').catch(()=>[]),pall('notices').catch(()=>[])]);
   const head=(t,p,l='সব দেখুন')=>`<div class="shd"><h2>${t}</h2>${p?`<a href="#/${p}">${l} →</a>`:''}</div>`;
   const first=`<div class="hlw"><img class="homelogo" src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড" style="max-width:320px;width:72%;height:auto"></div>
-  ${head('পরিচিতি','about','বিস্তারিত').replace('class="shd"','class="shd ln"')}<div class="card" id="homeAbout">${esc(DEF_ABOUT).replace(/\n/g,'<br>')}</div>
+  ${head('পরিচিতি','about','বিস্তারিত').replace('class="shd"','class="shd ln"')}<div class="card" id="homeAbout">${aboutHTML()}</div>
   <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${esc(SITE_TEXT.goal).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div><div id="homeRest"></div>`;
   const staticStage=()=>`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p style="margin:0">${esc(SITE_TEXT.method).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p style="margin:0">${esc(SITE_TEXT.policy).replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
   const staticReady=new Promise(resolve=>requestAnimationFrame(()=>{
@@ -924,12 +925,12 @@ home(routeToken){
     return homeData.then(([ab,bk,ns])=>requestAnimationFrame(()=>{
     const about=document.getElementById('homeAbout'),rest=document.getElementById('homeRest');
     if(routeToken!==routeVersion||!about||!rest)return;
-    about.innerHTML=esc(ab).replace(/\n/g,'<br>');
-    const {dlOf,dlD,bkGroups}=bookUI(bk);
+    about.innerHTML=aboutHTML(ab);
+    const {dlOf,dlD,bkGroups,bkTabs}=bookUI(bk);
     const curBody=d=>{const dl=d?(t=>dlD(t,d)):dlOf;return `<h3 class="sh">${d?d+' বিভাগের ':''}সামগ্রিক শিক্ষাক্রম</h3><div class="card cc" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px"><span>সম্পূর্ণ শিক্ষাক্রম পড়ুন ও ডাউনলোড করুন</span>${dl('সামগ্রিক শিক্ষাক্রম')}</div><h3 class="sh">${d?d+' বিভাগের ':''}বিষয়ভিত্তিক শিক্ষাক্রম</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">${SUBJ.map(g=>`<div class="card cc"><h3>${g[0]}</h3><div style="overflow-x:auto"><table><tr><th>ক্রম</th><th>বিষয়</th><th>কারিকুলাম</th><th>পাঠ্যপুস্তক</th></tr>${g[1].map((n,i)=>`<tr><td>${String(i+1).replace(/\d/g,c=>'০১২৩৪৫৬৭৮৯'[c])}</td><td>${n}</td><td>${dl(n+' কারিকুলাম')}</td><td>${dl(n)}</td></tr>`).join('')}</table></div></div>`).join('')}</div>`};
     const stages=[
       ()=>`<hr class="dv">${head('শিক্ষাক্রম (কারিকুলাম)','')}<div class="chips" id="cchips" style="margin-bottom:4px">${DIVS.map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div>${DIVS.map((d,i)=>`<div class="cvw" data-d="${d[0]}"${i?' hidden':''}>${curBody(d[0])}</div>`).join('')}`,
-      ()=>`<hr class="dv">${head('পাঠ্যপুস্তক','textbook')}${bkGroups()}`,
+      ()=>`<hr class="dv">${head('পাঠ্যপুস্তক','textbook')}${bkTabs('hchips')}`,
       ()=>`<hr class="dv"><section class="hero" style="margin-top:30px"><div><h2>পরীক্ষার ফলাফল</h2><p>রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন।</p></div><div class="box"><h3>ফলাফল দেখুন</h3><label for="hd">বিভাগ</label><select id="hd" required><option value="" selected disabled hidden>বিভাগ নির্বাচন করুন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select><label for="hr">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"><button id="hb">ফলাফল দেখুন</button></div></section><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
     ];
     const appendStage=i=>{
@@ -967,8 +968,8 @@ async board(){
 },
 async textbook(){
   const bk=await pall('books').catch(()=>[]),U=bookUI(bk);
-  return pageHead('পাঠ্যপুস্তক','বিভাগ ও শাখা অনুযায়ী সকল পাঠ্যপুস্তক','book')
-  +`<div class="tbar"><div class="chips" id="tchips"><button class="on" data-d="">সব</button>${DIVS.map(d=>`<button data-d="${d[0]}">${d[0]}</button>`).join('')}</div><div class="srch"><span>${ic('search')}</span><input id="tq" placeholder="বইয়ের নাম খুঁজুন…" aria-label="বই খুঁজুন"></div></div><div class="muted" id="tcnt" style="margin-bottom:6px"></div><div id="tbody">${U.bkGroups()}</div><div class="card cc emp" id="tnone" hidden>কোনো বই পাওয়া যায়নি।</div>`},
+  return pageHead('পাঠ্যপুস্তক','বিভাগ বেছে নিয়ে পাঠ্যপুস্তক দেখুন','book')
+  +`<div class="tbar"><div class="chips" id="tchips">${DIVS.map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div><div class="srch"><span>${ic('search')}</span><input id="tq" placeholder="বইয়ের নাম খুঁজুন…" aria-label="বই খুঁজুন"></div></div><div class="muted" id="tcnt" style="margin-bottom:6px"></div><div id="tbody">${U.bkGroups()}</div><div class="card cc emp" id="tnone" hidden>কোনো বই পাওয়া যায়নি।</div>`},
 async curriculum(){
   const books=await pall('books');
   const {dlD}=bookUI(books);
@@ -1042,7 +1043,8 @@ teacher(){return `${pageHead('শিক্ষক নিবন্ধন আবে
 
 /* ---------- ইভেন্ট বাইন্ডিং ---------- */
 function bindHome(){const hb=$('#hb'),hr=$('#hr'),hd=$('#hd');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'');hb.onclick=go;hr.onkeydown=e=>e.key=='Enter'&&go()}
-  const cb=document.querySelectorAll('#cchips button');cb.forEach(b=>b.onclick=()=>{cb.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.cvw').forEach(w=>w.hidden=w.dataset.d!=b.dataset.d)})}
+  const cb=document.querySelectorAll('#cchips button');cb.forEach(b=>b.onclick=()=>{cb.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.cvw').forEach(w=>w.hidden=w.dataset.d!=b.dataset.d)});
+  const hc=document.querySelectorAll('#hchips button');hc.forEach(b=>b.onclick=()=>{hc.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('#hchipsb .dvs').forEach(w=>w.hidden=w.dataset.div!=b.dataset.d)})}
 function bindResult(){
   const [q0,d0]=(location.hash.split('?')[1]||'').split('&d='),q=decodeURIComponent(q0||''),dv=d0?decodeURIComponent(d0):'',i=$('#rr'),o=$('#rout'),rd=$('#rd');
   const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value);$('#rb').onclick=()=>go();i.onkeydown=e=>e.key=='Enter'&&go();rl.onkeydown=e=>e.key=='Enter'&&go();
@@ -1319,6 +1321,7 @@ const SITE_TEXT={
   policy:'আমাদের সকল কাজ হবে শুধুমাত্র আল্লাহ তাআলার জন্য এবং তাঁরই কাছে প্রতিদান পাওয়ার আশায়। দ্বীনের শিক্ষা ও দাওয়াতের মাধ্যমে আমরা দুনিয়াবি কোনো বিনিময় চাই না, যেমন সাহাবায়ে কেরামও চাননি।'
 };
 const DEF_ABOUT=SITE_TEXT.about;
+function aboutHTML(t){const p=String(t==null?SITE_TEXT.about:t).split(/\n{2,}/).filter(Boolean),f=x=>esc(x).replace(/\n/g,'<br>');if(p.length<2)return f(p[0]||'');const last=p.pop();return f(p.join('\n\n'))+`<details class="bmore"><summary><span class="mo">আরও দেখুন</span><span class="lo">কম দেখুন</span></summary><p style="margin:10px 0 0;align-self:stretch">${f(last)}</p></details>`}
 async function site(k,def){try{const d=await getDoc(doc(db,'site',k));return d.exists()?d.data().v:def}catch{return def}}
 const objHTML=()=>{const L=SITE_TEXT.objectives.map(s=>String(s).trim()).filter(Boolean),a=L.slice(0,2),b=L.slice(2);return `<ul style="margin:0;padding-left:1.2em">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`+(b.length?`<details class="bmore"><summary><span class="mo">আরও ${bnum(b.length)} টি উদ্দেশ্য দেখুন</span><span class="lo">কম দেখুন</span></summary><ul style="margin:6px 0 0;padding-left:1.2em;align-self:stretch">${b.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></details>`:'')};
 
@@ -1331,7 +1334,7 @@ async function loadList(){
 }
 function bindTextbook(){
   document.querySelectorAll('a[href^="data:"]').forEach(a=>a.onclick=async e=>{e.preventDefault();const b=await (await fetch(a.href)).blob();open(URL.createObjectURL(b))});
-  const q=$('#tq');if(!q)return;let dv='';
+  const q=$('#tq');if(!q)return;let dv=DIVS[0][0];
   const apply=()=>{const t=q.value.trim().toLowerCase();let n=0;
     document.querySelectorAll('#tbody .dvs').forEach(sec=>{const okd=!dv||sec.dataset.div==dv;let any=0;
       sec.querySelectorAll('.sub2').forEach(sub=>{let sa=0;
@@ -1341,6 +1344,7 @@ function bindTextbook(){
     $('#tcnt').textContent=(t||dv)?bnum(n)+' টি বই পাওয়া গেছে':'';$('#tnone').hidden=n>0};
   q.oninput=apply;
   document.querySelectorAll('#tchips button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tchips button').forEach(x=>x.classList.toggle('on',x==b));dv=b.dataset.d;apply()});
+  apply();
 }
 async function renderInstitutionResultEntry(box,institution,database){
   const MIN=5,EXAMS=['সাপ্তাহিক মূল্যায়ন','মাসিক মূল্যায়ন','অর্ধবার্ষিক মূল্যায়ন','বার্ষিক মূল্যায়ন','পর্ব উন্নয়ন','বিভাগ উন্নয়ন'];
