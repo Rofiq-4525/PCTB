@@ -6,14 +6,17 @@
 <style id="crit">html{background:#e7f3ea}body.page-loading{background:#e7f3ea}
 #splash{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center;background:#e7f3ea;transition:opacity .8s cubic-bezier(.4,0,.2,1),visibility .8s}
 #splash.out{opacity:0;visibility:hidden;pointer-events:none}
-#splash::before{content:"";position:absolute;inset:14px;border:1px solid rgba(184,146,58,.55);border-radius:6px;pointer-events:none}
-#splash img{width:min(62vw,270px);height:auto;max-height:40vh;object-fit:contain;background:transparent;mix-blend-mode:multiply;animation:splashPulse 1.8s ease-in-out infinite}
-#splash .sp-name{font:600 1rem/1.5 'Noto Sans Bengali','Noto Serif Bengali',serif;color:#0d4a3a;margin:0}
-#splash .sp-bar{width:min(52vw,180px);height:3px;border-radius:3px;background:rgba(13,74,58,.14);overflow:hidden}
+#splash::before{content:"";position:absolute;inset:14px;border:1px solid rgba(184,146,58,.55);border-radius:6px;pointer-events:none;opacity:0;animation:spIn .6s ease .9s forwards}
+#splash .sp-icon{position:absolute;left:50%;top:50%;width:192px;height:192px;margin:-96px 0 0 -96px;border-radius:50%;object-fit:cover;animation:spOut .6s ease .9s forwards}
+#splash img.sp-logo{width:min(62vw,270px);height:auto;max-height:40vh;object-fit:contain;background:transparent;mix-blend-mode:multiply;opacity:0;animation:spIn .6s ease .9s forwards,splashPulse 1.8s ease-in-out .9s infinite}
+#splash .sp-name{font:600 1rem/1.5 'Noto Sans Bengali','Noto Serif Bengali',serif;color:#0d4a3a;margin:0;opacity:0;animation:spIn .6s ease .9s forwards}
+#splash .sp-bar{width:min(52vw,180px);height:3px;border-radius:3px;background:rgba(13,74,58,.14);overflow:hidden;opacity:0;animation:spIn .6s ease .9s forwards}
 #splash .sp-bar::after{content:"";display:block;width:40%;height:100%;border-radius:3px;background:linear-gradient(90deg,#0d4a3a,#b8923a);animation:splashBar 1.15s ease-in-out infinite}
-@keyframes splashPulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.035);opacity:1}}
+@keyframes spIn{to{opacity:1}}
+@keyframes spOut{to{opacity:0;transform:scale(.94)}}
+@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
 @keyframes splashBar{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
-@media(prefers-reduced-motion:reduce){#splash img,#splash .sp-bar::after{animation:none}#splash{transition:none}}
+@media(prefers-reduced-motion:reduce){#splash .sp-icon{display:none}#splash img.sp-logo,#splash .sp-name,#splash .sp-bar,#splash::before{opacity:1;animation:none}#splash .sp-bar::after{animation:none}#splash{transition:none}}
 </style>
 <title>PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</title>
 <link rel="icon" href="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_64,c_limit/logo_short">
@@ -501,7 +504,7 @@ function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|se
 </script>
 </head>
 <body class="page-loading">
-<div id="splash" role="status" aria-live="polite" aria-label="লোড হচ্ছে"><img src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_380,c_limit/logo" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p class="sp-name">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</p><div class="sp-bar" aria-hidden="true"></div></div>
+<div id="splash" role="status" aria-live="polite" aria-label="লোড হচ্ছে"><img class="sp-icon" src="https://res.cloudinary.com/d5vjnkoy/image/upload/q_auto,w_384,c_limit/pctb-icon-maskable-512" onerror="this.remove()" alt=""><img class="sp-logo" src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_380,c_limit/logo" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p class="sp-name">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</p><div class="sp-bar" aria-hidden="true"></div></div>
 <div id="scr">
 <header><div class="bar">
 <a class="logo" href="#/">
@@ -1737,7 +1740,7 @@ $('#mb').onclick=()=>{const h=document.querySelector('header'),o=h.classList.tog
 
 document.querySelectorAll('.fcols details').forEach(d=>d.open=true);
 /* ---------- রাউটার ---------- */
-function hideSplash(){const s=document.getElementById('splash');if(!s||s.dataset.h)return;s.dataset.h='1';setTimeout(()=>{s.classList.add('out');setTimeout(()=>s.remove(),900)},Math.max(0,1800-performance.now()))}
+function hideSplash(){const s=document.getElementById('splash');if(!s||s.dataset.h)return;s.dataset.h='1';setTimeout(()=>{s.classList.add('out');setTimeout(()=>s.remove(),900)},Math.max(0,2400-performance.now()))}
 setTimeout(hideSplash,8000);
 let prevK=null,lastNav=null,firstRoute=true;
 const SEAL_MIN=900;
