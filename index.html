@@ -14,6 +14,22 @@
 @keyframes splashPulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.035);opacity:1}}
 @keyframes splashBar{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
 @media(prefers-reduced-motion:reduce){#splash img,#splash .sp-bar::after{animation:none}#splash{transition:none}}
+.appbtn{display:inline-flex;align-items:center;gap:12px;margin:14px auto 0;padding:9px 20px 9px 10px;border:0;border-radius:16px;background:linear-gradient(135deg,#c9a24a,#e3c778 55%,#c9a24a);color:#06241b;text-align:left;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .18s ease,box-shadow .18s ease;font-family:inherit}
+.appbtn[hidden]{display:none}
+.appbtn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.5)}
+.appbtn:active{transform:translateY(0)}
+.appbtn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.appbtn .ab-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:#0b3a2d;color:#e3c778;flex-shrink:0}
+.appbtn .ab-ic svg{width:26px;height:26px}
+.appbtn .ab-tx{display:flex;flex-direction:column;line-height:1.25}
+.appbtn .ab-tx small{font-size:.72rem;font-weight:500;opacity:.8;letter-spacing:.02em}
+.appbtn .ab-tx b{font-size:1.02rem;font-weight:700;color:#06241b;letter-spacing:.01em}
+#apphelp{position:fixed;inset:0;z-index:9500;display:grid;place-items:center;padding:20px;background:rgba(6,36,27,.62);animation:ahIn .2s ease both}
+#apphelp .ah-card{max-width:360px;width:100%;background:#fff;color:#17261f;border-radius:18px;padding:22px 20px 18px;box-shadow:0 16px 48px rgba(0,0,0,.35);text-align:left}
+#apphelp h3{margin:0 0 8px;color:#0d4a3a;font-size:1.1rem}
+#apphelp p{margin:0 0 14px;line-height:1.7;font-size:.95rem}
+#apphelp button{margin:0;width:100%;padding:10px;border:0;border-radius:11px;background:#0d4a3a;color:#fff;font-size:.95rem;cursor:pointer}
+@keyframes ahIn{from{opacity:0}to{opacity:1}}
 </style>
 <title>PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</title>
 <link rel="icon" href="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_64,c_limit/logo_short">
@@ -516,6 +532,10 @@ function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|se
 <div class="fbrand">
 <div class="flogo"><span class="fbox"><img class="fseal" src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_192,c_limit/seal" data-f="seal" data-i="1" onerror="pick(this)" alt=""></span><div><b>PCTB</b><small>নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</small></div></div>
 <p>নববী আদর্শে গড়া শিক্ষাক্রম ও পাঠ্যপুস্তকের নির্ভরযোগ্য ঠিকানা।</p>
+<button type="button" class="appbtn" id="appInstall" hidden aria-label="অ্যাপ ইনস্টল করুন">
+<span class="ab-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="2.5" width="13" height="19" rx="2.6"/><path d="M12 7v6.4M9.1 10.8l2.9 2.9 2.9-2.9"/><path d="M10.2 18h3.6"/></svg></span>
+<span class="ab-tx"><small>এখনই নামিয়ে নিন</small><b>অ্যাপ ইনস্টল করুন</b></span>
+</button>
 </div>
 <div class="fcols">
 <details><summary>কুইক লিংক<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><ul><li><a href="#/">হোম</a></li><li><a href="#/about">বোর্ড পরিচিতি</a></li><li><a href="#/board">পরিচালনা পরিষদ</a></li><li><a href="#/textbook">পাঠ্যপুস্তক</a></li><li><a href="#/notice">নোটিশ</a></li><li><a href="#/institution">নতুন প্রতিষ্ঠান নিবন্ধন</a></li><li><a href="#/institutions">নিবন্ধিত প্রতিষ্ঠান তালিকা</a></li><li><a href="#/dashboard">প্রতিষ্ঠান লগইন করুন</a></li><li><a href="#/result">ফলাফল</a></li></ul></details>
@@ -1771,6 +1791,40 @@ addEventListener('hashchange',route);route();
 })();
 
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+/* ============ ফুটারের "অ্যাপ ইনস্টল করুন" বোতাম ============
+   APK_URL: আপনার APK ফাইলের নাম/লিংক। ফাইলটি সাইটের রিপোতে এই নামে রাখুন (যেমন pctb.apk)।
+   ফাইল না পেলে বা APK সাপোর্ট না করলে ব্রাউজারের "ইনস্টল" (PWA) চালু হবে। */
+(()=>{
+  const btn=document.getElementById('appInstall');if(!btn)return;
+  const APK_URL='pctb.apk';
+  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true||document.referrer.startsWith('android-app://');
+  if(standalone)return;
+  btn.hidden=false;
+  const ua=navigator.userAgent,isIOS=/iphone|ipad|ipod/i.test(ua),isAndroid=/android/i.test(ua);
+  let dp=null;
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+  addEventListener('appinstalled',()=>{btn.hidden=true});
+  const help=(title,text)=>{
+    const o=document.createElement('div');o.id='apphelp';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
+    o.innerHTML='<div class="ah-card"><h3></h3><p></p><button type="button">ঠিক আছে</button></div>';
+    o.querySelector('h3').textContent=title;o.querySelector('p').textContent=text;
+    const close=()=>o.remove();o.querySelector('button').onclick=close;o.onclick=e=>{if(e.target===o)close()};
+    document.body.appendChild(o);
+  };
+  btn.onclick=async()=>{
+    if(APK_URL&&isAndroid){
+      try{
+        const r=await fetch(APK_URL,{method:'HEAD',cache:'no-store'});
+        if(r.ok){const a=document.createElement('a');a.href=APK_URL;a.download='PCTB.apk';document.body.appendChild(a);a.click();a.remove();
+          help('ডাউনলোড শুরু হয়েছে','ডাউনলোড শেষ হলে ফাইলটি খুলে ইনস্টল করুন। ফোন অনুমতি চাইলে "এই উৎস থেকে ইনস্টল করার অনুমতি" দিন।');return}
+      }catch{}
+    }
+    if(dp){dp.prompt();try{await dp.userChoice}catch{}dp=null;return}
+    if(isIOS)help('আইফোনে ইনস্টল','Safari-র নিচের Share (শেয়ার) বোতাম চাপুন, তারপর "Add to Home Screen" বেছে নিন।');
+    else help('অ্যাপ ইনস্টল করুন','ব্রাউজারের মেনু (⋮) খুলে "Install app" বা "Add to Home screen" চাপুন।');
+  };
+})();
 /* মোবাইলে টেনে রিফ্রেশ (pull to refresh) */
 (()=>{const sc=document.getElementById('scr'),mq=matchMedia('(max-width:900px)');if(!sc)return;
  const ind=document.createElement('div');ind.id='ptr';ind.style.display='none';document.body.appendChild(ind);
