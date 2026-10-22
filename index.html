@@ -789,7 +789,7 @@ function resultCertificate(r,instName,id='resultCertificate'){
       ${detail('বিভাগ',bdiv(r))}
       ${detail('রোল নম্বর',rollOf(r)?bnum(rollOf(r)):'')}
       ${detail('প্রতিষ্ঠান',instName)}
-      ${detail('পরীক্ষা',examTitle(r))}${r.date?detail('পরীক্ষার তারিখ',fmtDate(r.date)):''}
+      <div class="cert-info-row"><span class="cert-info-label">পরীক্ষা</span><span class="cert-info-value">${esc(examTitle(r))}${r.date?`<span style="display:block;margin-top:6px;padding-top:6px;border-top:1px solid rgba(139,113,64,.35)">পরীক্ষার তারিখ: ${esc(fmtDate(r.date))}</span>`:''}</span></div>
     </section>
     <table class="cert-rtable"><thead><tr><th>ক্রম</th><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]}<br>(${bnum(p[2])})</th>`).join('')}<th>মোট<br>(১০০)</th><th>মন্তব্য</th></tr></thead><tbody>${subs.map((x,i)=>`<tr><td>${bnum(i+1)}</td><td>${esc(x.n)}</td>${PARTS.map(p=>`<td>${v(x[p[0]])}</td>`).join('')}<td><b>${x.m}</b></td><td${x.m<50?' style="color:#a3281f;font-weight:600"':''}>${remark(x.m)}</td></tr>`).join('')}</tbody></table>
     <div class="cert-summary"><span>সর্বমোট: ${bnum(total)} / ${bnum(n*100)}</span><span>গড় নম্বর: ${bnum(avg.toFixed(1))}</span><span>সার্বিক মন্তব্য: ${remark(avg)}</span>${fail?`<span style="color:#a3281f">অকৃতকার্য বিষয়: ${bnum(fail)}টি</span>`:''}</div>
