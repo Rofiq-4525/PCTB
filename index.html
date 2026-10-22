@@ -41,6 +41,12 @@
 .card.rlk button:active{transform:translateY(0);box-shadow:0 4px 10px rgba(13,74,58,.2)}
 .card.rlk .msg{display:block;margin-top:10px;font-size:.86rem}
 @media(max-width:520px){.card.rlk{padding:22px 16px 18px;border-radius:16px}.card.rlk .row{gap:8px}.card.rlk .row label{font-size:.88rem}}
+/* পরীক্ষার সময় (বছর/মাস/সপ্তাহ): আলাদা তিন বোতামের বদলে একটি বক্স, ভেতরে সরু দাগ */
+.card.rlk .pcap{margin:0;border:1px solid #d6e2db;border-radius:10px;background:#fafcfb;overflow:hidden;transition:border-color .15s,box-shadow .15s,background .15s}
+.card.rlk .pcap:hover{border-color:#b9cdc2}
+.card.rlk .pcap:focus-within{background:#fff;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,146,58,.16)}
+.card.rlk .pcap select,.card.rlk .pcap select:hover,.card.rlk .pcap select:focus{height:40px;margin:0;padding:0 12px;border:0;border-left:1px solid #d6e2db;border-radius:0;background:transparent;box-shadow:none;outline:0}
+.card.rlk .pcap select:first-child{border-left:0}
 #apphelp{position:fixed;inset:0;z-index:9500;display:grid;place-items:center;padding:20px;background:rgba(6,36,27,.62);animation:ahIn .2s ease both}
 #apphelp .ah-card{max-width:360px;width:100%;background:#fff;color:#17261f;border-radius:18px;padding:22px 20px 18px;box-shadow:0 16px 48px rgba(0,0,0,.35);text-align:left}
 #apphelp h3{margin:0 0 8px;color:#0d4a3a;font-size:1.1rem}
@@ -208,7 +214,7 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 /* বিভাগ কার্ড: উন্নত রঙ ও সাদা বৃত্ত বাদ */
 .bvc{border-top-width:4px;box-shadow:0 6px 16px rgba(13,74,58,.1)}
 .bvc .bvn{box-shadow:0 5px 12px rgba(13,74,58,.22)}
-
+.bvn img.ill{mix-blend-mode:multiply;filter:none}
 .bvc.d0{background:linear-gradient(160deg,#eaf8f0 0%,#b9e2c9 100%);border-color:#9fd1b3;border-top-color:#1f8a68}.bvc.d0 .bvn{background:linear-gradient(145deg,#2fa07a,#176b50)}.bvc.d0 b{color:#0f5a43}.bvc.d0 .pill{background:rgba(31,138,104,.14);color:#0f5a43}
 .bvc.d1{background:linear-gradient(160deg,#e7f5f8 0%,#b4dce6 100%);border-color:#98cbd8;border-top-color:#1f7f95}.bvc.d1 .bvn{background:linear-gradient(145deg,#2a95aa,#17697c)}.bvc.d1 b{color:#125668}.bvc.d1 .pill{background:rgba(31,127,149,.14);color:#125668}
 .bvc.d2{background:linear-gradient(160deg,#f5f8e3 0%,#d6e3a0 100%);border-color:#c3d584;border-top-color:#7a9a1f}.bvc.d2 .bvn{background:linear-gradient(145deg,#8fae2a,#5f7a14)}.bvc.d2 b{color:#4c6310}.bvc.d2 .pill{background:rgba(122,154,31,.16);color:#4c6310}
@@ -216,7 +222,7 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 .bvc .bvl{margin:6px 4px 2px;font-size:.92rem;font-weight:500;line-height:1.45;color:var(--ink)}
 .bvc:has(img.ill){padding:8px 6px 10px}
 .bvc .bvn:has(img.ill){width:min(100%,190px);height:auto;aspect-ratio:1;background:none!important;box-shadow:none!important;margin:0 auto 4px}
-.bvc .bvn:has(img.ill) .ic{display:none}.bvc:has(img.ill) b{display:block;line-height:1.25}.bvc:has(img.ill) .bvd{margin:1px 0 5px}.bvn img.ill{width:100%;height:100%;display:block;border-radius:50%;mix-blend-mode:normal;opacity:1;filter:drop-shadow(0 3px 6px rgba(13,74,58,.22))}
+.bvc .bvn:has(img.ill) .ic{display:none}.bvc:has(img.ill) b{display:block;line-height:1.25}.bvc:has(img.ill) .bvd{margin:1px 0 5px}.bvn img.ill{width:100%;height:100%;display:block;border-radius:50%;filter:drop-shadow(0 3px 6px rgba(13,74,58,.22))}
 /* হেডারের তিন আইকন বাটন: রঙিন ডিজাইন */
 .mnav{gap:0}
 .mnav .mb{border-radius:12px;box-shadow:0 2px 6px rgba(13,74,58,.14);transition:transform .15s,box-shadow .15s,background .15s,color .15s}
@@ -520,7 +526,7 @@ table.rtable td input{width:110px;min-width:0!important;text-align:right}
 .cert-rtable tbody tr:nth-child(even) td{background:rgba(13,74,58,.055)}
 .cert-summary{width:100%;max-width:640px;margin:12px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;padding:10px 14px;border:1px solid #b8923a;background:rgba(255,255,255,.62);color:#0d4a3a;font-weight:600}
 .cert-legend{width:100%;max-width:640px;margin:8px auto 0;font-size:.78rem;color:#604b25}
-@media(max-width:600px){.registration-certificate.result-certificate{min-height:0;padding:30px 14px;border-width:8px}.cert-rtable{font-size:.74rem}.cert-rtable th,.cert-rtable td{padding:4px 2px}}
+@media(max-width:600px){.registration-certificate.result-certificate{min-height:0;padding:30px 12px;border-width:8px}.cert-rtable{table-layout:fixed;font-size:.62rem;line-height:1.3}.cert-rtable th,.cert-rtable td{padding:4px 1px;overflow-wrap:anywhere;word-break:normal}.cert-rtable th{white-space:nowrap}.cert-rtable th:nth-child(1){width:9%}.cert-rtable th:nth-child(2){width:17%}.cert-rtable th:nth-child(3){width:11%}.cert-rtable th:nth-child(4){width:14%}.cert-rtable th:nth-child(5){width:12%}.cert-rtable th:nth-child(6){width:9%}.cert-rtable th:nth-child(7){width:11%}.cert-rtable th:nth-child(8){width:17%}.cert-summary{gap:4px 14px;font-size:.82rem;padding:8px 10px}}@media(max-width:340px){.cert-rtable{font-size:.56rem}}
 .sealload{display:flex;justify-content:center;align-items:center;min-height:68vh;min-height:calc(100svh - 150px);padding:24px 0;opacity:0;animation:slIn .25s ease forwards}
 .sl-wrap{position:relative;width:min(46vw,168px);height:min(46vw,168px)}
 .sl-ring{position:absolute;inset:0;border-radius:50%;border:4px solid rgba(184,146,58,.22);border-top-color:#b8923a;border-right-color:#0d4a3a;animation:slSpin 1s linear infinite}
@@ -529,6 +535,19 @@ table.rtable td input{width:110px;min-width:0!important;text-align:right}
 .sl-first{animation-delay:.7s}
 @keyframes slSpin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.sl-ring{animation-duration:3s}.sealload{animation:none;opacity:1}}
+/* মোবাইল ফিক্স: ফলাফল কার্ড, কার্ড-টেবিল, নম্বর-ঘরের লেবেল */
+@media(max-width:600px){
+.rc-table{table-layout:fixed;font-size:.66rem;line-height:1.3}
+.rc-table th,.rc-table td{padding:6px 1px;overflow-wrap:anywhere;word-break:normal}
+.rc-table th:nth-child(1){width:21%}.rc-table th:nth-child(2){width:11%}.rc-table th:nth-child(3){width:14%}.rc-table th:nth-child(4){width:12%}.rc-table th:nth-child(5){width:9%}.rc-table th:nth-child(6){width:9%}.rc-table th:nth-child(7){width:24%}
+.rc-table td:first-child,.rc-table th:first-child{padding-left:3px}
+.rescard{padding:14px 10px}}@media(max-width:340px){.rc-table{font-size:.58rem}
+.rc-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.mk .score-row td[data-label]::before{white-space:normal;min-height:2.4em;line-height:1.2;text-align:center;overflow-wrap:anywhere}
+}
+table.rtable td .tv{flex:1 1 auto;min-width:0;text-align:right;overflow-wrap:break-word;word-break:normal}
+table.rtable td .tv small{display:block}
+table.rtable td .tv button{margin:0}
 </style>
 <script>
 /* লোগো ফাইল: logo.* ও seal.* (png, jpg, jpeg, webp যেকোনোটা চলবে) */
@@ -735,7 +754,7 @@ const RESULT_CERT_CSS=`.registration-certificate.result-certificate{background:r
 .cert-rtable tbody tr:nth-child(even) td{background:rgba(13,74,58,.055)}
 .cert-summary{width:100%;max-width:640px;margin:12px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;padding:10px 14px;border:1px solid #b8923a;background:rgba(255,255,255,.62);color:#0d4a3a;font-weight:600}
 .cert-legend{width:100%;max-width:640px;margin:8px auto 0;font-size:.78rem;color:#604b25}
-@media(max-width:600px){.registration-certificate.result-certificate{min-height:0;padding:30px 14px;border-width:8px}.cert-rtable{font-size:.74rem}.cert-rtable th,.cert-rtable td{padding:4px 2px}}
+@media(max-width:600px){.registration-certificate.result-certificate{min-height:0;padding:30px 12px;border-width:8px}.cert-rtable{table-layout:fixed;font-size:.62rem;line-height:1.3}.cert-rtable th,.cert-rtable td{padding:4px 1px;overflow-wrap:anywhere;word-break:normal}.cert-rtable th{white-space:nowrap}.cert-rtable th:nth-child(1){width:9%}.cert-rtable th:nth-child(2){width:17%}.cert-rtable th:nth-child(3){width:11%}.cert-rtable th:nth-child(4){width:14%}.cert-rtable th:nth-child(5){width:12%}.cert-rtable th:nth-child(6){width:9%}.cert-rtable th:nth-child(7){width:11%}.cert-rtable th:nth-child(8){width:17%}.cert-summary{gap:4px 14px;font-size:.82rem;padding:8px 10px}}@media(max-width:340px){.cert-rtable{font-size:.56rem}}
 `;
 function registrationCertificate(student,id='registrationCertificate'){
   const issued=new Date().toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});
@@ -789,7 +808,7 @@ function resultCertificate(r,instName,id='resultCertificate'){
       ${detail('বিভাগ',bdiv(r))}
       ${detail('রোল নম্বর',rollOf(r)?bnum(rollOf(r)):'')}
       ${detail('প্রতিষ্ঠান',instName)}
-      <div class="cert-info-row"><span class="cert-info-label">পরীক্ষা</span><span class="cert-info-value">${esc(examTitle(r))}${r.date?`<span style="display:block;margin-top:6px;padding-top:6px;border-top:1px solid rgba(139,113,64,.35)">পরীক্ষার তারিখ: ${esc(fmtDate(r.date))}</span>`:''}</span></div>
+      ${detail('পরীক্ষা',examTitle(r))}${r.date?detail('পরীক্ষার তারিখ',fmtDate(r.date)):''}
     </section>
     <table class="cert-rtable"><thead><tr><th>ক্রম</th><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]}<br>(${bnum(p[2])})</th>`).join('')}<th>মোট<br>(১০০)</th><th>মন্তব্য</th></tr></thead><tbody>${subs.map((x,i)=>`<tr><td>${bnum(i+1)}</td><td>${esc(x.n)}</td>${PARTS.map(p=>`<td>${v(x[p[0]])}</td>`).join('')}<td><b>${x.m}</b></td><td${x.m<50?' style="color:#a3281f;font-weight:600"':''}>${remark(x.m)}</td></tr>`).join('')}</tbody></table>
     <div class="cert-summary"><span>সর্বমোট: ${bnum(total)} / ${bnum(n*100)}</span><span>গড় নম্বর: ${bnum(avg.toFixed(1))}</span><span>সার্বিক মন্তব্য: ${remark(avg)}</span>${fail?`<span style="color:#a3281f">অকৃতকার্য বিষয়: ${bnum(fail)}টি</span>`:''}</div>
@@ -943,9 +962,9 @@ function bookUI(bk){
   const bkCard=b=>`<div class="card cc bk">${cover(b.title,bdiv(b))}<div class="bkact">${b.url?dlU(b):sorryL(b.title)}</div></div>`;
   const bkOf=(t,d)=>bk.find(b=>String(b.title).trim()==t&&bdiv(b)==d&&b.url);const dlD=(t,d)=>{const b=bkOf(t,d);return b?dlU(b):sorryL(t)};const dmCard=(t,dn)=>{const b=bkOf(t,dn);return `<div class="card cc bk">${cover(t,dn)}<div class="bkact">${b?dlU(b):sorryL(t)}</div></div>`};
   const DUMMY=DIVS.map(d=>[d[0],SUBJ]);
-  const bn=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);const bgr=(l,fn,LIM=4)=>{const a=l.slice(0,LIM),r=l.slice(LIM);return `<div class="grid bgrid">${a.map(fn).join('')}</div>`+(r.length?`<details class="bmore"><summary><span class="mo">আরও ${bn(r.length)} টি বই দেখুন</span><span class="lo">কম দেখুন</span></summary><div class="grid bgrid">${r.map(fn).join('')}</div></details>`:'')};const secOf=b=>b.sec||(SUBJ.find(g=>g[1].includes(b.title))||[])[0]||'অন্যান্য';const secs=(l,fn)=>[...SUBJ.map(g=>g[0]),'অন্যান্য'].map(n=>[n,l.filter(b=>secOf(b)==n)]).filter(x=>x[1].length).map(x=>`<h4 class="ssh">${x[0]}</h4>${bgr(x[1],fn)}`).join('');const bkGroups=()=>{const known=new Set(SUBJ.flatMap(g=>g[1]));const one=(dn,extra)=>{const ex=extra.filter(b=>!(known.has(String(b.title).trim())&&DIVS.some(d=>d[0]==dn)));return [...SUBJ.map(g=>[g[0],[...g[1].map(t=>dmCard(t,dn)),...ex.filter(b=>secOf(b)==g[0]).map(bkCard)]]),['অন্যান্য',ex.filter(b=>!SUBJ.some(g=>g[0]==secOf(b))).map(bkCard)]].filter(x=>x[1].length).map(x=>`<div class="sub2"><h4 class="ssh">${x[0]}</h4>${bgr(x[1],h=>h)}</div>`).join('')};let h=DIVS.map(d=>`<section class="dvs" data-div="${d[0]}"><h3 class="sh">${d[0]} বিভাগ</h3>${one(d[0],bk.filter(b=>bdiv(b)==d[0]))}</section>`).join('');const o=bk.filter(b=>!DIVS.some(d=>d[0]==bdiv(b)));if(o.length)h+=`<section class="dvs" data-div="অন্যান্য"><h3 class="sh">অন্যান্য</h3><div class="sub2">${bgr(o.map(bkCard),x=>x)}</div></section>`;return h};
+  const bn=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);const bgr=(l,fn,LIM=4)=>{const a=l.slice(0,LIM),r=l.slice(LIM);return `<div class="grid bgrid">${a.map(fn).join('')}</div>`+(r.length?`<details class="bmore"><summary><span class="mo">আরও ${bn(r.length)} টি বই দেখুন</span><span class="lo">কম দেখুন</span></summary><div class="grid bgrid">${r.map(fn).join('')}</div></details>`:'')};const secOf=b=>b.sec||(SUBJ.find(g=>g[1].includes(b.title))||[])[0]||'অন্যান্য';const secs=(l,fn)=>[...SUBJ.map(g=>g[0]),'অন্যান্য'].map(n=>[n,l.filter(b=>secOf(b)==n)]).filter(x=>x[1].length).map(x=>`<h4 class="ssh">${x[0]}</h4>${bgr(x[1],fn)}`).join('');const bkGroups=LIM=>{const known=new Set(SUBJ.flatMap(g=>g[1]));const one=(dn,extra)=>{const ex=extra.filter(b=>!(known.has(String(b.title).trim())&&DIVS.some(d=>d[0]==dn)));return [...SUBJ.map(g=>[g[0],[...g[1].map(t=>dmCard(t,dn)),...ex.filter(b=>secOf(b)==g[0]).map(bkCard)]]),['অন্যান্য',ex.filter(b=>!SUBJ.some(g=>g[0]==secOf(b))).map(bkCard)]].filter(x=>x[1].length).map(x=>`<div class="sub2"><h4 class="ssh">${x[0]}</h4>${bgr(x[1],h=>h,LIM)}</div>`).join('')};let h=DIVS.map(d=>`<section class="dvs" data-div="${d[0]}"><h3 class="sh">${d[0]} বিভাগ</h3>${one(d[0],bk.filter(b=>bdiv(b)==d[0]))}</section>`).join('');const o=bk.filter(b=>!DIVS.some(d=>d[0]==bdiv(b)));if(o.length)h+=`<section class="dvs" data-div="অন্যান্য"><h3 class="sh">অন্যান্য</h3><div class="sub2">${bgr(o.map(bkCard),x=>x,LIM)}</div></section>`;return h};
   const dlOf=t=>{const b=bk.find(x=>String(x.title).trim()==t);return b?`<span class="dlg"><a class="dlb" href="${esc(b.url)}" download target="_blank" rel="noopener" title="ডাউনলোড" aria-label="ডাউনলোড">${ic('download')}</a><a class="dlb" href="${esc(b.url)}" target="_blank" rel="noopener" title="পড়ুন" aria-label="পড়ুন">${ic('read')}</a></span>`:sorryL(t)};
-  const bkTabs=cid=>{const g=bkGroups(),first=DIVS[0][0],extra=/data-div="অন্যান্য"/.test(g)?[['অন্যান্য']]:[];return `<div class="chips" id="${cid}" style="margin-bottom:12px">${[...DIVS,...extra].map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div><div id="${cid}b">${g.replace(/<section class="dvs" data-div="([^"]+)"/g,(m,d)=>d==first?m:m+' hidden')}</div>`};
+  const bkTabs=(cid,LIM)=>{const g=bkGroups(LIM),first=DIVS[0][0],extra=/data-div="অন্যান্য"/.test(g)?[['অন্যান্য']]:[];return `<div class="chips" id="${cid}" style="margin-bottom:12px">${[...DIVS,...extra].map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div><div id="${cid}b">${g.replace(/<section class="dvs" data-div="([^"]+)"/g,(m,d)=>d==first?m:m+' hidden')}</div>`};
   return {dlU,sorryL,cover,bkCard,dmCard,bgr,bkGroups,bkTabs,dlOf,dlD,bn};
 }
 /* ---------- সব পেজের জন্য সাধারণ অংশ ---------- */
@@ -962,8 +981,7 @@ const pcached=(key,fn,ttl=120000)=>{const e=PC.get(key);if(e&&Date.now()-e.t<ttl
 const pall=c=>pcached('c:'+c,()=>all(c));
 const psite=(k,d)=>pcached('s:'+k,()=>site(k,d));
 const psafeAll=async c=>{try{return{l:await pall(c)}}catch(e){console.error('Firestore:',c,e);return{err:e}}};
-/* বিভাগ-কার্ডের ছবি: আগে পরিষ্কার (ট্রান্সপারেন্ট কোণ) icon1-clean…icon4-clean; না পেলে পুরোনো icon1…icon4; তাও না পেলে ছবি বাদ */
-const divIcon=i=>`<span class="bvn">${ic(['adab','talib','lazim','khid'][i])}<img class="ill" src="${cloudImage(`icon${i+1}-clean`)}" alt="" loading="lazy" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${cloudImage(`icon${i+1}`)}'}else this.remove()"></span>`;
+const divIcon=i=>`<span class="bvn">${ic(['adab','talib','lazim','khid'][i])}<img class="ill" src="${cloudImage(`icon${i+1}`)}" alt="" loading="lazy" onerror="this.remove()"></span>`;
 const DIVINFO=[['আদব','প্রাইমারি','১–৫','নববী আদর্শ ও নৈতিকতা অর্জন'],['তলিব','মাধ্যমিক','৬–৮','ইলম ও আমল অর্জন'],['লাজিম','উচ্চ মাধ্যমিক','৯–১০','ব্যবহারিক দক্ষতা অর্জন ও কর্মজীবন গঠন'],['খিদমাহ','স্নাতক ও স্নাতকোত্তর','১১–১২','পরিবার, সমাজ ও উম্মাহর দায়িত্ব গ্রহণ']];
 const divCards=()=>`<div class="bv">${DIVINFO.map((x,i)=>`<div class="bvc d${i}" title="${x[0]}">${divIcon(i)}<div class="bvd">${x[1]}</div><p class="bvl">${x[3]}</p></div>`).join('')}</div>`;
 const MON=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
@@ -994,7 +1012,7 @@ home(routeToken){
     const curBody=d=>{const dl=d?(t=>dlD(t,d)):dlOf;return `<h3 class="sh">${d?d+' বিভাগের ':''}সামগ্রিক শিক্ষাক্রম</h3><div class="card cc" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px"><span>সম্পূর্ণ শিক্ষাক্রম পড়ুন ও ডাউনলোড করুন</span>${dl('সামগ্রিক শিক্ষাক্রম')}</div><h3 class="sh">${d?d+' বিভাগের ':''}বিষয়ভিত্তিক শিক্ষাক্রম</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">${SUBJ.map(g=>`<div class="card cc"><h3>${g[0]}</h3><div style="overflow-x:auto"><table><tr><th>ক্রম</th><th>বিষয়</th><th>কারিকুলাম</th><th>পাঠ্যপুস্তক</th></tr>${g[1].map((n,i)=>`<tr><td>${String(i+1).replace(/\d/g,c=>'০১২৩৪৫৬৭৮৯'[c])}</td><td>${n}</td><td>${dl(n+' কারিকুলাম')}</td><td>${dl(n)}</td></tr>`).join('')}</table></div></div>`).join('')}</div>`};
     const stages=[
       ()=>`<hr class="dv">${head('শিক্ষাক্রম (কারিকুলাম)','')}<div class="chips" id="cchips" style="margin-bottom:4px">${DIVS.map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div>${DIVS.map((d,i)=>`<div class="cvw" data-d="${d[0]}"${i?' hidden':''}>${curBody(d[0])}</div>`).join('')}`,
-      ()=>`<hr class="dv">${head('পাঠ্যপুস্তক','textbook')}${bkTabs('hchips')}`,
+      ()=>`<hr class="dv">${head('পাঠ্যপুস্তক','textbook')}${bkTabs('hchips',matchMedia('(min-width:900px)').matches?6:4)}`,
       ()=>`<hr class="dv">${head('পরীক্ষার ফলাফল','result')}<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="hd">বিভাগ</label><select id="hd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="hex">পরীক্ষা</label>${examSel('hex')}</div></div><div id="hper" style="display:none"></div><div class="row"><div><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"></div><div><label for="hrl">রোল নম্বর</label><input id="hrl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="hcap">নিরাপত্তা যাচাই: <b id="hcapq"></b></label><input id="hcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="hcapmsg" aria-live="polite"></div><button id="hb">ফলাফল দেখুন</button></div></div><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
     ];
     const appendStage=i=>{
@@ -1173,8 +1191,8 @@ function bindAdmin(){if(user&&tstat!=='admin'){$('#lo').onclick=()=>signOut(auth
 async function bindTeacher(){
   if(!user){
     const gl=$('#gl');if(gl)gl.onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){say($('#lm'),'Google লগইন হয়নি: '+e.message)}};
-    const lg=$('#lg');if(lg)lg.onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){say($('#lm'),'লগইন হয়নি। ইমেইল ও পাসওয়ার্ড দেখুন।')}};return}
-  const lo=$('#lo');if(lo)lo.onclick=()=>signOut(auth);
+    $('#lg').onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){say($('#lm'),'লগইন হয়নি। ইমেইল ও পাসওয়ার্ড দেখুন।')}};return}
+  $('#lo').onclick=()=>signOut(auth);
   document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const open=b.getAttribute('aria-expanded')!=='true';document.querySelectorAll('[data-g]').forEach(x=>x.setAttribute('aria-expanded','false'));document.querySelectorAll('[data-gp]').forEach(p=>p.hidden=true);if(open){b.setAttribute('aria-expanded','true');document.querySelector('[data-gp="'+b.dataset.g+'"]').hidden=false}});
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{tTab=b.dataset.t;route()});
   const box=$('#tbox');
@@ -1842,7 +1860,7 @@ addEventListener('hashchange',route);route();
     if(rows.length<2||!rows[0].querySelector('th'))return;
     const heads=[...rows[0].cells].map(c=>c.textContent.trim());
     tb.dataset.rt='1';tb.classList.add('rtable');rows[0].classList.add('rh');
-    rows.slice(1).forEach(r=>[...r.cells].forEach((c,i)=>{if(heads[i])c.dataset.label=heads[i]}));
+    rows.slice(1).forEach(r=>[...r.cells].forEach((c,i)=>{if(heads[i])c.dataset.label=heads[i];if(!c.querySelector(':scope>.tv')){const w=document.createElement('span');w.className='tv';while(c.firstChild)w.appendChild(c.firstChild);c.appendChild(w)}}));
   });
   let frame=0;
   new MutationObserver(()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(label)}).observe(document.body,{childList:true,subtree:true});
