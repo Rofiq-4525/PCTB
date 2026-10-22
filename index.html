@@ -344,26 +344,27 @@ table.rsmk tr[data-reg]>td.rs-tt::before{content:"মোট";display:block;margi
 .rsf .pcap:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,146,58,.15)}
 .rsf .pcap select{height:36px;border:0;border-left:1px solid #e3ece6;border-radius:0;background-color:transparent;padding:0 22px 0 8px;background-position:right 6px center;box-shadow:none}
 .rsf .pcap select:first-child{border-left:0}
-.rsf .cs{position:relative;min-width:0}
-.rsf .cs-native{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0;margin:0}
-.rsf .cs .cs-btn{display:block;width:100%;height:38px;min-height:0;margin:0;padding:0 28px 0 10px;border:1px solid #d6e2db;border-radius:8px;background-color:#fff;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%235d6f66' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:10px 6px;color:var(--ink);font:inherit;font-size:.92rem;font-weight:400;letter-spacing:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none;transform:none;cursor:pointer}
-.rsf .cs .cs-btn.ph{color:#8a9a91}
-.rsf .cs .cs-btn:hover{background-color:#fff;border-color:#b9cdc2;transform:none;box-shadow:none}
-.rsf .cs .cs-btn:focus-visible,.rsf .cs .cs-btn[aria-expanded=true]{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,146,58,.15)}
-.rsf .cs-list{position:absolute;left:0;top:calc(100% + 4px);min-width:100%;width:max-content;max-width:min(320px,88vw);max-height:224px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;z-index:60;background:#fff;border:1px solid #d6e2db;border-radius:10px;box-shadow:0 10px 28px rgba(13,74,58,.16);padding:4px}
-.rsf .cs-list.up{top:auto;bottom:calc(100% + 4px)}
-.rsf .row>div:nth-child(2) .cs-list,.rsf .pcap .cs:last-child .cs-list{left:auto;right:0}
-.rsf .cs-grp{padding:7px 10px 3px;font-size:.7rem;font-weight:700;color:var(--mut)}
-.rsf .cs-opt{padding:7px 10px;border-radius:6px;font-size:.9rem;line-height:1.4;color:var(--ink);cursor:pointer;white-space:normal}
-.rsf .cs-opt:hover{background:#f1f6f3}
-.rsf .cs-opt.on{background:#e8f0eb;color:var(--g);font-weight:600}
-.rsf .pcap{overflow:visible}
-.rsf .pcap .cs{flex:1 1 0;min-width:0;border-left:1px solid #e3ece6}
-.rsf .pcap .cs:first-child{border-left:0}
-.rsf .pcap .cs .cs-btn{height:36px;border:0;border-radius:0;padding:0 20px 0 8px;background-position:right 6px center}
-.rsf .pcap .cs:first-child .cs-btn{border-radius:8px 0 0 8px}
-.rsf .pcap .cs:last-child .cs-btn{border-radius:0 8px 8px 0}
-.rsf .pcap .cs:only-child .cs-btn{border-radius:8px}
+/* ---- মিনিমাল কাস্টম ড্রপডাউন (সকল select) ---- */
+.cs{position:relative;display:block;min-width:0}
+html body .cs-native{position:absolute!important;left:0;top:0;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;border:0!important;padding:0!important;margin:0!important}
+html body .cs .cs-btn{display:block;width:100%;height:38px;min-height:0;margin:0;padding:0 28px 0 10px;border:1px solid #d6e2db;border-radius:8px;background-color:#fff;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%235d6f66' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 10px center;background-size:10px 6px;color:var(--ink);font:inherit;font-size:.92rem;font-weight:400;letter-spacing:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:none;transform:none;cursor:pointer}
+html body .card.rlk .cs .cs-btn{height:40px}
+html body .cs .cs-btn.ph{color:#8a9a91}
+html body .cs .cs-btn:hover{background-color:#fff;border-color:#b9cdc2;transform:none;box-shadow:none}
+html body .cs .cs-btn:focus-visible,html body .cs .cs-btn[aria-expanded=true]{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,146,58,.15)}
+html body .cs .cs-btn:disabled{background-color:#f3f6f4;color:#9aa8a0;border-color:#e1ebe5;cursor:not-allowed}
+html body .cs-list{position:fixed;z-index:9000;min-width:120px;max-width:min(320px,88vw);max-height:224px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid #d6e2db;border-radius:10px;box-shadow:0 10px 28px rgba(13,74,58,.16);padding:4px;text-align:left}
+.cs-list .cs-grp{padding:7px 10px 3px;font-size:.7rem;font-weight:700;color:var(--mut)}
+.cs-list .cs-opt{padding:7px 10px;border-radius:6px;font-size:.9rem;line-height:1.4;color:var(--ink);cursor:pointer;white-space:normal}
+.cs-list .cs-opt:hover{background:#f1f6f3}
+.cs-list .cs-opt.on{background:#e8f0eb;color:var(--g);font-weight:600}
+html body .pcap .cs{flex:1 1 0;min-width:0;border-left:1px solid #e3ece6}
+html body .pcap .cs:first-child{border-left:0}
+html body .pcap .cs .cs-btn{height:36px;border:0;border-radius:0;padding:0 20px 0 8px;background-position:right 6px center}
+html body .card.rlk .pcap .cs .cs-btn{height:40px}
+html body .pcap .cs:first-child .cs-btn{border-radius:7px 0 0 7px}
+html body .pcap .cs:last-child .cs-btn{border-radius:0 7px 7px 0}
+html body .pcap .cs:only-child .cs-btn{border-radius:7px}
 #rsSave{display:block;margin:16px auto 0}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
 @media(max-width:620px){
@@ -862,7 +863,7 @@ function resultCertificate(r,instName,id='resultCertificate'){
       <p class="cert-board-en" lang="en">Prophetic Curriculum and Textbook Board</p>
       <img class="cert-seal-top" src="${cloudImage('seal')}" alt="PCTB সিল">
     </header>
-    <h1 class="cert-title">সামগ্রিক ফলাফল সনদ</h1>
+    <h1 class="cert-title">ফলাফল সনদ</h1>
     <div class="cert-reg">রেজিস্ট্রেশন নম্বর: ${esc(r.reg||'')}</div>
     <section class="cert-info-group"><h3 class="cert-info-title">শিক্ষার্থীর তথ্য</h3>
       ${detail('শিক্ষার্থীর নাম',r.name)}
@@ -1201,21 +1202,37 @@ function bindStudent(){bindPeriod('s','sex');const go=()=>{if(capOk('scap')){sho
 function csEnhance(root){
   if(!root)return;
   const closeAll=()=>document.querySelectorAll('.cs-list:not([hidden])').forEach(x=>{x.hidden=true;x.previousElementSibling.setAttribute('aria-expanded','false')});
-  if(!window.__csG){window.__csG=1;document.addEventListener('click',e=>{if(!e.target.closest('.cs'))closeAll()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()})}
+  if(!window.__csG){window.__csG=1;
+    document.addEventListener('click',e=>{if(!e.target.closest('.cs'))closeAll()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+    document.addEventListener('scroll',e=>{if(!(e.target.nodeType===1&&e.target.closest('.cs-list')))closeAll()},true);
+    addEventListener('resize',closeAll);
+  }
   root.querySelectorAll('select').forEach(sel=>{
-    if(sel.dataset.cs)return;sel.dataset.cs='1';
+    if(sel.dataset.cs||sel.multiple||sel.size>1)return;sel.dataset.cs='1';
     const w=document.createElement('div');w.className='cs';
     const b=document.createElement('button');b.type='button';b.className='cs-btn';b.setAttribute('aria-haspopup','listbox');b.setAttribute('aria-expanded','false');
     const lab=sel.getAttribute('aria-label')||(sel.id&&document.querySelector('label[for="'+sel.id+'"]')?.textContent.replace('*','').trim());if(lab)b.setAttribute('aria-label',lab);
     const l=document.createElement('div');l.className='cs-list';l.setAttribute('role','listbox');l.hidden=true;
     sel.parentNode.insertBefore(w,sel);w.append(b,l,sel);sel.classList.add('cs-native');sel.tabIndex=-1;sel.setAttribute('aria-hidden','true');
-    const sync=()=>{const o=sel.selectedOptions[0];b.textContent=o?o.textContent:'';b.classList.toggle('ph',!sel.value)};
-    const add=o=>{if(o.disabled)return;const i=document.createElement('div');i.className='cs-opt'+(o.value===sel.value?' on':'');i.setAttribute('role','option');i.textContent=o.textContent;i.onclick=e=>{e.stopPropagation();sel.value=o.value;sel.dispatchEvent(new Event('change',{bubbles:true}));sync();closeAll()};l.appendChild(i)};
+    const sync=()=>{const o=sel.options[sel.selectedIndex];b.textContent=o?o.textContent:'';b.classList.toggle('ph',!sel.value);b.disabled=sel.disabled};
+    const dv=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value'),di=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'selectedIndex');
+    Object.defineProperty(sel,'value',{configurable:true,get(){return dv.get.call(this)},set(v){dv.set.call(this,v);sync()}});
+    Object.defineProperty(sel,'selectedIndex',{configurable:true,get(){return di.get.call(this)},set(v){di.set.call(this,v);sync()}});
+    new MutationObserver(sync).observe(sel,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled','selected']});
+    const add=o=>{if(o.disabled)return;const i=document.createElement('div');i.className='cs-opt'+(o.value===sel.value?' on':'');i.setAttribute('role','option');i.textContent=o.textContent;i.onclick=e=>{e.stopPropagation();sel.value=o.value;sel.dispatchEvent(new Event('change',{bubbles:true}));closeAll()};l.appendChild(i)};
     const build=()=>{l.textContent='';[...sel.children].forEach(c=>{if(c.tagName==='OPTGROUP'){const g=document.createElement('div');g.className='cs-grp';g.textContent=c.label;l.appendChild(g);[...c.children].forEach(add)}else add(c)})};
-    b.onclick=e=>{e.stopPropagation();const was=!l.hidden;closeAll();if(was)return;build();l.hidden=false;b.setAttribute('aria-expanded','true');const r=b.getBoundingClientRect(),h=l.offsetHeight;l.classList.toggle('up',r.bottom+h+8>innerHeight&&r.top>h+8);const on=l.querySelector('.on');if(on)l.scrollTop=Math.max(0,on.offsetTop-40)};
+    b.onclick=e=>{e.stopPropagation();const was=!l.hidden;closeAll();if(was)return;build();
+      const r=b.getBoundingClientRect();l.style.minWidth=r.width+'px';l.style.left='0px';l.style.top='0px';l.hidden=false;
+      const h=l.offsetHeight,wd=l.offsetWidth;let x=r.left,y=r.bottom+4;
+      if(x+wd>innerWidth-8)x=Math.max(8,innerWidth-8-wd);
+      if(y+h>innerHeight-8&&r.top>h+12)y=r.top-4-h;
+      l.style.left=x+'px';l.style.top=y+'px';b.setAttribute('aria-expanded','true');
+      const on=l.querySelector('.on');if(on)l.scrollTop=Math.max(0,on.offsetTop-40)};
     sel.addEventListener('change',sync);sync();
   });
 }
+{const csAuto=()=>csEnhance(document.body);csAuto();new MutationObserver(()=>{cancelAnimationFrame(csAuto._f);csAuto._f=requestAnimationFrame(csAuto)}).observe(document.body,{childList:true,subtree:true})}
 function renderResultEntryForm(box,institution=null){
   box.innerHTML=`<h3>ফলাফল তৈরি</h3><div class="row"><div><label for="rg">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rg" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="2331001"></div><div><label for="ex">পরীক্ষার নাম</label><select id="ex"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option><option>সাপ্তাহিক মূল্যায়ন</option><option>মাসিক মূল্যায়ন</option><option>অর্ধবার্ষিক মূল্যায়ন</option><option>বার্ষিক মূল্যায়ন</option><option>পর্ব উন্নয়ন</option><option>বিভাগ উন্নয়ন</option></select></div></div>
   <div class="row"><div><label for="studentName">শিক্ষার্থীর নাম</label><input id="studentName" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div><label for="studentFather">পিতার নাম</label><input id="studentFather" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div></div><div><label for="studentDivision">বিভাগ</label><input id="studentDivision" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div id="sn2" class="muted" aria-live="polite">রেজিস্ট্রেশন নম্বর লিখে যাচাই করুন।</div>
@@ -1625,7 +1642,7 @@ async function renderInstitutionStudentList(box,institution,database){
   $('#slq').oninput=draw;draw();
 }
 async function renderInstitutionAllResults(box,institution,database){
-  box.innerHTML='<h4>ফলাফল দেখুন</h4><p class="muted">ফলাফল লোড হচ্ছে…</p>';
+  box.innerHTML='<h4>সকল শিক্ষার্থীর ফলাফল</h4><p class="muted">ফলাফল লোড হচ্ছে…</p>';
   let rows=[];
   try{
     const [rs,ss]=await Promise.all([
@@ -1637,27 +1654,15 @@ async function renderInstitutionAllResults(box,institution,database){
   }catch(error){box.innerHTML=`<p class="msg bad">ফলাফল আনা যায়নি: ${esc(error.message)}</p>`;return}
   const exams=[...new Set(rows.map(r=>r.exam).filter(Boolean))],dvs=DIVS.map(d=>d[0]).filter(d=>rows.some(r=>r._div===d));
   const printCard=el=>{el.classList.add('print-target');addEventListener('afterprint',()=>el.classList.remove('print-target'),{once:true});print()};
-  box.innerHTML=`<h4>ফলাফল দেখুন</h4><div class="chips" id="irMode" style="margin-bottom:10px"><button type="button" class="on" data-m="sub">বিষয়ভিত্তিক</button><button type="button" data-m="all">সামগ্রিক সনদ</button></div><div id="irBody"></div>`;
+  box.innerHTML=`<h4>সকল শিক্ষার্থীর ফলাফল</h4><div id="irBody"></div>`;
   const body=$('#irBody');
-  const drawSub=()=>{
-    body.innerHTML=`<div class="row"><div><label for="isDiv">বিভাগ</label><select id="isDiv"><option value="" selected disabled>বিভাগ নির্বাচন করুন</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="isExam">পরীক্ষা</label><select id="isExam"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div></div><label for="isSub">বিষয়</label><select id="isSub"><option value="" selected disabled>বিষয় নির্বাচন করুন</option>${SUBJ.map(g=>`<optgroup label="${esc(g[0])}">${g[1].map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}</optgroup>`).join('')}</select><div id="isOut"></div>`;
-    const draw=()=>{
-      const fd=$('#isDiv').value,fe=$('#isExam').value,fs=$('#isSub').value,out=$('#isOut');
-      if(!fd||!fe||!fs){out.innerHTML='<p class="muted">বিভাগ, পরীক্ষা ও বিষয় নির্বাচন করলে ওই বিষয়ের সকল শিক্ষার্থীর নম্বর দেখা যাবে।</p>';return}
-      const list=rows.filter(r=>r._div===fd&&r.exam===fe).map(r=>({r,s:(r.subjects||[]).find(x=>x.n===fs)})).filter(x=>x.s).sort((p,q)=>String(q.r.date||'').localeCompare(String(p.r.date||''))||String(p.r.reg).localeCompare(String(q.r.reg)));
-      const v=x=>x??'–';
-      out.innerHTML=list.length?`<div class="card" id="isCard" style="margin-top:12px"><h3>${esc(fs)} — ${esc(fd)} বিভাগ</h3><p class="muted">${esc(fe)} · ${esc(institution.name)} · মোট ${bnum(list.length)} জন</p><div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th><th>সময় / তারিখ</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট (১০০)</th><th>মন্তব্য</th></tr>${list.map(({r,s})=>`<tr><td>${bnum(rollOf(r)||'')}</td><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(examTitle(r).replace(r.exam||'','').replace(/^\s*\(|\)\s*$/g,'')||'—')}${r.date?`<br><small class="muted">${esc(fmtDate(r.date))}</small>`:''}</td>${PARTS.map(p=>`<td>${v(s[p[0]])}</td>`).join('')}<td><b>${s.m}</b></td><td><span style="${s.m<50?'color:var(--err);font-weight:600':''}">${remark(s.m)}</span></td></tr>`).join('')}</table></div><button type="button" class="alt noprint" id="isPrint">প্রিন্ট করুন</button></div>`:'<p class="muted">এই বিভাগ, পরীক্ষা ও বিষয়ে এখনও কোনো নম্বর জমা হয়নি।</p>';
-      const pb=$('#isPrint');if(pb)pb.onclick=()=>printCard($('#isCard'));
-    };
-    ['isDiv','isExam','isSub'].forEach(id=>$('#'+id).onchange=draw);draw();
-  };
   const drawAll=()=>{
     const done=rows.filter(r=>!r.draft);
     body.innerHTML=`<div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div></div><input id="irQ" placeholder="নাম বা রেজিস্ট্রেশন নম্বর দিয়ে খুঁজুন" aria-label="ফলাফল খুঁজুন"><div id="irList"></div><div id="irSheet"></div>`;
     const draw=()=>{
       const fd=$('#irDiv').value,fe=$('#irExam').value,q=norm($('#irQ').value).toLowerCase();
       const f=done.filter(r=>(!fd||r._div===fd)&&(!fe||r.exam===fe)&&(!q||String(r.name||'').toLowerCase().includes(q)||String(r.reg||'').toLowerCase().includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
-      $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি সামগ্রিক ফলাফল</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>নাম</th><th>পরীক্ষা</th><th>বিভাগ</th><th>মোট</th><th>মন্তব্য</th><th></th></tr>${f.map(r=>{const subs=r.subjects||[],total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(subs.length?total/subs.length:0);return `<tr><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(examTitle(r))}${r.date?`<br><small class="muted">${esc(fmtDate(r.date))}</small>`:''}</td><td>${esc(r._div)}</td><td>${bnum(total)}</td><td>${remark(avg)}</td><td><button class="alt" data-ir-view="${esc(r.id)}" style="margin:0">সনদ দেখুন</button></td></tr>`}).join('')}</table></div>`:'<p class="muted">এখনও কোনো সামগ্রিক ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
+      $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি ফলাফল</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>নাম</th><th>পরীক্ষা</th><th>বিভাগ</th><th>মোট</th><th>মন্তব্য</th><th></th></tr>${f.map(r=>{const subs=r.subjects||[],total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(subs.length?total/subs.length:0);return `<tr><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(examTitle(r))}${r.date?`<br><small class="muted">${esc(fmtDate(r.date))}</small>`:''}</td><td>${esc(r._div)}</td><td>${bnum(total)}</td><td>${remark(avg)}</td><td><button class="alt" data-ir-view="${esc(r.id)}" style="margin:0">সনদ দেখুন</button></td></tr>`}).join('')}</table></div>`:'<p class="muted">এখনও কোনো ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
       $('#irList').querySelectorAll('[data-ir-view]').forEach(b=>b.onclick=()=>{
         const r=done.find(x=>x.id===b.dataset.irView),out=$('#irSheet');
         out.innerHTML=resultCertificate(r,institution.name)+`<div class="noprint" style="text-align:center;margin:8px 0 18px"><button type="button" class="alt" id="irPrint">প্রিন্ট / PDF</button> <button type="button" class="alt" id="irDl">ডাউনলোড (HTML)</button></div>`;
@@ -1668,8 +1673,7 @@ async function renderInstitutionAllResults(box,institution,database){
     };
     $('#irDiv').onchange=draw;$('#irExam').onchange=draw;$('#irQ').oninput=draw;draw();
   };
-  $('#irMode').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#irMode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));b.dataset.m==='sub'?drawSub():drawAll()});
-  drawSub();
+  drawAll();
 }
 function bindDash(){
   const dashboard=$('#institutionDashboardContent');
