@@ -304,25 +304,27 @@ th{background:#e8f0eb;font-weight:600}
 .muted{color:var(--mut)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .sub{display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center;margin-bottom:6px}.sub span{font-weight:500}
 .rsmk th:first-child,.rsmk td:first-child{position:sticky;left:0;z-index:2;background:#fff;box-shadow:1px 0 0 var(--line)}.rsmk th:first-child{background:#e8f0eb;z-index:3}.rsmk td,.rsmk th{white-space:nowrap}
-.rsmk .c-div,.rsmk .c-term{display:none}
+.rsmk .c-div,.rsmk .c-term,.rsmk .c-sub{display:none}
 @media(max-width:640px){
 #rsTable .rsmk,#rsTable .rsmk tbody{display:block;width:100%}
 #rsTable .rsmk tr:first-child{display:none}
-#rsTable .rsmk tr[data-reg]{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;padding:0 0 10px;margin-bottom:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;align-items:stretch}
+#rsTable .rsmk tr[data-reg]{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:0;padding:0 0 10px;margin-bottom:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;align-items:stretch}
 table.rsmk tr[data-reg]>td{display:block;position:static;width:auto;min-width:0;padding:4px 4px 2px;border:0;box-shadow:none;background:none;text-align:center;white-space:normal;overflow-wrap:anywhere}
 table.rsmk tr[data-reg]>td.c-name,table.rsmk tr[data-reg]>td.c-roll,table.rsmk tr[data-reg]>td.c-reg,table.rsmk tr[data-reg]>td.c-div,table.rsmk tr[data-reg]>td.c-term{background:#e8f0eb}
-table.rsmk tr[data-reg]>td.c-name{grid-column:1/6;grid-row:1;text-align:center;font-weight:700;font-size:.95rem;color:var(--g);padding:8px 8px 2px;line-height:1.3}
+table.rsmk tr[data-reg]>td.c-name{grid-column:1/21;grid-row:1;text-align:center;border-bottom:1px solid #b9cdc2;font-weight:700;font-size:.95rem;color:var(--g);padding:8px 8px 2px;line-height:1.3}
 table.rsmk tr[data-reg]>td.c-name::before{content:"নামঃ ";font-weight:600;color:var(--mut)}
-table.rsmk tr[data-reg]>td.c-roll{grid-column:1;grid-row:2;text-align:left;padding:0 4px 8px 8px}
-table.rsmk tr[data-reg]>td.c-reg{grid-column:2/4;grid-row:2;padding:0 4px 8px}
-table.rsmk tr[data-reg]>td.c-div{display:block;grid-column:4;grid-row:2;padding:0 4px 8px}
-table.rsmk tr[data-reg]>td.c-term{display:block;grid-column:5;grid-row:2;padding:0 8px 8px 4px}
+table.rsmk tr[data-reg]>td.c-roll{grid-column:1/6;grid-row:2;text-align:center;padding:6px 4px 8px}
+table.rsmk tr[data-reg]>td.c-reg{grid-column:6/11;grid-row:2;text-align:center;padding:6px 4px 8px}
+table.rsmk tr[data-reg]>td.c-div{display:block;grid-column:11/16;grid-row:2;text-align:center;padding:6px 4px 8px}
+table.rsmk tr[data-reg]>td.c-term{display:block;grid-column:16/21;grid-row:2;text-align:center;padding:6px 4px 8px}
 table.rsmk tr[data-reg]>td.c-roll,table.rsmk tr[data-reg]>td.c-reg,table.rsmk tr[data-reg]>td.c-div,table.rsmk tr[data-reg]>td.c-term{font-size:.74rem;line-height:1.25}
+table.rsmk tr[data-reg]>td.c-sub{display:block;grid-column:1/21;grid-row:3;text-align:center;font-weight:700;font-size:.9rem;color:var(--g);padding:10px 8px 0}
+table.rsmk tr[data-reg]>td.c-sub::before{content:"বিষয়ঃ ";font-weight:600;color:var(--mut)}
 table.rsmk tr[data-reg]>td.c-roll::before{content:"রোল";display:block;color:var(--mut);font-size:.62rem}
 table.rsmk tr[data-reg]>td.c-reg::before{content:"রেজিস্ট্রেশন";display:block;color:var(--mut);font-size:.62rem}
 table.rsmk tr[data-reg]>td.c-div::before{content:"বিভাগ";display:block;color:var(--mut);font-size:.62rem}
 table.rsmk tr[data-reg]>td.c-term::before{content:"পর্ব";display:block;color:var(--mut);font-size:.62rem}
-table.rsmk tr[data-reg]>td.c-in,table.rsmk tr[data-reg]>td.rs-tt{grid-row:3;padding:8px 3px 0}
+table.rsmk tr[data-reg]>td.c-in,table.rsmk tr[data-reg]>td.rs-tt{grid-row:4;grid-column:span 4;padding:8px 3px 0}
 table.rsmk tr[data-reg]>td.c-in{font-size:.66rem;color:var(--mut);line-height:1.15}
 table.rsmk tr[data-reg]>td.c-in::before{content:attr(data-label);display:block;margin-bottom:2px;white-space:nowrap;font-size:.64rem}
 table.rsmk tr[data-reg]>td.c-in input{width:100%;min-width:0!important;height:34px;padding:3px 1px;font-size:.85rem;text-align:center;border-radius:6px}
@@ -1496,7 +1498,7 @@ async function renderInstitutionResultEntry(box,institution,database){
     $('#rsTable').innerHTML=`<h4 style="margin-top:16px">${esc(sub)} — ${esc(d)} বিভাগ, পর্ব ${bnum(t)} · ${esc(examTitle({exam,year:y,month:m,week:w}))}</h4>
     <div style="overflow-x:auto"><table class="rsmk" data-rt="1"><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট</th></tr>
     ${list.map(s=>{const saved=(results.get(s.reg)?.subjects||[]).find(x=>x.n===sub),n=(results.get(s.reg)?.subjects||[]).length;
-      return `<tr data-reg="${esc(s.reg)}" data-had="${saved?1:0}"><td class="c-roll">${bnum(s.roll)}</td><td class="c-reg">${esc(s.reg)}</td><td class="c-name">${esc(s.name)}</td><td class="c-div">${esc(d)}</td><td class="c-term">${bnum(t)}</td>${PARTS.map(p=>`<td class="c-in" data-label="${p[1]}"><input type="number" min="0" max="${p[2]}" inputmode="numeric" data-k="${p[0]}" value="${saved?saved[p[0]]??'':''}" style="min-width:64px" aria-label="${esc(s.name)} ${p[1]}"></td>`).join('')}<td class="rs-tt" style="text-align:center">0</td></tr>`}).join('')}</table></div>
+      return `<tr data-reg="${esc(s.reg)}" data-had="${saved?1:0}"><td class="c-roll">${bnum(s.roll)}</td><td class="c-reg">${esc(s.reg)}</td><td class="c-name">${esc(s.name)}</td><td class="c-div">${esc(d)}</td><td class="c-term">${bnum(t)}</td><td class="c-sub">${esc(sub)}</td>${PARTS.map(p=>`<td class="c-in" data-label="${p[1]}"><input type="number" min="0" max="${p[2]}" inputmode="numeric" data-k="${p[0]}" value="${saved?saved[p[0]]??'':''}" style="min-width:64px" aria-label="${esc(s.name)} ${p[1]}"></td>`).join('')}<td class="rs-tt" style="text-align:center">0</td></tr>`}).join('')}</table></div>
     <button id="rsSave">সকল শিক্ষার্থীর নম্বর সংরক্ষণ করুন</button>`;
     $('#rsTable').querySelectorAll('tr[data-reg]').forEach(rowTotal);
     $('#rsTable').oninput=e=>{const el=e.target;if(!el.dataset.k)return;const p=PARTS.find(x=>x[0]===el.dataset.k);if(+el.value>p[2])el.value=p[2];if(+el.value<0)el.value=0;rowTotal(el.closest('tr'))};
