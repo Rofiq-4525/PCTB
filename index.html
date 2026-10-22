@@ -208,7 +208,7 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 /* বিভাগ কার্ড: উন্নত রঙ ও সাদা বৃত্ত বাদ */
 .bvc{border-top-width:4px;box-shadow:0 6px 16px rgba(13,74,58,.1)}
 .bvc .bvn{box-shadow:0 5px 12px rgba(13,74,58,.22)}
-.bvn img.ill{mix-blend-mode:multiply;filter:none}
+
 .bvc.d0{background:linear-gradient(160deg,#eaf8f0 0%,#b9e2c9 100%);border-color:#9fd1b3;border-top-color:#1f8a68}.bvc.d0 .bvn{background:linear-gradient(145deg,#2fa07a,#176b50)}.bvc.d0 b{color:#0f5a43}.bvc.d0 .pill{background:rgba(31,138,104,.14);color:#0f5a43}
 .bvc.d1{background:linear-gradient(160deg,#e7f5f8 0%,#b4dce6 100%);border-color:#98cbd8;border-top-color:#1f7f95}.bvc.d1 .bvn{background:linear-gradient(145deg,#2a95aa,#17697c)}.bvc.d1 b{color:#125668}.bvc.d1 .pill{background:rgba(31,127,149,.14);color:#125668}
 .bvc.d2{background:linear-gradient(160deg,#f5f8e3 0%,#d6e3a0 100%);border-color:#c3d584;border-top-color:#7a9a1f}.bvc.d2 .bvn{background:linear-gradient(145deg,#8fae2a,#5f7a14)}.bvc.d2 b{color:#4c6310}.bvc.d2 .pill{background:rgba(122,154,31,.16);color:#4c6310}
@@ -216,7 +216,7 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 .bvc .bvl{margin:6px 4px 2px;font-size:.92rem;font-weight:500;line-height:1.45;color:var(--ink)}
 .bvc:has(img.ill){padding:8px 6px 10px}
 .bvc .bvn:has(img.ill){width:min(100%,190px);height:auto;aspect-ratio:1;background:none!important;box-shadow:none!important;margin:0 auto 4px}
-.bvc .bvn:has(img.ill) .ic{display:none}.bvc:has(img.ill) b{display:block;line-height:1.25}.bvc:has(img.ill) .bvd{margin:1px 0 5px}.bvn img.ill{width:100%;height:100%;display:block;border-radius:50%;filter:drop-shadow(0 3px 6px rgba(13,74,58,.22))}
+.bvc .bvn:has(img.ill) .ic{display:none}.bvc:has(img.ill) b{display:block;line-height:1.25}.bvc:has(img.ill) .bvd{margin:1px 0 5px}.bvn img.ill{width:100%;height:100%;display:block;border-radius:50%;mix-blend-mode:normal;opacity:1;filter:drop-shadow(0 3px 6px rgba(13,74,58,.22))}
 /* হেডারের তিন আইকন বাটন: রঙিন ডিজাইন */
 .mnav{gap:0}
 .mnav .mb{border-radius:12px;box-shadow:0 2px 6px rgba(13,74,58,.14);transition:transform .15s,box-shadow .15s,background .15s,color .15s}
@@ -962,7 +962,8 @@ const pcached=(key,fn,ttl=120000)=>{const e=PC.get(key);if(e&&Date.now()-e.t<ttl
 const pall=c=>pcached('c:'+c,()=>all(c));
 const psite=(k,d)=>pcached('s:'+k,()=>site(k,d));
 const psafeAll=async c=>{try{return{l:await pall(c)}}catch(e){console.error('Firestore:',c,e);return{err:e}}};
-const divIcon=i=>`<span class="bvn">${ic(['adab','talib','lazim','khid'][i])}<img class="ill" src="${cloudImage(`icon${i+1}`)}" alt="" loading="lazy" onerror="this.remove()"></span>`;
+/* বিভাগ-কার্ডের ছবি: আগে পরিষ্কার (ট্রান্সপারেন্ট কোণ) icon1-clean…icon4-clean; না পেলে পুরোনো icon1…icon4; তাও না পেলে ছবি বাদ */
+const divIcon=i=>`<span class="bvn">${ic(['adab','talib','lazim','khid'][i])}<img class="ill" src="${cloudImage(`icon${i+1}-clean`)}" alt="" loading="lazy" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${cloudImage(`icon${i+1}`)}'}else this.remove()"></span>`;
 const DIVINFO=[['আদব','প্রাইমারি','১–৫','নববী আদর্শ ও নৈতিকতা অর্জন'],['তলিব','মাধ্যমিক','৬–৮','ইলম ও আমল অর্জন'],['লাজিম','উচ্চ মাধ্যমিক','৯–১০','ব্যবহারিক দক্ষতা অর্জন ও কর্মজীবন গঠন'],['খিদমাহ','স্নাতক ও স্নাতকোত্তর','১১–১২','পরিবার, সমাজ ও উম্মাহর দায়িত্ব গ্রহণ']];
 const divCards=()=>`<div class="bv">${DIVINFO.map((x,i)=>`<div class="bvc d${i}" title="${x[0]}">${divIcon(i)}<div class="bvd">${x[1]}</div><p class="bvl">${x[3]}</p></div>`).join('')}</div>`;
 const MON=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
@@ -1172,8 +1173,8 @@ function bindAdmin(){if(user&&tstat!=='admin'){$('#lo').onclick=()=>signOut(auth
 async function bindTeacher(){
   if(!user){
     const gl=$('#gl');if(gl)gl.onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){say($('#lm'),'Google লগইন হয়নি: '+e.message)}};
-    $('#lg').onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){say($('#lm'),'লগইন হয়নি। ইমেইল ও পাসওয়ার্ড দেখুন।')}};return}
-  $('#lo').onclick=()=>signOut(auth);
+    const lg=$('#lg');if(lg)lg.onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){say($('#lm'),'লগইন হয়নি। ইমেইল ও পাসওয়ার্ড দেখুন।')}};return}
+  const lo=$('#lo');if(lo)lo.onclick=()=>signOut(auth);
   document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{const open=b.getAttribute('aria-expanded')!=='true';document.querySelectorAll('[data-g]').forEach(x=>x.setAttribute('aria-expanded','false'));document.querySelectorAll('[data-gp]').forEach(p=>p.hidden=true);if(open){b.setAttribute('aria-expanded','true');document.querySelector('[data-gp="'+b.dataset.g+'"]').hidden=false}});
   document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{tTab=b.dataset.t;route()});
   const box=$('#tbox');
