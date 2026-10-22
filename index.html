@@ -293,14 +293,6 @@ button:hover{background:var(--g2)}button.alt{background:#fff;color:var(--g);bord
 .msg{margin-top:10px;font-weight:500}.msg.ok{color:var(--g2)}.msg.bad{color:var(--err)}
 table{width:100%;border-collapse:collapse}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
 th{background:#e8f0eb;font-weight:600}
-.rs-entry-table{min-width:900px;table-layout:fixed}
-.rs-entry-table th:nth-child(1){width:64px}
-.rs-entry-table th:nth-child(2){width:140px;white-space:nowrap}
-.rs-entry-table td:nth-child(2){white-space:nowrap}
-.rs-entry-table th:nth-child(3){width:150px}
-.rs-entry-table th:nth-child(n+4):nth-child(-n+7){width:86px;text-align:center}
-.rs-entry-table th:nth-child(8){width:72px;text-align:center}
-.rs-entry-table th:nth-child(9){width:110px}
 .reg{font:600 1.35rem monospace;background:#e8f0eb;padding:8px 14px;border-radius:7px;display:inline-block;letter-spacing:1px}
 .pill{display:inline-block;padding:2px 10px;border-radius:20px;background:#e8f0eb;font-size:.82rem;color:var(--g)}
 .muted{color:var(--mut)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -1460,7 +1452,7 @@ async function renderInstitutionResultEntry(box,institution,database){
     const {d,t,exam,sub,y,m,w,pk,pOk}=sel();
     if(!list.length){$('#rsTable').innerHTML='';return}
     $('#rsTable').innerHTML=`<h4 style="margin-top:16px">${esc(sub)} — ${esc(d)} বিভাগ, পর্ব ${bnum(t)} · ${esc(examTitle({exam,year:y,month:m,week:w}))}</h4><p class="muted">প্রতিটি শিক্ষার্থীর ঘরে নম্বর দিন। যে শিক্ষার্থীর সব ঘর ফাঁকা থাকবে তার নম্বর জমা হবে না; আংশিক লিখলে ফাঁকা ঘর ০ ধরা হবে।</p>
-    <div class="rs-table-scroll" style="overflow-x:auto"><table class="rs-entry-table"><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট</th><th>জমা বিষয়</th></tr>
+    <div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট</th><th>জমা বিষয়</th></tr>
     ${list.map(s=>{const saved=(results.get(s.reg)?.subjects||[]).find(x=>x.n===sub),n=(results.get(s.reg)?.subjects||[]).length;
       return `<tr data-reg="${esc(s.reg)}" data-had="${saved?1:0}"><td>${bnum(s.roll)}</td><td>${esc(s.reg)}</td><td>${esc(s.name)}</td>${PARTS.map(p=>`<td><input type="number" min="0" max="${p[2]}" inputmode="numeric" data-k="${p[0]}" value="${saved?saved[p[0]]??'':''}" style="min-width:64px" aria-label="${esc(s.name)} ${p[1]}"></td>`).join('')}<td class="rs-tt" style="text-align:center">0</td><td class="rs-cnt">${countCell(s.reg)}</td></tr>`}).join('')}</table></div>
     <button id="rsSave">সকল শিক্ষার্থীর নম্বর সংরক্ষণ করুন</button>`;
