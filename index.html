@@ -47,6 +47,10 @@
 #apphelp p{margin:0 0 14px;line-height:1.7;font-size:.95rem}
 #apphelp button{margin:0;width:100%;padding:10px;border:0;border-radius:11px;background:#0d4a3a;color:#fff;font-size:.95rem;cursor:pointer}
 @keyframes ahIn{from{opacity:0}to{opacity:1}}
+.pcap{display:flex;flex-wrap:nowrap;align-items:stretch;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden;margin:4px 0 10px}
+.pcap select{flex:1 1 0;min-width:0;width:auto;margin:0;padding:9px 12px;border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;font-size:.92rem;text-overflow:ellipsis}
+.pcap select:first-child{border-left:0;padding-left:12px}.pcap select:last-child{padding-right:12px}
+.pcap:focus-within{border-color:var(--g);box-shadow:0 0 0 3px rgba(13,74,58,.12)}.pcap select:focus{outline:0;box-shadow:none}
 </style>
 <title>PCTB – নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</title>
 <link rel="icon" href="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_64,c_limit/logo_short">
@@ -574,7 +578,7 @@ const ADMIN_EMAIL='a.rofiq4525@gmail.com';
 let DEMO=firebaseConfig.apiKey==="YOUR_API_KEY";
 let initializeApp,getFirestore,collection,doc,getDoc,setDoc,addDoc,getDocs,query,where,runTransaction,deleteDoc,getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,onAuthStateChanged,signOut,GoogleAuthProvider,signInWithPopup,sendEmailVerification,getStorage,ref,uploadBytes,getDownloadURL;
 function useDemo(){
-  const K='pctb_demo',ld=()=>{try{return JSON.parse(localStorage.getItem(K))||{}}catch{return mem}},mem={},sv=d=>{try{localStorage.setItem(K,JSON.stringify(d))}catch{mem=d}};
+  let K='pctb_demo',ld=()=>{try{return JSON.parse(localStorage.getItem(K))||{}}catch{return mem}},mem={},sv=d=>{try{localStorage.setItem(K,JSON.stringify(d))}catch{mem=d}};
   initializeApp=getFirestore=getAuth=getStorage=()=>({});
   collection=(_,c)=>({c});doc=(_,c,id)=>({c,id});where=(f,o,v)=>({f,v});query=(c,...w)=>({c:c.c,w});
   getDocs=async q=>{const col=ld()[q.c]||{};const docs=Object.entries(col).filter(([,v])=>(q.w||[]).every(w=>v[w.f]===w.v)).map(([id,v])=>({id,data:()=>v}));return{docs,empty:!docs.length}};
@@ -629,6 +633,24 @@ const SUBJ=[['দ্বীন শিক্ষা',['ইমান শিক্ষ
 const PARTS=[['w','লিখিত',30],['p','ব্যবহারিক',30],['o','মৌখিক',20],['a','আদব',20]];
 const DIVS=[['আদব'],['তলিব'],['লাজিম'],['খিদমাহ']];
 const EXAMS=[['সাপ্তাহিক মূল্যায়ন','সাপ্তাহিক'],['মাসিক মূল্যায়ন','মাসিক'],['অর্ধবার্ষিক মূল্যায়ন','অর্ধবার্ষিক'],['বার্ষিক মূল্যায়ন','বার্ষিক'],['বিভাগ উন্নয়ন','বিভাগ উন্নয়ন']];
+const MONTHS_BN=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+const WEEKS_BN=['১ম','২য়','৩য়','৪র্থ','৫ম'];
+const EXAM_PERIOD={'সাপ্তাহিক মূল্যায়ন':['y','m','w'],'মাসিক মূল্যায়ন':['y','m']};
+const periodOf=exam=>EXAM_PERIOD[exam]||['y'];
+const periodKey=(exam,y,m,w)=>exam?periodOf(exam).map(k=>k==='y'?y:k==='m'?m:w).join('-'):'';
+const examTitle=r=>{const bits=[];if(r.week)bits.push(WEEKS_BN[r.week-1]+' সপ্তাহ');const ym=[r.month?MONTHS_BN[r.month-1]:'',r.year?bnum(r.year):''].filter(Boolean).join(' ');if(ym)bits.push(ym);return (r.exam||'')+(bits.length?` (${bits.join(', ')})`:'')};
+const fmtDate=d=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');return m?`${bnum(+m[3])} ${MONTHS_BN[+m[2]-1]} ${bnum(m[1])}`:(d||'')};
+const getPeriod=pf=>{const g=k=>{const el=document.getElementById(pf+k);return el?el.value:''};return {y:g('y'),m:g('m'),w:g('w')}};
+const bindPeriod=(pf,exId)=>{
+  const ex=document.getElementById(exId),box=document.getElementById(pf+'per');if(!ex||!box)return;
+  const render=()=>{
+    const ks=ex.value?periodOf(ex.value):[],cy=new Date().getFullYear();
+    const mk=(k,label,opts)=>`<select id="${pf}${k}" aria-label="${label}"><option value="">${label}</option>${opts}</select>`;
+    const f={y:mk('y','বছর',Array.from({length:7},(_,i)=>cy+1-i).map(v=>`<option value="${v}">${bnum(v)}</option>`).join('')),m:mk('m','মাস',MONTHS_BN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('')),w:mk('w','সপ্তাহ',WEEKS_BN.map((n,i)=>`<option value="${i+1}">${n} সপ্তাহ</option>`).join(''))};
+    box.innerHTML=ks.length?`<label>পরীক্ষার সময় নির্বাচন</label><div class="pcap">${ks.map(k=>f[k]).join('')}</div>`:'';box.style.display=ks.length?'':'none';
+  };
+  ex.addEventListener('change',render);render();
+};
 const examSel=id=>`<select id="${id}"><option value="">পরীক্ষা নির্বাচন</option>${EXAMS.map(e=>`<option value="${e[0]}">${e[1]}</option>`).join('')}</select>`;
 const DIV_CODES={আদব:'233',তলিব:'333',লাজিম:'433',খিদমাহ:'533'};
 const WORLD_AREAS=[
@@ -767,7 +789,7 @@ function resultCertificate(r,instName,id='resultCertificate'){
       ${detail('বিভাগ',bdiv(r))}
       ${detail('রোল নম্বর',rollOf(r)?bnum(rollOf(r)):'')}
       ${detail('প্রতিষ্ঠান',instName)}
-      ${detail('পরীক্ষা',r.exam)}
+      ${detail('পরীক্ষা',examTitle(r))}${r.date?detail('পরীক্ষার তারিখ',fmtDate(r.date)):''}
     </section>
     <table class="cert-rtable"><thead><tr><th>ক্রম</th><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]}<br>(${bnum(p[2])})</th>`).join('')}<th>মোট<br>(১০০)</th><th>মন্তব্য</th></tr></thead><tbody>${subs.map((x,i)=>`<tr><td>${bnum(i+1)}</td><td>${esc(x.n)}</td>${PARTS.map(p=>`<td>${v(x[p[0]])}</td>`).join('')}<td><b>${x.m}</b></td><td${x.m<50?' style="color:#a3281f;font-weight:600"':''}>${remark(x.m)}</td></tr>`).join('')}</tbody></table>
     <div class="cert-summary"><span>সর্বমোট: ${bnum(total)} / ${bnum(n*100)}</span><span>গড় নম্বর: ${bnum(avg.toFixed(1))}</span><span>সার্বিক মন্তব্য: ${remark(avg)}</span>${fail?`<span style="color:#a3281f">অকৃতকার্য বিষয়: ${bnum(fail)}টি</span>`:''}</div>
@@ -876,7 +898,7 @@ function downloadInstitutionCertificate(institution){
 function card(r){
   const total=r.total??r.subjects.reduce((a,x)=>a+x.m,0),n=r.subjects.length,avg=r.avg??total/n,fail=r.subjects.filter(x=>x.m<50).length;
   const rm=m=>`<span style="${m<50?'color:var(--err);font-weight:600':''}">${remark(m)}</span>`,v=x=>x??'–';
-  return `<div class="card rescard"><div class="rc-head"><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="" width="64" height="64"><h3>${esc(r.exam)}</h3><div class="rc-name">${esc(r.name)}</div>${r.father||r.guardian?`<div class="rc-meta">${r.father?`পিতা: ${esc(r.father)}`:''}${r.father&&r.guardian?' · ':''}${r.guardian?`অভিভাবক: ${esc(r.guardian)}`:''}</div>`:''}<div class="rc-pills">${bdiv(r)?`<span class="pill">${esc(bdiv(r))} বিভাগ</span>`:''}<span class="pill">${esc(r.reg)}</span>${rollOf(r)?`<span class="pill">রোল ${bnum(rollOf(r))}</span>`:''}</div></div>
+  return `<div class="card rescard"><div class="rc-head"><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="" width="64" height="64"><h3>${esc(examTitle(r))}</h3>${r.date?`<div class="rc-meta">পরীক্ষার তারিখ: ${esc(fmtDate(r.date))}</div>`:''}<div class="rc-name">${esc(r.name)}</div>${r.father||r.guardian?`<div class="rc-meta">${r.father?`পিতা: ${esc(r.father)}`:''}${r.father&&r.guardian?' · ':''}${r.guardian?`অভিভাবক: ${esc(r.guardian)}`:''}</div>`:''}<div class="rc-pills">${bdiv(r)?`<span class="pill">${esc(bdiv(r))} বিভাগ</span>`:''}<span class="pill">${esc(r.reg)}</span>${rollOf(r)?`<span class="pill">রোল ${bnum(rollOf(r))}</span>`:''}</div></div>
   <div style="overflow-x:auto"><table class="rc-table"><tr><th>বিষয়</th><th>লিখিত (৩০)</th><th>ব্যবহারিক (৩০)</th><th>মৌখিক (২০)</th><th>আদব (২০)</th><th>মোট (১০০)</th><th>মন্তব্য</th></tr>
   ${r.subjects.map(x=>`<tr><td>${esc(x.n)}</td><td>${v(x.w)}</td><td>${v(x.p)}</td><td>${v(x.o)}</td><td>${v(x.a)}</td><td><b>${x.m}</b></td><td>${rm(x.m)}</td></tr>`).join('')}</table></div>
   <div class="rc-sum"><div><span>সর্বমোট</span><b>${total} / ${n*100}</b></div><div><span>গড় নম্বর</span><b>${avg.toFixed(1)}</b></div><div><span>সার্বিক মন্তব্য</span><b>${rm(avg)}</b></div></div>
@@ -890,7 +912,7 @@ function downloadResult(result){
   const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'})),link=document.createElement('a');
   link.href=url;link.download=`PCTB-result-${result.reg||'result'}-${String(result.exam||'').replace(/[^\w-]/g,'_')}.html`;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-async function showResults(reg,out,dv,roll,exam){
+async function showResults(reg,out,dv,roll,exam,per){
   reg=norm(reg);roll=norm(roll||'');
   if(!reg){out.innerHTML='';return}
   out.innerHTML='<p class="muted">খোঁজা হচ্ছে…</p>';
@@ -898,8 +920,9 @@ async function showResults(reg,out,dv,roll,exam){
     let rs=(await getDocs(query(collection(db,'results'),where('reg','==',reg)))).docs.map(d=>d.data()).sort((a,b)=>b.t-a.t).filter(r=>!r.draft);
     if(dv)rs=rs.filter(r=>r.div==dv);
     if(exam)rs=rs.filter(r=>r.exam==exam);
+    if(per){if(per.y)rs=rs.filter(r=>String(r.year||'')===String(per.y));if(per.m)rs=rs.filter(r=>String(r.month||'')===String(per.m));if(per.w)rs=rs.filter(r=>String(r.week||'')===String(per.w))}
     if(roll)rs=rs.filter(r=>rollMatches(r,roll));
-    if(!rs.length){out.innerHTML=`<div class="card"><span class="msg bad">${roll?'এই রেজিস্ট্রেশন ও রোল নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বর দুটি আবার দেখুন।':exam?`এই রেজিস্ট্রেশন নম্বরে ${esc(exam)}-এর কোনো ফলাফল পাওয়া যায়নি।`:dv?`এই রেজিস্ট্রেশন নম্বরে ${esc(dv)} বিভাগের কোনো ফলাফল পাওয়া যায়নি।`:'এই রেজিস্ট্রেশন নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বরটি আবার দেখুন।'}</span></div>`;return}
+    if(!rs.length){out.innerHTML=`<div class="card"><span class="msg bad">${roll?'এই রেজিস্ট্রেশন ও রোল নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বর দুটি আবার দেখুন।':exam?`এই রেজিস্ট্রেশন নম্বরে ${esc(examTitle({exam,year:per&&per.y,month:per&&per.m,week:per&&per.w}))}-এর কোনো ফলাফল পাওয়া যায়নি।`:dv?`এই রেজিস্ট্রেশন নম্বরে ${esc(dv)} বিভাগের কোনো ফলাফল পাওয়া যায়নি।`:'এই রেজিস্ট্রেশন নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বরটি আবার দেখুন।'}</span></div>`;return}
     out.innerHTML=rs.map(card).join('');
     out.querySelectorAll('.result-print').forEach(button=>button.onclick=()=>{
       const resultCard=button.closest('.card');resultCard.classList.add('print-target');
@@ -971,7 +994,7 @@ home(routeToken){
     const stages=[
       ()=>`<hr class="dv">${head('শিক্ষাক্রম (কারিকুলাম)','')}<div class="chips" id="cchips" style="margin-bottom:4px">${DIVS.map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div>${DIVS.map((d,i)=>`<div class="cvw" data-d="${d[0]}"${i?' hidden':''}>${curBody(d[0])}</div>`).join('')}`,
       ()=>`<hr class="dv">${head('পাঠ্যপুস্তক','textbook')}${bkTabs('hchips')}`,
-      ()=>`<hr class="dv">${head('পরীক্ষার ফলাফল','result')}<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="hd">বিভাগ</label><select id="hd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="hex">পরীক্ষা</label>${examSel('hex')}</div></div><div class="row"><div><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"></div><div><label for="hrl">রোল নম্বর</label><input id="hrl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="hcap">নিরাপত্তা যাচাই: <b id="hcapq"></b></label><input id="hcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="hcapmsg" aria-live="polite"></div><button id="hb">ফলাফল দেখুন</button></div></div><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
+      ()=>`<hr class="dv">${head('পরীক্ষার ফলাফল','result')}<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="hd">বিভাগ</label><select id="hd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="hex">পরীক্ষা</label>${examSel('hex')}</div></div><div id="hper" style="display:none"></div><div class="row"><div><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"></div><div><label for="hrl">রোল নম্বর</label><input id="hrl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="hcap">নিরাপত্তা যাচাই: <b id="hcapq"></b></label><input id="hcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="hcapmsg" aria-live="polite"></div><button id="hb">ফলাফল দেখুন</button></div></div><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
     ];
     const appendStage=i=>{
       if(i>=stages.length||routeToken!==routeVersion||!rest.isConnected)return;
@@ -1066,10 +1089,10 @@ async institutions(){
   return pageHead('নিবন্ধিত প্রতিষ্ঠান তালিকা','বোর্ডভুক্ত প্রতিষ্ঠানের তালিকা','school')
   +(r.err?errBox(r.err):l.length?`<div class="tbar"><div class="muted" id="icnt">মোট ${bnum(l.length)} টি প্রতিষ্ঠান</div><div class="srch"><span>${ic('search')}</span><input id="iq" placeholder="নাম, দেশ বা ঠিকানা দিয়ে খুঁজুন…" aria-label="প্রতিষ্ঠান খুঁজুন"></div></div><div class="grid" id="ilist">${l.map(i=>`<div class="card cc ins" data-s="${esc((i.name+' '+(i.address||'')+' '+(i.code||'')+' '+(i.country||'')+' '+(i.area||'')+' '+(i.divisions||[]).join(' ')+' '+(i.division||'')+' '+(i.language||'')).toLowerCase())}"><span class="bvn">${ic('school')}</span><h3>${esc(i.name)}</h3>${i.address?`<div class="muted adr">${ic('pin')}<span>${esc(i.address)}</span></div>`:''}${i.country?`<span class="pill">${esc(WORLD_AREAS.find(a=>a[0]===i.area)?.[1]||i.area)} · ${esc(i.country)}</span>`:''}${(i.divisions||[]).length?`<span class="pill">${esc(i.divisions.join(', '))} বিভাগ</span>`:i.division?`<span class="pill">${esc(i.division)} বিভাগ</span>`:''}${i.language?`<div class="muted">স্থানীয় ভাষা: ${esc(i.language)}</div>`:''}${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div><div class="card cc emp" id="inone" hidden>কোনো প্রতিষ্ঠান পাওয়া যায়নি।</div>`:emptyBox('school','এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।','প্রতিষ্ঠান যুক্ত হলে এখানে তালিকা দেখা যাবে।'))},
 result:()=>pageHead('ফলাফল','রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন','result')
-  +`<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="rd">বিভাগ</label><select id="rd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="rex">পরীক্ষা</label>${examSel('rex')}</div></div><div class="row"><div><label for="rr">রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"></div><div><label for="rl">রোল নম্বর</label><input id="rl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="rcap">নিরাপত্তা যাচাই: <b id="rcapq"></b></label><input id="rcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="rcapmsg" aria-live="polite"></div><button id="rb">ফলাফল দেখুন</button></div></div>`
+  +`<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="rd">বিভাগ</label><select id="rd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="rex">পরীক্ষা</label>${examSel('rex')}</div></div><div id="rper" style="display:none"></div><div class="row"><div><label for="rr">রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"></div><div><label for="rl">রোল নম্বর</label><input id="rl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="rcap">নিরাপত্তা যাচাই: <b id="rcapq"></b></label><input id="rcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="rcapmsg" aria-live="polite"></div><button id="rb">ফলাফল দেখুন</button></div></div>`
   +`<div id="rout"></div>`,
 student:()=>pageHead('শিক্ষার্থী ফলাফল','শিক্ষার্থীরা এখানে শুধু ফলাফল দেখতে ও ডাউনলোড করতে পারবে','student')
-  +`<div class="card cc lookup rlk" style="max-width:620px"><h3>ফলাফল দেখুন</h3><label for="sr">রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><label for="sex">পরীক্ষা</label>${examSel('sex')}<label for="scap">নিরাপত্তা যাচাই: <b id="scapq"></b></label><input id="scap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="scapmsg" aria-live="polite"></div><button id="svb">ফলাফল দেখুন</button></div><div id="srout"></div>`,
+  +`<div class="card cc lookup rlk" style="max-width:620px"><h3>ফলাফল দেখুন</h3><label for="sr">রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><label for="sex">পরীক্ষা</label>${examSel('sex')}<div id="sper" style="display:none"></div><label for="scap">নিরাপত্তা যাচাই: <b id="scapq"></b></label><input id="scap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="scapmsg" aria-live="polite"></div><button id="svb">ফলাফল দেখুন</button></div><div id="srout"></div>`,
 async sorry(){const q=new URLSearchParams(location.hash.split('?')[1]||'').get('b');return `<div class="card" style="text-align:center;padding:40px 20px"><div style="color:var(--gold)"><svg class="ic" style="width:54px;height:54px" viewBox="0 0 24 24" aria-hidden="true">${ICONS.book}</svg></div><h2 style="margin:10px 0 6px">দুঃখিত!</h2><p>${q?'“'+esc(q)+'” বইটি':'এই বইটি'} এখনো যুক্ত করা হয়নি। অনুগ্রহ করে কিছুদিন পরে আবার চেষ্টা করুন।</p><p><a href="#/">← হোমে ফিরে যান</a></p></div>`},
 admin(){
   if(!user)return `${pageHead('অ্যাডমিন প্যানেল','','shield')}<div class="card" style="max-width:420px"><p class="muted">অ্যাডমিন অ্যাকাউন্ট দিয়ে লগইন করুন।</p><button id="gl" class="alt" style="width:100%;margin:0">Google দিয়ে লগইন</button><p class="muted" style="text-align:center;margin:8px 0 0">অথবা ইমেইল দিয়ে</p><label for="em">ইমেইল</label><input id="em" type="email" autocomplete="username"><label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password"><button id="lg">লগইন</button><div id="lm"></div></div>`;
@@ -1082,17 +1105,18 @@ teacher(){return `${pageHead('শিক্ষক নিবন্ধন আবে
 };
 
 /* ---------- ইভেন্ট বাইন্ডিং ---------- */
-function bindHome(){const hb=$('#hb'),hr=$('#hr'),hd=$('#hd'),hrl=$('#hrl');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'')+(hrl&&hrl.value.trim()?'&r='+encodeURIComponent(hrl.value.trim()):'')+($('#hex')&&$('#hex').value?'&e='+encodeURIComponent($('#hex').value):'');{const c=$('#hcap');if(c&&!c.dataset.ans)capNew('hcap')}const tryGo=()=>{if(capOk('hcap'))go()};hb.onclick=tryGo;hr.onkeydown=e=>e.key=='Enter'&&tryGo();if(hrl)hrl.onkeydown=e=>e.key=='Enter'&&tryGo();const hcp=$('#hcap');if(hcp)hcp.onkeydown=e=>e.key=='Enter'&&tryGo()}
+function bindHome(){bindPeriod('h','hex');const hb=$('#hb'),hr=$('#hr'),hd=$('#hd'),hrl=$('#hrl');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'')+(hrl&&hrl.value.trim()?'&r='+encodeURIComponent(hrl.value.trim()):'')+($('#hex')&&$('#hex').value?'&e='+encodeURIComponent($('#hex').value):'')+(()=>{const p=getPeriod('h');return $('#hex')&&$('#hex').value&&(p.y||p.m||p.w)?'&p='+encodeURIComponent([p.y,p.m,p.w].join(',')):''})();{const c=$('#hcap');if(c&&!c.dataset.ans)capNew('hcap')}const tryGo=()=>{if(capOk('hcap'))go()};hb.onclick=tryGo;hr.onkeydown=e=>e.key=='Enter'&&tryGo();if(hrl)hrl.onkeydown=e=>e.key=='Enter'&&tryGo();const hcp=$('#hcap');if(hcp)hcp.onkeydown=e=>e.key=='Enter'&&tryGo()}
   const cb=document.querySelectorAll('#cchips button');cb.forEach(b=>b.onclick=()=>{cb.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.cvw').forEach(w=>w.hidden=w.dataset.d!=b.dataset.d)});
   const hc=document.querySelectorAll('#hchips button');hc.forEach(b=>b.onclick=()=>{hc.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('#hchipsb .dvs').forEach(w=>w.hidden=w.dataset.div!=b.dataset.d)})}
 function capNew(id){const a=2+Math.floor(Math.random()*8),b=1+Math.floor(Math.random()*8),sub=Math.random()<.5&&a>b,e=document.getElementById(id),q=document.getElementById(id+'q');if(!e||!q)return;e.dataset.ans=String(sub?a-b:a+b);e.value='';q.textContent=bnum(a)+(sub?' − ':' + ')+bnum(b)+' = ?'}
 function capOk(id){const e=document.getElementById(id),m=document.getElementById(id+'msg');if(!e)return true;if(norm(e.value)===e.dataset.ans){m.className='';m.textContent='';return true}say(m,e.value.trim()?'উত্তর সঠিক হয়নি। নতুন প্রশ্নের উত্তর দিন।':'নিরাপত্তা যাচাইয়ের উত্তর লিখুন।');capNew(id);return false}
 function bindResult(){
-  const [qr,e0]=(location.hash.split('?')[1]||'').split('&e='),[qd,r0]=qr.split('&r='),[q0,d0]=qd.split('&d='),q=decodeURIComponent(q0||''),dv=d0?decodeURIComponent(d0):'',rv=r0?decodeURIComponent(r0):'',ev=e0?decodeURIComponent(e0):'',i=$('#rr'),o=$('#rout'),rd=$('#rd');
-  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value,$('#rex').value);capNew('rcap');const tryGo=()=>{if(capOk('rcap')){go();capNew('rcap')}};$('#rb').onclick=tryGo;i.onkeydown=e=>e.key=='Enter'&&tryGo();rl.onkeydown=e=>e.key=='Enter'&&tryGo();$('#rcap').onkeydown=e=>e.key=='Enter'&&tryGo();
-  if(q){i.value=q;if(dv)rd.value=dv;if(rv)rl.value=rv;if(ev)$('#rex').value=ev;go(dv)}
+  bindPeriod('r','rex');
+  const [qr,e0]=(location.hash.split('?')[1]||'').split('&e='),[qd,r0]=qr.split('&r='),[q0,d0]=qd.split('&d='),q=decodeURIComponent(q0||''),dv=d0?decodeURIComponent(d0):'',rv=r0?decodeURIComponent(r0):'',[e1,p1]=(e0||'').split('&p='),ev=e1?decodeURIComponent(e1):'',pv=p1?decodeURIComponent(p1).split(','):[],i=$('#rr'),o=$('#rout'),rd=$('#rd');
+  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value,$('#rex').value,getPeriod('r'));capNew('rcap');const tryGo=()=>{if(capOk('rcap')){go();capNew('rcap')}};$('#rb').onclick=tryGo;i.onkeydown=e=>e.key=='Enter'&&tryGo();rl.onkeydown=e=>e.key=='Enter'&&tryGo();$('#rcap').onkeydown=e=>e.key=='Enter'&&tryGo();
+  if(q){i.value=q;if(dv)rd.value=dv;if(rv)rl.value=rv;if(ev){$('#rex').value=ev;$('#rex').dispatchEvent(new Event('change'));['y','m','w'].forEach((k,x)=>{const el=$('#r'+k);if(el&&pv[x])el.value=pv[x]})}go(dv)}
 }
-function bindStudent(){const go=()=>{if(capOk('scap')){showResults($('#sr').value,$('#srout'),'','',$('#sex').value);capNew('scap')}};capNew('scap');$('#svb').onclick=go;$('#sr').onkeydown=e=>e.key==='Enter'&&go();$('#scap').onkeydown=e=>e.key==='Enter'&&go()}
+function bindStudent(){bindPeriod('s','sex');const go=()=>{if(capOk('scap')){showResults($('#sr').value,$('#srout'),'','',$('#sex').value,getPeriod('s'));capNew('scap')}};capNew('scap');$('#svb').onclick=go;$('#sr').onkeydown=e=>e.key==='Enter'&&go();$('#scap').onkeydown=e=>e.key==='Enter'&&go()}
 function renderResultEntryForm(box,institution=null){
   box.innerHTML=`<h3>ফলাফল তৈরি</h3><div class="row"><div><label for="rg">সম্পূর্ণ রেজিস্ট্রেশন নম্বর</label><input id="rg" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="2331001"></div><div><label for="ex">পরীক্ষার নাম</label><select id="ex"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option><option>সাপ্তাহিক মূল্যায়ন</option><option>মাসিক মূল্যায়ন</option><option>অর্ধবার্ষিক মূল্যায়ন</option><option>বার্ষিক মূল্যায়ন</option><option>পর্ব উন্নয়ন</option><option>বিভাগ উন্নয়ন</option></select></div></div>
   <div class="row"><div><label for="studentName">শিক্ষার্থীর নাম</label><input id="studentName" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div><label for="studentFather">পিতার নাম</label><input id="studentFather" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div></div><div><label for="studentDivision">বিভাগ</label><input id="studentDivision" readonly placeholder="রেজিস্ট্রেশন নম্বর দিলে আসবে"></div><div id="sn2" class="muted" aria-live="polite">রেজিস্ট্রেশন নম্বর লিখে যাচাই করুন।</div>
@@ -1173,7 +1197,7 @@ async function bindTeacher(){
           const keys=[...groups.keys()].sort((a,b)=>a.localeCompare(b,'bn'));
           $('#arList').innerHTML=keys.length?keys.map(k=>{
             const list=groups.get(k).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'bn')||String(a.exam||'').localeCompare(String(b.exam||''),'bn'));
-            return `<h4 class="sh">${esc(k)} (${bnum(list.length)})</h4><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>নাম</th><th>পরীক্ষা</th><th>বিভাগ</th><th>মোট</th><th>মন্তব্য</th><th></th></tr>${list.map(r=>{const subs=r.subjects||[],total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(subs.length?total/subs.length:0);return `<tr><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(r.exam||'')}</td><td>${esc(bdiv(r)||'')}</td><td>${bnum(total)}</td><td>${remark(avg)}</td><td><button class="alt" data-ar-view="${esc(r.id)}" style="margin:0">দেখুন</button></td></tr>`}).join('')}</table></div>`}).join(''):'<p class="muted">কোনো ফলাফল পাওয়া যায়নি।</p>';
+            return `<h4 class="sh">${esc(k)} (${bnum(list.length)})</h4><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>নাম</th><th>পরীক্ষা</th><th>বিভাগ</th><th>মোট</th><th>মন্তব্য</th><th></th></tr>${list.map(r=>{const subs=r.subjects||[],total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(subs.length?total/subs.length:0);return `<tr><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(examTitle(r))}${r.date?`<br><small class="muted">${esc(fmtDate(r.date))}</small>`:''}</td><td>${esc(bdiv(r)||'')}</td><td>${bnum(total)}</td><td>${remark(avg)}</td><td><button class="alt" data-ar-view="${esc(r.id)}" style="margin:0">দেখুন</button></td></tr>`}).join('')}</table></div>`}).join(''):'<p class="muted">কোনো ফলাফল পাওয়া যায়নি।</p>';
           $('#arList').querySelectorAll('[data-ar-view]').forEach(b=>b.onclick=()=>{
             const r=rows.find(x=>x.id===b.dataset.arView),out=$('#arSheet');
             out.innerHTML=card(r);
@@ -1403,21 +1427,30 @@ async function renderInstitutionResultEntry(box,institution,database){
   <div><label for="rsTerm">পর্ব *</label><select id="rsTerm"><option value="" selected disabled>পর্ব নির্বাচন করুন</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div>
   <div class="row"><div><label for="rsExam">পরীক্ষার নাম *</label><select id="rsExam"><option value="" selected disabled>পরীক্ষা নির্বাচন করুন</option>${EXAMS.map(e=>`<option>${esc(e)}</option>`).join('')}</select></div>
   <div><label for="rsSub">বিষয় *</label><select id="rsSub"><option value="" selected disabled>বিষয় নির্বাচন করুন</option>${SUBJ.map(g=>`<optgroup label="${esc(g[0])}">${g[1].map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}</optgroup>`).join('')}</select></div></div>
-  <div id="rsStatus" class="muted" aria-live="polite">বিভাগ, পর্ব, পরীক্ষা ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।</div>
+  <div id="rsPeriod" style="display:none"></div>
+  <div class="row"><div><label for="rsDate">পরীক্ষার তারিখ *</label><input type="date" id="rsDate"></div></div>
+  <div id="rsStatus" class="muted" aria-live="polite">বিভাগ, পর্ব, পরীক্ষা (বছর/মাস/সপ্তাহসহ) ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।</div>
   <div id="rsTable"></div><div id="rsMsg" aria-live="polite"></div>`;
   let results=new Map(),list=[],loadVersion=0;
-  const sel=()=>({d:$('#rsDiv').value,t:$('#rsTerm').value,exam:$('#rsExam').value,sub:$('#rsSub').value});
-  const resRef=(s,exam)=>doc(database,'results',s.reg+'__'+exam);
-  const fetchResults=async exam=>{
+  const sel=()=>{const exam=$('#rsExam').value,g=id=>$('#'+id)?$('#'+id).value:'',y=g('rsYear'),m=g('rsMonth'),w=g('rsWeek');return {d:$('#rsDiv').value,t:$('#rsTerm').value,exam,sub:$('#rsSub').value,y,m,w,pk:periodKey(exam,y,m,w),pOk:!!exam&&periodOf(exam).every(k=>k==='y'?y:k==='m'?m:w)}};
+  const renderPeriod=()=>{
+    const exam=$('#rsExam').value,ks=exam?periodOf(exam):[],cy=new Date().getFullYear();
+    const sel1=(id,label,opts)=>`<select id="${id}" aria-label="${label}"><option value="" selected disabled>${label}</option>${opts}</select>`;
+    const f={y:sel1('rsYear','বছর',Array.from({length:6},(_,i)=>cy+1-i).map(v=>`<option value="${v}">${bnum(v)}</option>`).join('')),m:sel1('rsMonth','মাস',MONTHS_BN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('')),w:sel1('rsWeek','সপ্তাহ',WEEKS_BN.map((n,i)=>`<option value="${i+1}">${n} সপ্তাহ</option>`).join(''))};
+    $('#rsPeriod').innerHTML=ks.length?`<label>পরীক্ষার সময় নির্বাচন *</label><div class="pcap">${ks.map(k=>f[k]).join('')}</div>`:'';$('#rsPeriod').style.display=ks.length?'':'none';
+    ['rsYear','rsMonth','rsWeek'].forEach(id=>{const el=$('#'+id);if(el)el.onchange=load});
+  };
+  const resRef=(s,exam,pk)=>doc(database,'results',s.reg+'__'+exam+(pk?'__'+pk:''));
+  const fetchResults=async (exam,pk)=>{
     const snap=await getDocs(query(collection(database,'results'),where('institutionCode','==',institution.code)));
-    results=new Map(snap.docs.map(d=>d.data()).filter(r=>r.exam===exam).map(r=>[r.reg,r]));
+    results=new Map(snap.docs.map(d=>d.data()).filter(r=>r.exam===exam&&(r.pk||'')===(pk||'')).map(r=>[r.reg,r]));
   };
   const rowTotal=tr=>{const v=PARTS.reduce((s,p)=>s+(+tr.querySelector(`[data-k="${p[0]}"]`).value||0),0);tr.querySelector('.rs-tt').textContent=bnum(v)};
   const countCell=reg=>{const n=(results.get(reg)?.subjects||[]).length;return n>=MIN?`<span class="pill">${bnum(n)} টি ✓</span>`:`<span class="muted">${bnum(n)} / ${bnum(MIN)}</span>`};
   const draw=()=>{
-    const {d,t,exam,sub}=sel();
+    const {d,t,exam,sub,y,m,w,pk,pOk}=sel();
     if(!list.length){$('#rsTable').innerHTML='';return}
-    $('#rsTable').innerHTML=`<h4 style="margin-top:16px">${esc(sub)} — ${esc(d)} বিভাগ, পর্ব ${bnum(t)}</h4><p class="muted">প্রতিটি শিক্ষার্থীর ঘরে নম্বর দিন। যে শিক্ষার্থীর সব ঘর ফাঁকা থাকবে তার নম্বর জমা হবে না; আংশিক লিখলে ফাঁকা ঘর ০ ধরা হবে।</p>
+    $('#rsTable').innerHTML=`<h4 style="margin-top:16px">${esc(sub)} — ${esc(d)} বিভাগ, পর্ব ${bnum(t)} · ${esc(examTitle({exam,year:y,month:m,week:w}))}</h4><p class="muted">প্রতিটি শিক্ষার্থীর ঘরে নম্বর দিন। যে শিক্ষার্থীর সব ঘর ফাঁকা থাকবে তার নম্বর জমা হবে না; আংশিক লিখলে ফাঁকা ঘর ০ ধরা হবে।</p>
     <div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট</th><th>জমা বিষয়</th></tr>
     ${list.map(s=>{const saved=(results.get(s.reg)?.subjects||[]).find(x=>x.n===sub),n=(results.get(s.reg)?.subjects||[]).length;
       return `<tr data-reg="${esc(s.reg)}" data-had="${saved?1:0}"><td>${bnum(s.roll)}</td><td>${esc(s.reg)}</td><td>${esc(s.name)}</td>${PARTS.map(p=>`<td><input type="number" min="0" max="${p[2]}" inputmode="numeric" data-k="${p[0]}" value="${saved?saved[p[0]]??'':''}" style="min-width:64px" aria-label="${esc(s.name)} ${p[1]}"></td>`).join('')}<td class="rs-tt" style="text-align:center">0</td><td class="rs-cnt">${countCell(s.reg)}</td></tr>`}).join('')}</table></div>
@@ -1427,17 +1460,19 @@ async function renderInstitutionResultEntry(box,institution,database){
     $('#rsSave').onclick=save;
   };
   const load=async()=>{
-    const {d,t,exam,sub}=sel();
+    const {d,t,exam,sub,y,m,w,pk,pOk}=sel();
     $('#rsMsg').textContent='';
-    if(!d||!t||!exam||!sub){list=[];$('#rsTable').innerHTML='';$('#rsStatus').textContent='বিভাগ, পর্ব, পরীক্ষা ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।';return}
+    if(!d||!t||!exam||!sub||!pOk){list=[];$('#rsTable').innerHTML='';$('#rsStatus').textContent='বিভাগ, পর্ব, পরীক্ষা (বছর/মাস/সপ্তাহসহ) ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।';return}
     list=students.filter(s=>s.div===d&&String(s.term)===t).sort((a,b)=>String(a.reg).localeCompare(String(b.reg)));
     if(!list.length){$('#rsTable').innerHTML='';$('#rsStatus').textContent='এই বিভাগ ও পর্বে কোনো নিবন্ধিত শিক্ষার্থী নেই।';return}
     const version=++loadVersion;$('#rsStatus').textContent='সংরক্ষিত নম্বর দেখা হচ্ছে…';
-    try{await fetchResults(exam);if(version!==loadVersion)return;$('#rsStatus').textContent=`${bnum(list.length)} জন শিক্ষার্থী।`;draw()}
+    try{await fetchResults(exam,pk);if(version!==loadVersion)return;const dEl=$('#rsDate');if(dEl&&!dEl.value){const f=[...results.values()].find(r=>r.date);if(f)dEl.value=f.date}$('#rsStatus').textContent=`${bnum(list.length)} জন শিক্ষার্থী।`;draw()}
     catch(error){if(version!==loadVersion)return;list=[];$('#rsTable').innerHTML='';say($('#rsStatus'),'সংরক্ষিত নম্বর আনা যায়নি: '+error.message)}
   };
   const save=async()=>{
-    const {exam,sub}=sel(),msg=$('#rsMsg'),button=$('#rsSave');
+    const {exam,sub,y,m,w,pk}=sel(),msg=$('#rsMsg'),button=$('#rsSave'),date=$('#rsDate').value;
+    if(!date)return say(msg,'পরীক্ষার তারিখ দিন।');
+    {const [dy,dm]=date.split('-');if(y&&+dy!==+y)return say(msg,'তারিখের বছর নির্বাচিত বছরের সঙ্গে মেলেনি।');if(m&&+dm!==+m)return say(msg,'তারিখের মাস নির্বাচিত মাসের সঙ্গে মেলেনি।')}
     const rows=[...$('#rsTable').querySelectorAll('tr[data-reg]')];
     const jobs=rows.map(tr=>{
       const marks={};let any=false;
@@ -1449,21 +1484,22 @@ async function renderInstitutionResultEntry(box,institution,database){
     for(const j of jobs){
       say(msg,`সংরক্ষণ হচ্ছে… (${bnum(done+failed)}/${bnum(jobs.length)})`,true);
       try{
-        const s=j.student,snap=await getDoc(resRef(s,exam));
+        const s=j.student,snap=await getDoc(resRef(s,exam,pk));
         let subjects=(snap.exists()?snap.data().subjects||[]:[]).filter(x=>x.n!==sub);
         if(j.any)subjects.push({n:sub,...j.marks,m:j.marks.w+j.marks.p+j.marks.o+j.marks.a});
         subjects.sort((a,b)=>order.indexOf(a.n)-order.indexOf(b.n));
         const total=subjects.reduce((x,y)=>x+y.m,0),avg=subjects.length?total/subjects.length:0;
         const result={reg:s.reg,name:s.name,father:s.father||'',guardian:s.guardian||'',exam,div:s.div,term:String(s.term||''),roll:s.roll,subjects,total,avg,t:Date.now(),institutionCode:institution.code};
         if(subjects.length<MIN)result.draft=true;
-        await setDoc(resRef(s,exam),result);done++;
+        result.date=date;result.pk=pk;if(y)result.year=+y;if(m)result.month=+m;if(w)result.week=+w;
+        await setDoc(resRef(s,exam,pk),result);done++;
       }catch(error){failed++;firstError=firstError||error.message}
     }
-    try{await fetchResults(exam);draw()}catch(error){}
+    try{await fetchResults(exam,pk);draw()}catch(error){}
     const m2=$('#rsMsg');
     say(m2,failed?`${bnum(done)} জনের নম্বর সংরক্ষিত হয়েছে, ${bnum(failed)} জনের হয়নি: ${firstError}`:`${bnum(done)} জন শিক্ষার্থীর "${sub}" বিষয়ের নম্বর সংরক্ষিত হয়েছে।`,!failed);
   };
-  ['rsDiv','rsTerm','rsExam','rsSub'].forEach(id=>$('#'+id).onchange=load);
+  ['rsDiv','rsTerm','rsSub'].forEach(id=>$('#'+id).onchange=load);$('#rsExam').onchange=()=>{renderPeriod();load()};
 }
 async function renderInstitutionStudentList(box,institution,database){
   box.innerHTML='<h4>শিক্ষার্থী তালিকা</h4><p class="muted">তালিকা লোড হচ্ছে…</p>';
@@ -1508,9 +1544,9 @@ async function renderInstitutionAllResults(box,institution,database){
     const draw=()=>{
       const fd=$('#isDiv').value,fe=$('#isExam').value,fs=$('#isSub').value,out=$('#isOut');
       if(!fd||!fe||!fs){out.innerHTML='<p class="muted">বিভাগ, পরীক্ষা ও বিষয় নির্বাচন করলে ওই বিষয়ের সকল শিক্ষার্থীর নম্বর দেখা যাবে।</p>';return}
-      const list=rows.filter(r=>r._div===fd&&r.exam===fe).map(r=>({r,s:(r.subjects||[]).find(x=>x.n===fs)})).filter(x=>x.s).sort((p,q)=>String(p.r.reg).localeCompare(String(q.r.reg)));
+      const list=rows.filter(r=>r._div===fd&&r.exam===fe).map(r=>({r,s:(r.subjects||[]).find(x=>x.n===fs)})).filter(x=>x.s).sort((p,q)=>String(q.r.date||'').localeCompare(String(p.r.date||''))||String(p.r.reg).localeCompare(String(q.r.reg)));
       const v=x=>x??'–';
-      out.innerHTML=list.length?`<div class="card" id="isCard" style="margin-top:12px"><h3>${esc(fs)} — ${esc(fd)} বিভাগ</h3><p class="muted">${esc(fe)} · ${esc(institution.name)} · মোট ${bnum(list.length)} জন</p><div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট (১০০)</th><th>মন্তব্য</th></tr>${list.map(({r,s})=>`<tr><td>${bnum(rollOf(r)||'')}</td><td>${esc(r.reg)}</td><td>${esc(r.name)}</td>${PARTS.map(p=>`<td>${v(s[p[0]])}</td>`).join('')}<td><b>${s.m}</b></td><td><span style="${s.m<50?'color:var(--err);font-weight:600':''}">${remark(s.m)}</span></td></tr>`).join('')}</table></div><button type="button" class="alt noprint" id="isPrint">প্রিন্ট করুন</button></div>`:'<p class="muted">এই বিভাগ, পরীক্ষা ও বিষয়ে এখনও কোনো নম্বর জমা হয়নি।</p>';
+      out.innerHTML=list.length?`<div class="card" id="isCard" style="margin-top:12px"><h3>${esc(fs)} — ${esc(fd)} বিভাগ</h3><p class="muted">${esc(fe)} · ${esc(institution.name)} · মোট ${bnum(list.length)} জন</p><div style="overflow-x:auto"><table><tr><th>রোল</th><th>রেজিস্ট্রেশন</th><th>নাম</th><th>সময় / তারিখ</th>${PARTS.map(p=>`<th>${p[1]} (${bnum(p[2])})</th>`).join('')}<th>মোট (১০০)</th><th>মন্তব্য</th></tr>${list.map(({r,s})=>`<tr><td>${bnum(rollOf(r)||'')}</td><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(examTitle(r).replace(r.exam||'','').replace(/^\s*\(|\)\s*$/g,'')||'—')}${r.date?`<br><small class="muted">${esc(fmtDate(r.date))}</small>`:''}</td>${PARTS.map(p=>`<td>${v(s[p[0]])}</td>`).join('')}<td><b>${s.m}</b></td><td><span style="${s.m<50?'color:var(--err);font-weight:600':''}">${remark(s.m)}</span></td></tr>`).join('')}</table></div><button type="button" class="alt noprint" id="isPrint">প্রিন্ট করুন</button></div>`:'<p class="muted">এই বিভাগ, পরীক্ষা ও বিষয়ে এখনও কোনো নম্বর জমা হয়নি।</p>';
       const pb=$('#isPrint');if(pb)pb.onclick=()=>printCard($('#isCard'));
     };
     ['isDiv','isExam','isSub'].forEach(id=>$('#'+id).onchange=draw);draw();
@@ -1521,7 +1557,7 @@ async function renderInstitutionAllResults(box,institution,database){
     const draw=()=>{
       const fd=$('#irDiv').value,fe=$('#irExam').value,q=norm($('#irQ').value).toLowerCase();
       const f=done.filter(r=>(!fd||r._div===fd)&&(!fe||r.exam===fe)&&(!q||String(r.name||'').toLowerCase().includes(q)||String(r.reg||'').toLowerCase().includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
-      $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি সামগ্রিক ফলাফল</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>নাম</th><th>পরীক্ষা</th><th>বিভাগ</th><th>মোট</th><th>মন্তব্য</th><th></th></tr>${f.map(r=>{const subs=r.subjects||[],total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(subs.length?total/subs.length:0);return `<tr><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(r.exam||'')}</td><td>${esc(r._div)}</td><td>${bnum(total)}</td><td>${remark(avg)}</td><td><button class="alt" data-ir-view="${esc(r.id)}" style="margin:0">সনদ দেখুন</button></td></tr>`}).join('')}</table></div>`:'<p class="muted">এখনও কোনো সামগ্রিক ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
+      $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি সামগ্রিক ফলাফল</p><div style="overflow-x:auto"><table><tr><th>রেজিস্ট্রেশন</th><th>নাম</th><th>পরীক্ষা</th><th>বিভাগ</th><th>মোট</th><th>মন্তব্য</th><th></th></tr>${f.map(r=>{const subs=r.subjects||[],total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(subs.length?total/subs.length:0);return `<tr><td>${esc(r.reg)}</td><td>${esc(r.name)}</td><td>${esc(examTitle(r))}${r.date?`<br><small class="muted">${esc(fmtDate(r.date))}</small>`:''}</td><td>${esc(r._div)}</td><td>${bnum(total)}</td><td>${remark(avg)}</td><td><button class="alt" data-ir-view="${esc(r.id)}" style="margin:0">সনদ দেখুন</button></td></tr>`}).join('')}</table></div>`:'<p class="muted">এখনও কোনো সামগ্রিক ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
       $('#irList').querySelectorAll('[data-ir-view]').forEach(b=>b.onclick=()=>{
         const r=done.find(x=>x.id===b.dataset.irView),out=$('#irSheet');
         out.innerHTML=resultCertificate(r,institution.name)+`<div class="noprint" style="text-align:center;margin:8px 0 18px"><button type="button" class="alt" id="irPrint">প্রিন্ট / PDF</button> <button type="button" class="alt" id="irDl">ডাউনলোড (HTML)</button></div>`;
