@@ -384,7 +384,9 @@ html body .pcap .cs:only-child .cs-btn{border-radius:7px}
 .dtbl{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:.8rem;margin:0}
 .dtbl th,.dtbl td{padding:6px 10px;border-right:1px solid #e3ece6;border-bottom:1px solid #e3ece6;text-align:left;white-space:nowrap;background:#fff}
 .dtbl thead th{position:sticky;top:0;z-index:1;background:#e8f0eb;color:var(--g);font-weight:700;border-bottom:1px solid #b9cdc2}
-.dtbl td.n{text-align:center}
+.dtbl td.n,.dtbl th.n{text-align:center}
+.dtbl thead th{height:30px;box-sizing:border-box;line-height:1.2}
+.dtbl thead tr:nth-child(2) th{top:30px}
 .dtbl tbody tr:nth-child(even) td{background:#f7faf8}
 #rsSave{display:block;margin:16px auto 0}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
@@ -991,18 +993,18 @@ function downloadCertificate(certificate,title,fileName){
   frame.srcdoc=styledHtml;
   document.body.append(frame);
 }
-function viewCertificateA4(certificate,title){
+function viewCertificateA4(certificate,title,opt={}){
   document.getElementById('a4view')?.remove();
-  const W=820,o=document.createElement('div');o.id='a4view';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');o.setAttribute('aria-label','সনদ');
+  const W=opt.w||820,MH=opt.h||1147,o=document.createElement('div');o.id='a4view';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');o.setAttribute('aria-label','সনদ');
   o.innerHTML='<div class="a4-bar"><button type="button" class="a4-pr">প্রিন্ট / PDF</button><button type="button" class="a4-cl">বন্ধ করুন</button></div><div class="a4-scroll"><div class="a4-stage"><iframe class="a4-frame" title="সনদ"></iframe></div></div>';
   const fr=o.querySelector('iframe'),stage=o.querySelector('.a4-stage'),prevOv=document.body.style.overflow;
-  const fit=()=>{const k=Math.min(1,(innerWidth-16)/W),h=+fr.dataset.h||1147;fr.style.transform='scale('+k+')';stage.style.width=W*k+'px';stage.style.height=h*k+'px'};
-  const size=()=>{try{const h=Math.max(1147,fr.contentDocument.documentElement.scrollHeight);fr.dataset.h=h;fr.style.height=h+'px';fit()}catch(e){}};
+  const fit=()=>{const k=Math.min(1,(innerWidth-16)/W),h=+fr.dataset.h||MH;fr.style.transform='scale('+k+')';stage.style.width=W*k+'px';stage.style.height=h*k+'px'};
+  const size=()=>{try{const h=Math.max(MH,fr.contentDocument.documentElement.scrollHeight);fr.dataset.h=h;fr.style.height=h+'px';fit()}catch(e){}};
   const close=()=>{o.remove();document.body.style.overflow=prevOv;removeEventListener('resize',fit);removeEventListener('keydown',esc2)};
   const esc2=e=>{if(e.key==='Escape')close()};
-  fr.style.width=W+'px';fr.style.height='1147px';
-  fr.onload=()=>{size();const d=fr.contentDocument;if(d&&d.fonts&&d.fonts.ready)d.fonts.ready.then(size,()=>{})};
-  fr.srcdoc=certificateDocHtml(certificate,title).replace('</head>','<style>@page{size:A4;margin:0}html,body{background:#e9eeeb!important;overflow:hidden}</style></head>');
+  fr.style.width=W+'px';fr.style.height=MH+'px';
+  fr.onload=()=>{size();const d=fr.contentDocument;if(d&&d.fonts&&d.fonts.ready)d.fonts.ready.then(size,()=>{});if(opt.print)setTimeout(()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}},450)};
+  fr.srcdoc=(opt.html||certificateDocHtml(certificate,title)).replace('</head>','<style>@page{size:'+(opt.page||'A4')+';margin:'+(opt.margin||'0')+'}html,body{background:#e9eeeb!important;overflow:hidden}</style></head>');
   o.querySelector('.a4-cl').onclick=close;
   o.querySelector('.a4-pr').onclick=()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}};
   addEventListener('resize',fit);addEventListener('keydown',esc2);
@@ -1390,12 +1392,22 @@ async function bindTeacher(){
           const fd=$('#shDiv').value,ft=$('#shTerm').value,fe=$('#shExam').value;
           const f=rows.filter(r=>r._inst===fi&&(!fd||bdiv(r)===fd)&&(!ft||termOf(r)===ft)&&(!fe||examTitle(r)===fe)).sort((a,b)=>String(bdiv(a)).localeCompare(String(bdiv(b)),'bn')||termOf(a).localeCompare(termOf(b))||(Number(rollOf(a))||0)-(Number(rollOf(b))||0)||String(a.name||'').localeCompare(String(b.name||''),'bn'));
           const subj=[];f.forEach(r=>(r.subjects||[]).forEach(x=>{if(!subj.includes(x.n))subj.push(x.n)}));
-          const head=['ক্রম','রেজিস্ট্রেশন','রোল','নাম','পিতার নাম','বিভাগ','পর্ব','পরীক্ষা','তারিখ',...subj,'সর্বমোট','গড়','মন্তব্য'];
-          const data=f.map((r,i)=>{const s=r.subjects||[],total=r.total??s.reduce((a,x)=>a+x.m,0),avg=r.avg??(s.length?total/s.length:0),m=new Map(s.map(x=>[x.n,x.m]));return [i+1,r.reg||'',rollOf(r)||'',r.name||'',r._father,bdiv(r)||'',termOf(r),examTitle(r),r.date||'',...subj.map(n=>m.has(n)?m.get(n):''),total,Number(avg).toFixed(1),remark(avg)]});
+          const base=['ক্রম','রেজিস্ট্রেশন','রোল','নাম','পিতার নাম','বিভাগ','পর্ব','পরীক্ষা','তারিখ'],tail=['সর্বমোট','গড়','মন্তব্য'],sub2=[...PARTS.map(x=>x[1]),'মোট'];
+          const head=[...base,...subj.flatMap(n=>sub2.map(t=>n+' – '+t)),...tail];
+          const data=f.map((r,i)=>{const s=r.subjects||[],total=r.total??s.reduce((a,x)=>a+x.m,0),avg=r.avg??(s.length?total/s.length:0),m=new Map(s.map(x=>[x.n,x]));return [i+1,r.reg||'',rollOf(r)||'',r.name||'',r._father,bdiv(r)||'',termOf(r),examTitle(r),r.date||'',...subj.flatMap(n=>{const x=m.get(n);return [...PARTS.map(q=>x&&x[q[0]]!=null?x[q[0]]:''),x?x.m:'']}),total,Number(avg).toFixed(1),remark(avg)]});
           const numCol=i=>i==0||i==2||i==6||(i>=9&&i<head.length-1);
           const cell=(v,i)=>i==8?(v?esc(fmtDate(v)):''):numCol(i)||i==1?bnum(esc(v)):esc(v);
-          $('#shBar').innerHTML=`<span>মোট ${bnum(f.length)} জন শিক্ষার্থীর ফলাফল</span><button type="button" class="alt" id="shCsv" style="margin:0"${f.length?'':' disabled'}>CSV ডাউনলোড</button>`;
-          $('#shTbl').innerHTML=f.length?`<div class="dtwrap"><table class="dtbl" data-rt="1"><thead><tr>${head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${data.map(r=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>';
+          $('#shBar').innerHTML=`<span>মোট ${bnum(f.length)} জন শিক্ষার্থীর ফলাফল</span><button type="button" class="alt" id="shCsv" style="margin:0"${f.length?'':' disabled'}>CSV ডাউনলোড</button><button type="button" class="alt" id="shPdf" style="margin:0"${f.length?'':' disabled'}>PDF ডাউনলোড</button>`;
+          $('#shTbl').innerHTML=f.length?`<div class="dtwrap"><table class="dtbl" data-rt="1"><thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}" style="text-align:center">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}<th rowspan="2">শিট</th></tr><tr>${subj.map(()=>sub2.map(t=>`<th class="n">${esc(t)}</th>`).join('')).join('')}</tr></thead><tbody>${data.map((r,k)=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}<td><button type="button" class="alt" data-sv="${esc(f[k].id)}" style="margin:0 4px 0 0;padding:3px 9px;font-size:.75rem">দেখুন</button><button type="button" class="alt" data-sp="${esc(f[k].id)}" style="margin:0;padding:3px 9px;font-size:.75rem">PDF</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>';
+          $('#shTbl').querySelectorAll('[data-sv],[data-sp]').forEach(b=>b.onclick=()=>{const r=f.find(x=>x.id===(b.dataset.sv||b.dataset.sp));if(r)viewCertificateA4(resultCertificate({...r,father:r.father||r._father},r._inst),'PCTB ফলাফল সনদ - '+(r.reg||''),{print:!!b.dataset.sp})});
+          const pdfBtn=$('#shPdf');
+          if(pdfBtn)pdfBtn.onclick=()=>{
+            const cols=head.length,fs=cols>60?4.5:cols>45?5.5:cols>32?6.5:cols>22?7.5:8.5;
+            const meta=[fd,ft?'পর্ব '+bnum(ft):'',fe].filter(Boolean).join(' · ');
+            const thead=`<thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}</tr><tr>${subj.map(()=>sub2.map(t=>`<th>${esc(t)}</th>`).join('')).join('')}</tr></thead>`;
+            const doc=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><title>ফলাফল শিট - ${esc(fi)}</title><style>*{box-sizing:border-box}body{margin:0;padding:8mm;font-family:'Noto Sans Bengali','Hind Siliguri',sans-serif;color:#1d2b25;font-size:${fs}pt;line-height:1.3}h1{font-size:${fs+5}pt;margin:0 0 2pt;text-align:center}p{margin:0 0 6pt;text-align:center;font-size:${fs+1}pt}table{border-collapse:collapse;width:100%}th,td{border:.6pt solid #7a8f84;padding:2pt 3pt;text-align:left;vertical-align:middle}th{background:#e8f0eb;text-align:center}td.n{text-align:center}thead{display:table-header-group}tr{page-break-inside:avoid}</style></head><body><h1>${esc(fi)}</h1><p>ফলাফল শিট${meta?' — '+esc(meta):''} · মোট ${bnum(f.length)} জন</p><table>${thead}<tbody>${data.map(r=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}</tr>`).join('')}</tbody></table></body></html>`;
+            viewCertificateA4(null,'PCTB ফলাফল শিট - '+fi,{html:doc,w:1160,h:830,page:'A4 landscape',margin:'8mm',print:true});
+          };
           const csvBtn=$('#shCsv');
           if(csvBtn)csvBtn.onclick=()=>{
             const q=v=>{let t=String(v);if(typeof v==='string'&&/^[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"'};
