@@ -993,6 +993,41 @@ function downloadCertificate(certificate,title,fileName){
   frame.srcdoc=styledHtml;
   document.body.append(frame);
 }
+function loadLib(src,test){
+  return new Promise((res,rej)=>{
+    if(test())return res();
+    const e=document.createElement('script');e.src=src;e.onload=()=>test()?res():rej(new Error('lib'));e.onerror=()=>rej(new Error('lib load'));document.head.appendChild(e);
+  });
+}
+async function sheetPdf({inst,meta,thead,rows,cols,count,fileName}){
+  await loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',()=>window.html2canvas);
+  await loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>window.jspdf&&window.jspdf.jsPDF);
+  if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+  const W=1700,H=Math.round(W*210/297),PAD=26,CW=W-PAD*2,CH=H-PAD*2;
+  const host=document.createElement('div');host.style.cssText='position:absolute;left:-10000px;top:0;width:'+W+'px;background:#fff;z-index:-1';
+  const css=fs=>'<style>.shp{width:'+W+'px;height:'+H+'px;padding:'+PAD+'px;background:#fff;overflow:hidden;box-sizing:border-box;font-family:"Noto Sans Bengali","Hind Siliguri",sans-serif;color:#1d2b25;font-size:'+fs+'px;line-height:1.3}.shp *{box-sizing:border-box}.shp h1{font-size:'+(fs+9)+'px;margin:0 0 3px;text-align:center}.shp .mt{margin:0 0 8px;text-align:center;font-size:'+(fs+1)+'px}.shp table{border-collapse:collapse;width:100%}.shp th,.shp td{border:1px solid #7a8f84;padding:3px 4px;text-align:left;vertical-align:middle;word-break:keep-all}.shp th{background:#e8f0eb;text-align:center}.shp td.n{text-align:center}</style>';
+  const title='<h1>'+esc(inst)+'</h1><p class="mt">ফলাফল শিট'+(meta?' — '+esc(meta):'')+' · মোট '+bnum(count)+' জন</p>';
+  let fs=cols>60?10:cols>45?11:cols>32?12:cols>22?13:14,tbl,ttlH;
+  host.innerHTML=css(fs)+'<div class="shp" id="shpM" style="height:auto;overflow:visible">'+title+'<table>'+thead+'<tbody>'+rows.join('')+'</tbody></table></div>';
+  document.body.appendChild(host);
+  try{
+    const m=host.querySelector('#shpM');tbl=m.querySelector('table');
+    for(let k=0;k<14&&tbl.offsetWidth>CW+1;k++){fs-=.6;host.querySelector('style').outerHTML=css(fs)}
+    ttlH=m.querySelector('h1').offsetHeight+m.querySelector('.mt').offsetHeight+11;
+    const theadH=tbl.tHead.offsetHeight,trs=[...tbl.tBodies[0].rows],hs=trs.map(r=>r.offsetHeight);
+    const pages=[];let cur=[],used=0,cap=CH-ttlH-theadH;
+    trs.forEach((r,i)=>{if(used+hs[i]>cap&&cur.length){pages.push(cur);cur=[];used=0;cap=CH-theadH}cur.push(r.outerHTML);used+=hs[i]});
+    if(cur.length||!pages.length)pages.push(cur);
+    const {jsPDF}=window.jspdf,pdf=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+    for(let k=0;k<pages.length;k++){
+      host.innerHTML=css(fs)+'<div class="shp">'+(k==0?title:'')+'<table>'+thead+'<tbody>'+pages[k].join('')+'</tbody></table></div>';
+      const canvas=await window.html2canvas(host.querySelector('.shp'),{scale:2,backgroundColor:'#fff',logging:false});
+      if(k)pdf.addPage('a4','landscape');
+      pdf.addImage(canvas.toDataURL('image/jpeg',.92),'JPEG',0,0,297,210);
+    }
+    pdf.save(fileName);
+  }finally{host.remove()}
+}
 function viewCertificateA4(certificate,title,opt={}){
   document.getElementById('a4view')?.remove();
   const W=opt.w||820,MH=opt.h||1147,o=document.createElement('div');o.id='a4view';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');o.setAttribute('aria-label','সনদ');
@@ -1398,15 +1433,22 @@ async function bindTeacher(){
           const numCol=i=>i==0||i==2||i==6||(i>=9&&i<head.length-1);
           const cell=(v,i)=>i==8?(v?esc(fmtDate(v)):''):numCol(i)||i==1?bnum(esc(v)):esc(v);
           $('#shBar').innerHTML=`<span>মোট ${bnum(f.length)} জন শিক্ষার্থীর ফলাফল</span><button type="button" class="alt" id="shCsv" style="margin:0"${f.length?'':' disabled'}>CSV ডাউনলোড</button><button type="button" class="alt" id="shPdf" style="margin:0"${f.length?'':' disabled'}>PDF ডাউনলোড</button>`;
-          $('#shTbl').innerHTML=f.length?`<div class="dtwrap"><table class="dtbl" data-rt="1"><thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}" style="text-align:center">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}<th rowspan="2">শিট</th></tr><tr>${subj.map(()=>sub2.map(t=>`<th class="n">${esc(t)}</th>`).join('')).join('')}</tr></thead><tbody>${data.map((r,k)=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}<td><button type="button" class="alt" data-sv="${esc(f[k].id)}" style="margin:0 4px 0 0;padding:3px 9px;font-size:.75rem">দেখুন</button><button type="button" class="alt" data-sp="${esc(f[k].id)}" style="margin:0;padding:3px 9px;font-size:.75rem">PDF</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>';
-          $('#shTbl').querySelectorAll('[data-sv],[data-sp]').forEach(b=>b.onclick=()=>{const r=f.find(x=>x.id===(b.dataset.sv||b.dataset.sp));if(r)viewCertificateA4(resultCertificate({...r,father:r.father||r._father},r._inst),'PCTB ফলাফল সনদ - '+(r.reg||''),{print:!!b.dataset.sp})});
+          $('#shTbl').innerHTML=f.length?`<div class="dtwrap"><table class="dtbl" data-rt="1"><thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}" style="text-align:center">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}<th rowspan="2">শিট</th></tr><tr>${subj.map(()=>sub2.map(t=>`<th class="n">${esc(t)}</th>`).join('')).join('')}</tr></thead><tbody>${data.map((r,k)=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}<td><button type="button" class="alt" data-sv="${esc(f[k].id)}" style="margin:0;padding:3px 9px;font-size:.75rem">দেখুন</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>';
+          $('#shTbl').querySelectorAll('[data-sv]').forEach(b=>b.onclick=()=>{const r=f.find(x=>x.id===b.dataset.sv);if(r)viewCertificateA4(resultCertificate({...r,father:r.father||r._father},r._inst),'PCTB ফলাফল সনদ - '+(r.reg||''))});
+          const meta=[fd,ft?'পর্ব '+bnum(ft):'',fe].filter(Boolean).join(' · ');
+          const thead=`<thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}</tr><tr>${subj.map(()=>sub2.map(t=>`<th>${esc(t)}</th>`).join('')).join('')}</tr></thead>`;
           const pdfBtn=$('#shPdf');
-          if(pdfBtn)pdfBtn.onclick=()=>{
+          const printSheet=()=>{
             const cols=head.length,fs=cols>60?4.5:cols>45?5.5:cols>32?6.5:cols>22?7.5:8.5;
-            const meta=[fd,ft?'পর্ব '+bnum(ft):'',fe].filter(Boolean).join(' · ');
-            const thead=`<thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}</tr><tr>${subj.map(()=>sub2.map(t=>`<th>${esc(t)}</th>`).join('')).join('')}</tr></thead>`;
             const doc=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><title>ফলাফল শিট - ${esc(fi)}</title><style>*{box-sizing:border-box}body{margin:0;padding:8mm;font-family:'Noto Sans Bengali','Hind Siliguri',sans-serif;color:#1d2b25;font-size:${fs}pt;line-height:1.3}h1{font-size:${fs+5}pt;margin:0 0 2pt;text-align:center}p{margin:0 0 6pt;text-align:center;font-size:${fs+1}pt}table{border-collapse:collapse;width:100%}th,td{border:.6pt solid #7a8f84;padding:2pt 3pt;text-align:left;vertical-align:middle}th{background:#e8f0eb;text-align:center}td.n{text-align:center}thead{display:table-header-group}tr{page-break-inside:avoid}</style></head><body><h1>${esc(fi)}</h1><p>ফলাফল শিট${meta?' — '+esc(meta):''} · মোট ${bnum(f.length)} জন</p><table>${thead}<tbody>${data.map(r=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}</tr>`).join('')}</tbody></table></body></html>`;
             viewCertificateA4(null,'PCTB ফলাফল শিট - '+fi,{html:doc,w:1160,h:830,page:'A4 landscape',margin:'8mm',print:true});
+          };
+          if(pdfBtn)pdfBtn.onclick=async()=>{
+            pdfBtn.disabled=true;const t0=pdfBtn.textContent;pdfBtn.textContent='PDF তৈরি হচ্ছে…';
+            try{
+              await sheetPdf({inst:fi,meta,thead,rows:data.map(r=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}</tr>`),cols:head.length,count:f.length,fileName:'result-sheet-'+((f[0]&&f[0]._code)||'institution')+'-'+new Date().toISOString().slice(0,10)+'.pdf'});
+            }catch(e){console.error(e);printSheet()}
+            finally{pdfBtn.disabled=false;pdfBtn.textContent=t0}
           };
           const csvBtn=$('#shCsv');
           if(csvBtn)csvBtn.onclick=()=>{
