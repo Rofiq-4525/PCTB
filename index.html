@@ -661,6 +661,20 @@ button:not([class]):not(.chips *):not(.adm-bar *):not(.adm-gp *):not(.tabs *):no
 .card.rlk button:active{box-shadow:0 4px 10px rgba(13,74,58,.2),0 0 7px rgba(201,168,92,.45)}
 .adm-bar>button.on,.adm-gp button.on,.tabs button.on,.chips button.on,.tbar .chips button.on,#cchips button.on,#hchips button.on{box-shadow:0 0 7px rgba(201,168,92,.45)}
 </style>
+<style id="adm-minimal">
+/* ব্যবস্থাপনা মেনু: বাটনের বদলে মিনিমাল মেনু (অ্যাডমিন ও প্রতিষ্ঠান প্যানেল) */
+.adm-bar{border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;margin-bottom:0;overflow:visible}
+.adm-bar>button,.adm-bar>button:hover{background:transparent;color:var(--mut);font-weight:600;border:0;border-bottom:2px solid transparent;border-radius:0;box-shadow:none;padding:10px 6px;margin:0 0 -1px}
+.adm-bar>button+button{border-left:0}
+.adm-bar>button:hover{color:var(--g);background:#f4f9f5}
+.adm-bar>button.on{background:transparent;color:var(--g);border-bottom-color:var(--gold);box-shadow:none}
+.adm-bar>button[aria-expanded="true"]{color:var(--g)}
+.adm-gp{flex-direction:column;flex-wrap:nowrap;gap:0;margin:0 0 14px;padding:6px;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;background:#fff;box-shadow:0 8px 20px rgba(13,74,58,.08)}
+.adm-gp button,.adm-gp button.alt{display:flex;align-items:center;width:100%;margin:0;padding:9px 12px;text-align:left;background:transparent;color:var(--ink);font-weight:500;border:0;border-radius:8px;box-shadow:none}
+.adm-gp button:hover{background:#f1f6f3;color:var(--g)}
+.adm-gp button.on{background:#e8f0eb;color:var(--g);font-weight:600;border:0;box-shadow:inset 3px 0 0 var(--gold)}
+@media(max-width:760px){.adm-gp button,.adm-gp button.alt{padding:9px 10px;font-size:.88rem;border-radius:7px}.adm-bar>button{padding:9px 3px}}
+</style>
 </head>
 <body class="page-loading">
 <div id="splash" role="status" aria-live="polite" aria-label="লোড হচ্ছে"><img src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_380,c_limit/logo" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p class="sp-name">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</p><div class="sp-bar" aria-hidden="true"></div></div>
