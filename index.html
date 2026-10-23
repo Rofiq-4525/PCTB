@@ -114,7 +114,7 @@ nav{display:flex;align-items:center;gap:2px;justify-content:flex-end;flex:0 0 au
 .mb .ic{width:20px;height:20px}
 .mb.pctb{width:auto;height:40px;min-width:0;padding:0 10px;border-radius:10px;font:800 1.08rem 'Noto Sans Bengali','Hind Siliguri',sans-serif;letter-spacing:0;white-space:nowrap;color:#0d4a3a}
 .mb:hover{background:#e8f0eb}.mb.on,.mb.on:hover{background:#d1e9d5;color:var(--g);border-color:#a9d0af}
-.mb.loggedin,.mb.loggedin.on,.mb.loggedin:hover{border:2px solid var(--gold);box-shadow:0 0 0 2px rgba(184,146,58,.22)}
+.mb.loggedin,.mb.loggedin.on,.mb.loggedin:hover{border:1px solid rgba(184,146,58,.4);box-shadow:0 0 0 2px rgba(184,146,58,.08)}
 .mnav > .mb:first-child.on,.mnav > .mb:first-child.on:hover{background:#edf5ef;color:var(--g);border-color:#d9e7dd}
 .md{position:absolute;top:calc(100% + 6px);right:0;min-width:210px;background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:0 0 12px 12px;box-shadow:0 14px 28px rgba(13,74,58,.18);padding:6px;display:none;z-index:60}
 .mi.open>.md{display:block}
@@ -243,7 +243,7 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 .mnav>.mb:first-child,.mnav .mi:last-child>.mb,.mnav .mb.loggedin,.mnav>.mb:first-child:hover,.mnav>.mb:first-child.on,.mnav>.mb:first-child.on:hover,.mnav .mi:last-child>.mb:hover,.mnav .mi:last-child>.mb.on,.mnav .mi:last-child>.mb.on:hover,.mnav .mb.loggedin.on,.mnav .mb.loggedin:hover{background:transparent;border:0;box-shadow:none}
 .mnav>.mb:first-child.on .ic{filter:drop-shadow(0 0 3px rgba(217,169,32,.85))}
 .mnav .mi:last-child>.mb.on .ic{filter:drop-shadow(0 0 3px rgba(93,180,214,.9))}
-.mnav .mb.loggedin{color:#b8923a}.mnav .mb.loggedin .ic{filter:drop-shadow(0 0 3px rgba(184,146,58,.8))}
+.mnav .mb.loggedin{color:#c9b27a}.mnav .mb.loggedin .ic{filter:drop-shadow(0 0 2px rgba(184,146,58,.25))}
 /* হেডার আইকন: বড় ও গাঢ় */
 .mnav>.mb .ic,.mnav .mi>.mb .ic{width:22px;height:22px;stroke-width:2.4}
 .mnav>.mb:first-child,.mnav .mi:last-child>.mb,.mnav .mb.loggedin{width:34px}
@@ -391,7 +391,7 @@ html body .pcap .cs:only-child .cs-btn{border-radius:7px}
 .mnav>.mb:nth-child(2),.mnav>.mb:nth-child(3){background:transparent;border:0;box-shadow:none;width:34px;padding:0}
 .mnav>.mb:nth-child(2){color:var(--g)}.mnav>.mb:nth-child(3){color:#0a6c8f}
 .mnav>.mb:nth-child(n+2).on .ic{filter:drop-shadow(0 0 3px rgba(93,180,214,.9))}
-.mnav>.mb.loggedin,.mnav>.mb.loggedin:hover{color:#b8923a;background:transparent;border:0;box-shadow:none}.mnav>.mb.loggedin .ic{filter:drop-shadow(0 0 3px rgba(184,146,58,.8))}
+.mnav>.mb.loggedin,.mnav>.mb.loggedin:hover{color:#c9b27a;background:transparent;border:0;box-shadow:none}.mnav>.mb.loggedin .ic{filter:drop-shadow(0 0 2px rgba(184,146,58,.25))}
 #rsSave{display:block;margin:16px auto 0}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
 @media(max-width:620px){
@@ -1116,7 +1116,7 @@ const head=(t,p,l='সব দেখুন')=>`<div class="shd"><h2>${t}</h2>${p?
 const bnum=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
 const pageHead=(t,sub)=>`<section class="pbn"><div class="pbl"><span class="fb"><svg viewBox="0 0 170 100" aria-hidden="true"><path d="M28 54C28 28 56 22 85 4c29 18 57 24 57 50" fill="none" stroke="#0d4a3a" stroke-width="5" stroke-linecap="round"/><path d="M58 56q13-8 27 0q14-8 27 0v20q-14-8-27 0q-13-8-27 0z" fill="#0d4a3a"/><path d="M85 56v20" stroke="#fff" stroke-width="2"/><text x="85" y="95" text-anchor="middle" font-size="22" font-weight="800" font-family="Arial,sans-serif" fill="#0d4a3a" letter-spacing="2">PCTB</text></svg><span>নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</span></span><img src="logo.png" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"></div><div class="pbc"><h2>${t}</h2><div class="orn"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.2 6.8L22 12l-6.8 3.2L12 22l-3.2-6.8L2 12l6.8-3.2z" fill="currentColor"/><circle cx="12" cy="12" r="2.3" fill="#fff"/></svg><i></i></div><p>${sub||'নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড'}</p></div><div class="pbs"><span class="fb"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#fffdf6" stroke="#b8923a" stroke-width="3"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0d4a3a" stroke-width="1.8" stroke-dasharray="2.5 2.5"/><path d="M27 39Q50 31 50 43Q50 31 73 39L73 61Q50 54 50 66Q50 54 27 61Z" fill="#0d4a3a"/><path d="M50 42V64" stroke="#fff" stroke-width="2"/><text x="50" y="79" text-anchor="middle" font-size="11" font-family="Arial,sans-serif" font-weight="700" fill="#0d4a3a">PCTB</text></svg></span><img src="seal.png" data-f="seal" data-i="1" onerror="pick(this)" alt="PCTB সিল"></div></section>`;
 const emptyBox=(i,t,sub)=>`<div class="card cc emp"><span class="bvn">${ic(i)}</span><b>${t}</b><div class="muted">${sub||''}</div></div>`;
-const SHOW_DEMO_NOTICES=true; /* false করলে নমুনা নোটিশ আর দেখাবে না */
+const SHOW_DEMO_NOTICES=false; /* false করলে নমুনা নোটিশ আর দেখাবে না */
 const errBox=e=>emptyBox('info','তথ্য এখন লোড করা যাচ্ছে না','কিছুক্ষণ পরে আবার চেষ্টা করুন।'+(e&&e.code?`<br><small>(${esc(e.code)})</small>`:''));
 async function safeAll(c){try{return{l:await all(c)}}catch(e){console.error('Firestore:',c,e);return{err:e}}}
 /* পাবলিক পেজের ডেটা ক্যাশ (২ মিনিট) — হোমে আনা ডেটা অন্য পেজে আবার আনতে হয় না */
@@ -1204,12 +1204,7 @@ async curriculum(){
 },
 async notice(){
   const r=await psafeAll('notices'),l=r.l||[];
-  const demo=[
-    {title:'নমুনা নোটিশ: নতুন শিক্ষাবর্ষের প্রস্তুতি',body:'শিক্ষাপ্রতিষ্ঠানসমূহকে নতুন শিক্ষাবর্ষের পাঠপরিকল্পনা ও প্রয়োজনীয় প্রস্তুতি সম্পন্ন করার অনুরোধ জানানো হলো। এটি ওয়েবসাইটের ডিজাইন প্রদর্শনের জন্য তৈরি একটি ডেমো নোটিশ।',date:'১৩ অক্টোবর ২০২৬',id:'sample-01'},
-    {title:'নমুনা বিজ্ঞপ্তি: শিক্ষক প্রশিক্ষণ কর্মশালা',body:'শিক্ষকদের পাঠদান পদ্ধতি ও মূল্যায়ন বিষয়ে প্রশিক্ষণ কর্মশালার একটি নমুনা বিজ্ঞপ্তি। প্রকৃত তারিখ, স্থান ও নিবন্ধনের তথ্য কর্তৃপক্ষ পরবর্তীতে জানাবে।',date:'১০ অক্টোবর ২০২৬',id:'sample-02'},
-    {title:'নমুনা নির্দেশনা: পাঠ্যপুস্তক বিতরণ',body:'শিক্ষাপ্রতিষ্ঠানগুলোকে পাঠ্যপুস্তকের চাহিদা যাচাই ও বিতরণ-সংক্রান্ত প্রস্তুতি রাখার নমুনা নির্দেশনা।',date:'০৫ অক্টোবর ২০২৬',id:'sample-03'},
-    {title:'নমুনা বিজ্ঞপ্তি: মূল্যায়ন ও ফলাফল প্রস্তুতি',body:'শিক্ষার্থীদের ধারাবাহিক মূল্যায়নের তথ্য সঠিকভাবে সংরক্ষণ এবং ফলাফল প্রস্তুতের জন্য একটি নমুনা বিজ্ঞপ্তি।',date:'০১ অক্টোবর ২০২৬',id:'sample-04'}
-  ];
+  const demo=[];
   const actual=l.map((n,i)=>({...n,date:n.t?(d=>`${bnum(d.getDate())} ${MON[d.getMonth()]} ${bnum(d.getFullYear())}`)(new Date(n.t)):'তারিখ উল্লেখ নেই',id:'live-'+i,isLive:true}));
   const items=[...actual,...(SHOW_DEMO_NOTICES?demo:[])];
   const seal=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PCTB সিল"><circle cx="50" cy="50" r="46" fill="#fffdf6" stroke="#b8923a" stroke-width="3"/><circle cx="50" cy="50" r="39" fill="none" stroke="#0d4a3a" stroke-width="1.8" stroke-dasharray="2.5 2.5"/><path d="M27 39 Q50 31 50 43 Q50 31 73 39 L73 61 Q50 54 50 66 Q50 54 27 61Z" fill="#0d4a3a"/><path d="M50 42V64" stroke="#fff" stroke-width="2"/><text x="50" y="79" text-anchor="middle" font-size="11" font-family="Arial,sans-serif" font-weight="700" fill="#0d4a3a">PCTB</text></svg>`;
