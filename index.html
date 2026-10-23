@@ -668,7 +668,7 @@ button:not([class]):not(.chips *):not(.adm-bar *):not(.adm-gp *):not(.tabs *):no
 .adm-gp button,.adm-gp button.alt{display:flex;align-items:center;width:100%;margin:0;padding:9px 12px;text-align:left;background:transparent;color:var(--ink);font-weight:500;border:0;border-radius:8px;box-shadow:none}
 .adm-gp button:hover{background:#f1f6f3;color:var(--g)}
 .adm-gp button.on,.adm-gp button.on:hover{background:var(--g);color:#fff;font-weight:600;border:0;box-shadow:0 0 7px rgba(201,168,92,.45)}
-.adm-bar>button[aria-expanded="true"]:not(.on){background:#d1e9d5;color:var(--g)}
+.adm-bar>button[aria-expanded="true"]:not(.on){background:#eef1ef;color:var(--ink)}
 /* সিলেক্ট করা আইটেমে রঙ: অন্য ড্রপডাউন মেনুতেও একই */
 .dd a.cur,.md a.cur,.dd a.cur:hover,.md a.cur:hover{background:var(--g);color:#fff;box-shadow:0 0 7px rgba(201,168,92,.45)}
 .dd a.cur .ic,.md a.cur .ic,.dd a.cur:hover .ic,.md a.cur:hover .ic{background:rgba(255,255,255,.18);color:#fff;transform:none}
@@ -679,6 +679,15 @@ button:not([class]):not(.chips *):not(.adm-bar *):not(.adm-gp *):not(.tabs *):no
 /* বিভাগ কার্ডের ছবির ওপর কার্ডের রঙ মিশে যাওয়া বন্ধ: multiply ব্লেন্ড ও ছায়া বাদ */
 .bvc .bvn img.ill,.bvn img.ill{mix-blend-mode:normal;filter:none;opacity:1}
 .bvc .bvn:has(img.ill){background:none!important;box-shadow:none!important}
+</style>
+<style id="sel-only-color">
+/* ডিফল্ট (সিলেক্ট না করা) বাটনে কোনো রঙ নেই; রঙ শুধু সিলেক্ট করা (.on) বাটনে */
+.adm-bar{border-color:var(--line)}
+.adm-bar>button:not(.on),.tabs button:not(.on),.chips button:not(.on),.tbar .chips button:not(.on),#cchips button:not(.on),#hchips button:not(.on){background:#fff;color:#3d4a43;border-color:var(--line);box-shadow:none}
+.adm-gp button:not(.on),.adm-gp button.alt:not(.on){background:transparent;color:#3d4a43}
+.adm-bar>button:not(.on):hover,.tabs button:not(.on):hover,.chips button:not(.on):hover,.tbar .chips button:not(.on):hover,#cchips button:not(.on):hover,#hchips button:not(.on):hover{background:#f3f5f4;color:var(--ink)}
+.adm-gp button:not(.on):hover{background:#f3f5f4;color:var(--ink)}
+.adm-bar>button[aria-expanded="true"]:not(.on):hover{background:#eef1ef}
 </style>
 </head>
 <body class="page-loading">
