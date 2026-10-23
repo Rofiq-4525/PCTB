@@ -380,6 +380,12 @@ html body .pcap .cs:only-child .cs-btn{border-radius:7px}
 #a4view .a4-stage{position:relative;margin:0 auto;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.4)}
 #a4view .a4-frame{display:block;border:0;max-width:none;transform-origin:0 0;background:#e9eeeb}
 .result-certificate .cert-signatures{align-items:flex-end}.cert-seal-bottom{flex:0 0 auto;align-self:flex-end;width:96px;height:96px;object-fit:contain;mix-blend-mode:multiply;background:transparent}@media(max-width:700px){.cert-seal-bottom{width:60px;height:60px}}
+.dtwrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:8px;-webkit-overflow-scrolling:touch}
+.dtbl{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:.8rem;margin:0}
+.dtbl th,.dtbl td{padding:6px 10px;border-right:1px solid #e3ece6;border-bottom:1px solid #e3ece6;text-align:left;white-space:nowrap;background:#fff}
+.dtbl thead th{position:sticky;top:0;z-index:1;background:#e8f0eb;color:var(--g);font-weight:700;border-bottom:1px solid #b9cdc2}
+.dtbl td.n{text-align:center}
+.dtbl tbody tr:nth-child(even) td{background:#f7faf8}
 #rsSave{display:block;margin:16px auto 0}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
 @media(max-width:620px){
@@ -1213,8 +1219,8 @@ async sorry(){const q=new URLSearchParams(location.hash.split('?')[1]||'').get('
 admin(){
   if(!user)return `${pageHead('অ্যাডমিন প্যানেল','','shield')}<div class="card" style="max-width:420px"><p class="muted">অ্যাডমিন অ্যাকাউন্ট দিয়ে লগইন করুন।</p><button id="gl" class="alt" style="width:100%;margin:0">Google দিয়ে লগইন</button><p class="muted" style="text-align:center;margin:8px 0 0">অথবা ইমেইল দিয়ে</p><label for="em">ইমেইল</label><input id="em" type="email" autocomplete="username"><label for="pw">পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password"><button id="lg">লগইন</button><div id="lm"></div></div>`;
   if(tstat!=='admin')return `${pageHead('অ্যাডমিন প্যানেল','','shield')}<div class="card" style="max-width:460px"><p class="msg bad">এই অ্যাকাউন্ট (${esc(user.email)}) অ্যাডমিন নয়।</p><button class="alt" id="lo">লগআউট</button></div>`;
-  const T=[['studentapps','শিক্ষার্থী আবেদন'],['allresults','সকল ফলাফল'],['stu','শিক্ষার্থী তালিকা'],['book','বই আপলোড'],['notice','নোটিশ'],['instlist','নিবন্ধিত প্রতিষ্ঠান'],['instapp','প্রতিষ্ঠান আবেদন'],['instverify','প্রতিষ্ঠান যাচাই প্রশ্ন'],['site','সাইট তথ্য']];
-  const G=[['শিক্ষার্থী ব্যবস্থাপনা',['studentapps','allresults','stu']],['প্রতিষ্ঠান ব্যবস্থাপনা',['instlist','instapp','instverify']],['বোর্ড ব্যবস্থাপনা',['book','notice','site']]];
+  const T=[['studentapps','শিক্ষার্থী আবেদন'],['allresults','সকল ফলাফল'],['resultsheet','ফলাফল শিট'],['stu','শিক্ষার্থী তালিকা'],['book','বই আপলোড'],['notice','নোটিশ'],['instlist','নিবন্ধিত প্রতিষ্ঠান'],['instapp','প্রতিষ্ঠান আবেদন'],['instverify','প্রতিষ্ঠান যাচাই প্রশ্ন'],['site','সাইট তথ্য']];
+  const G=[['শিক্ষার্থী ব্যবস্থাপনা',['studentapps','allresults','resultsheet','stu']],['প্রতিষ্ঠান ব্যবস্থাপনা',['instlist','instapp','instverify']],['বোর্ড ব্যবস্থাপনা',['book','notice','site']]];
   if(!T.some(t=>t[0]==tTab))tTab='studentapps';
   return `${pageHead('অ্যাডমিন প্যানেল','','shield')}<div class="adm-bar">${G.map((g,i)=>`<button type="button" data-g="${i}" aria-expanded="false" class="${g[1].some(k=>k==tTab)?'on':''}"><span>${g[0].replace(' ','<br>')}</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`).join('')}</div>${G.map((g,i)=>`<div class="adm-gp" data-gp="${i}" hidden>${g[1].map(k=>`<button type="button" data-t="${k}" class="${tTab==k?'on':''}">${(T.find(t=>t[0]==k)||[])[1]}</button>`).join('')}${i==G.length-1?'<button type="button" class="alt" id="lo">লগআউট</button>':''}</div>`).join('')}<div class="card" id="tbox"></div><div id="ml" style="margin-top:14px"></div>`},
 teacher(){return `${pageHead('শিক্ষক নিবন্ধন আবেদন','নিবন্ধিত প্রতিষ্ঠানের ড্যাশবোর্ড থেকে শিক্ষক আবেদন জমা হয়','teacher')}<div class="card" style="max-width:620px"><p>শিক্ষক আবেদন ও ফলাফল পরিচালনার জন্য আলাদা শিক্ষক লগইন লাগে না। নিবন্ধিত প্রতিষ্ঠানের দায়িত্বশীল ব্যক্তি <a href="#/dashboard">প্রতিষ্ঠান ড্যাশবোর্ড</a> থেকে শিক্ষক আবেদন জমা দেবেন এবং ফলাফল তৈরি করবেন।</p></div>`}
@@ -1357,6 +1363,49 @@ async function bindTeacher(){
           });
         };
         $('#arInst').onchange=draw;$('#arExam').onchange=draw;$('#arQ').oninput=draw;draw();
+      }catch(e){say(body,'ফলাফল আনা যায়নি: '+e.message)}
+    })();
+  }else if(tTab=='resultsheet'){
+    box.innerHTML='<h3>প্রতিষ্ঠানের ফলাফল শিট</h3><div id="shBody" class="muted">লোড হচ্ছে…</div>';
+    (async()=>{
+      const body=$('#shBody');
+      try{
+        const [rs,sts,ins]=await Promise.all([all('results'),all('students'),all('institutions')]);
+        const stMap=new Map(sts.map(x=>[x.reg||x.id,x])),insMap=new Map(ins.map(x=>[String(x.code||x.id),x]));
+        const rows=rs.map(r=>{const st=stMap.get(r.reg)||{},code=String(r.institutionCode||st.institutionCode||''),ib=insMap.get(code)||{};return {...r,_inst:ib.name||r.inst||st.inst||'প্রতিষ্ঠান উল্লেখ নেই',_code:code,_father:r.father||st.father||''}});
+        const insNames=[...new Set(rows.map(r=>r._inst))].sort((a,b)=>a.localeCompare(b,'bn'));
+        const termOf=r=>String(r.term||String(r.reg||'')[3]||'');
+        body.className='';
+        body.innerHTML=`<div class="rsf"><div><label for="shInst">প্রতিষ্ঠান *</label><select id="shInst"><option value="" selected disabled>প্রতিষ্ঠান নির্বাচন করুন</option>${insNames.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div><div class="row"><div><label for="shDiv">বিভাগ</label><select id="shDiv"><option value="">সকল বিভাগ</option></select></div><div><label for="shTerm">পর্ব</label><select id="shTerm"><option value="">সকল পর্ব</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div><div><label for="shExam">পরীক্ষা</label><select id="shExam"><option value="">সকল পরীক্ষা</option></select></div></div><div id="shBar" style="margin:12px 0 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"></div><div id="shTbl"></div>`;
+        const fill=()=>{
+          const base=rows.filter(r=>r._inst===$('#shInst').value);
+          const dv=[...new Set(base.map(r=>bdiv(r)).filter(Boolean))],ex=[...new Set(base.map(r=>examTitle(r)).filter(Boolean))];
+          $('#shDiv').innerHTML='<option value="">সকল বিভাগ</option>'+dv.map(n=>`<option>${esc(n)}</option>`).join('');
+          $('#shExam').innerHTML='<option value="">সকল পরীক্ষা</option>'+ex.map(n=>`<option>${esc(n)}</option>`).join('');
+          $('#shDiv').value='';$('#shExam').value='';$('#shTerm').value='';
+        };
+        const draw=()=>{
+          const fi=$('#shInst').value;
+          if(!fi){$('#shBar').innerHTML='';$('#shTbl').innerHTML='<p class="muted">প্রতিষ্ঠান নির্বাচন করলে সকল শিক্ষার্থীর ফলাফল শিট আসবে।</p>';return}
+          const fd=$('#shDiv').value,ft=$('#shTerm').value,fe=$('#shExam').value;
+          const f=rows.filter(r=>r._inst===fi&&(!fd||bdiv(r)===fd)&&(!ft||termOf(r)===ft)&&(!fe||examTitle(r)===fe)).sort((a,b)=>String(bdiv(a)).localeCompare(String(bdiv(b)),'bn')||termOf(a).localeCompare(termOf(b))||(Number(rollOf(a))||0)-(Number(rollOf(b))||0)||String(a.name||'').localeCompare(String(b.name||''),'bn'));
+          const subj=[];f.forEach(r=>(r.subjects||[]).forEach(x=>{if(!subj.includes(x.n))subj.push(x.n)}));
+          const head=['ক্রম','রেজিস্ট্রেশন','রোল','নাম','পিতার নাম','বিভাগ','পর্ব','পরীক্ষা','তারিখ',...subj,'সর্বমোট','গড়','মন্তব্য'];
+          const data=f.map((r,i)=>{const s=r.subjects||[],total=r.total??s.reduce((a,x)=>a+x.m,0),avg=r.avg??(s.length?total/s.length:0),m=new Map(s.map(x=>[x.n,x.m]));return [i+1,r.reg||'',rollOf(r)||'',r.name||'',r._father,bdiv(r)||'',termOf(r),examTitle(r),r.date||'',...subj.map(n=>m.has(n)?m.get(n):''),total,Number(avg).toFixed(1),remark(avg)]});
+          const numCol=i=>i==0||i==2||i==6||(i>=9&&i<head.length-1);
+          const cell=(v,i)=>i==8?(v?esc(fmtDate(v)):''):numCol(i)||i==1?bnum(esc(v)):esc(v);
+          $('#shBar').innerHTML=`<span>মোট ${bnum(f.length)} জন শিক্ষার্থীর ফলাফল</span><button type="button" class="alt" id="shCsv" style="margin:0"${f.length?'':' disabled'}>CSV ডাউনলোড</button>`;
+          $('#shTbl').innerHTML=f.length?`<div class="dtwrap"><table class="dtbl" data-rt="1"><thead><tr>${head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${data.map(r=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>';
+          const csvBtn=$('#shCsv');
+          if(csvBtn)csvBtn.onclick=()=>{
+            const q=v=>{let t=String(v);if(typeof v==='string'&&/^[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"'};
+            const csv='\ufeff'+[head,...data].map(r=>r.map(q).join(',')).join('\r\n');
+            const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+            a.download='result-sheet-'+((f[0]&&f[0]._code)||'institution')+'-'+new Date().toISOString().slice(0,10)+'.csv';
+            document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+          };
+        };
+        $('#shInst').onchange=()=>{fill();draw()};$('#shDiv').onchange=draw;$('#shTerm').onchange=draw;$('#shExam').onchange=draw;draw();
       }catch(e){say(body,'ফলাফল আনা যায়নি: '+e.message)}
     })();
   }else if(tTab=='site'){
