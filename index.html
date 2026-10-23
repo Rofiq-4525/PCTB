@@ -650,6 +650,17 @@ function pick(i){var e=["png","jpg","jpeg","webp","PNG","JPG","JPEG"],n=+i.datas
 function cloudImage(n){var id=n.replace(/\.[^.]+$/,"").replace(/ /g,"_"),w={"logo-short-web":160,"logo-icon":64,logo:640,seal:192,icon1:380,icon2:380,icon3:380,icon4:380}[id]||380;return "https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_"+w+",c_limit/"+id}
 function cloudMarkup(s){return s.replace(/src="(logo-short-web|logo-icon|logo|seal|icon[1-4]|logo%20short)\.png"/g,(_,n)=>'src="'+cloudImage(n.replace(/%20/g," ") + ".png")+'"')}
 </script>
+<style id="gold-aura">
+/* সবুজ বাটনে খুব হালকা গোল্ডেন আভা */
+button:not([class]):not(.chips *):not(.adm-bar *):not(.adm-gp *):not(.tabs *):not(#cchips *):not(#hchips *),
+#apphelp button,.hero .box button{box-shadow:0 0 7px rgba(201,168,92,.45)}
+button:not([class]):not(.chips *):not(.adm-bar *):not(.adm-gp *):not(.tabs *):not(#cchips *):not(#hchips *):hover,
+#apphelp button:hover,.hero .box button:hover{box-shadow:0 0 9px rgba(201,168,92,.6)}
+.card.rlk button{box-shadow:0 8px 18px rgba(13,74,58,.22),0 0 7px rgba(201,168,92,.45)}
+.card.rlk button:hover{box-shadow:0 12px 24px rgba(13,74,58,.28),0 0 9px rgba(201,168,92,.6)}
+.card.rlk button:active{box-shadow:0 4px 10px rgba(13,74,58,.2),0 0 7px rgba(201,168,92,.45)}
+.adm-bar>button.on,.adm-gp button.on,.tabs button.on,.chips button.on,.tbar .chips button.on,#cchips button.on,#hchips button.on{box-shadow:0 0 7px rgba(201,168,92,.45)}
+</style>
 </head>
 <body class="page-loading">
 <div id="splash" role="status" aria-live="polite" aria-label="লোড হচ্ছে"><img src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto,w_380,c_limit/logo" data-f="logo" data-i="1" onerror="pick(this)" alt="PCTB লোগো"><p class="sp-name">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</p><div class="sp-bar" aria-hidden="true"></div></div>
