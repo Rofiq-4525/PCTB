@@ -114,7 +114,7 @@ nav{display:flex;align-items:center;gap:2px;justify-content:flex-end;flex:0 0 au
 .mb .ic{width:20px;height:20px}
 .mb.pctb{width:auto;height:40px;min-width:0;padding:0 10px;border-radius:10px;font:800 1.08rem 'Noto Sans Bengali','Hind Siliguri',sans-serif;letter-spacing:0;white-space:nowrap;color:#0d4a3a}
 .mb:hover{background:#e8f0eb}.mb.on,.mb.on:hover{background:#d1e9d5;color:var(--g);border-color:#a9d0af}
-.mb.loggedin,.mb.loggedin.on,.mb.loggedin:hover{border:1px solid rgba(184,146,58,.4);box-shadow:0 0 0 2px rgba(184,146,58,.06)}
+.mb.loggedin,.mb.loggedin.on,.mb.loggedin:hover{box-shadow:0 2px 5px rgba(13,74,58,.22)}
 .mnav > .mb:first-child.on,.mnav > .mb:first-child.on:hover{background:#edf5ef;color:var(--g);border-color:#d9e7dd}
 .md{position:absolute;top:calc(100% + 6px);right:0;min-width:210px;background:#fff;border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:0 0 12px 12px;box-shadow:0 14px 28px rgba(13,74,58,.18);padding:6px;display:none;z-index:60}
 .mi.open>.md{display:block}
@@ -241,9 +241,9 @@ footer.ft{background:linear-gradient(180deg,#0b3a2d,#06241b);color:#cfe3d8;text-
 .mnav .mb.loggedin,.mnav .mb.loggedin.on,.mnav .mb.loggedin:hover{border:2px solid var(--gold);box-shadow:0 0 0 2px rgba(184,146,58,.22),0 2px 6px rgba(13,74,58,.14)}
 /* সব হেডার বাটন: বক্স ছাড়া, শুধু আইকন */
 .mnav>.mb:first-child,.mnav .mi:last-child>.mb,.mnav .mb.loggedin,.mnav>.mb:first-child:hover,.mnav>.mb:first-child.on,.mnav>.mb:first-child.on:hover,.mnav .mi:last-child>.mb:hover,.mnav .mi:last-child>.mb.on,.mnav .mi:last-child>.mb.on:hover,.mnav .mb.loggedin.on,.mnav .mb.loggedin:hover{background:transparent;border:0;box-shadow:none}
-.mnav>.mb:first-child.on .ic{filter:drop-shadow(0 0 3px rgba(217,169,32,.85))}
-.mnav .mi:last-child>.mb.on .ic{filter:drop-shadow(0 0 3px rgba(93,180,214,.9))}
-.mnav .mb.loggedin{color:#0a6c8f}.mnav .mb.loggedin .ic,.mnav .mb.loggedin.on .ic,.mnav .mi:last-child>.mb.loggedin.on .ic{filter:drop-shadow(0 0 3px rgba(125,85,10,.75))}
+.mnav>.mb:first-child.on .ic{filter:none}
+.mnav .mi:last-child>.mb.on .ic{filter:none}
+.mnav .mb.loggedin{color:#0a6c8f}.mnav .mb.loggedin .ic,.mnav .mb.loggedin.on .ic,.mnav .mi:last-child>.mb.loggedin.on .ic{filter:drop-shadow(0 2px 2px rgba(13,74,58,.35))}
 /* হেডার আইকন: বড় ও গাঢ় */
 .mnav>.mb .ic,.mnav .mi>.mb .ic{width:22px;height:22px;stroke-width:2.4}
 .mnav>.mb:first-child,.mnav .mi:last-child>.mb,.mnav .mb.loggedin{width:34px}
@@ -390,8 +390,8 @@ html body .pcap .cs:only-child .cs-btn{border-radius:7px}
 .dtbl tbody tr:nth-child(even) td{background:#f7faf8}
 .mnav>.mb:nth-child(2),.mnav>.mb:nth-child(3){background:transparent;border:0;box-shadow:none;width:34px;padding:0}
 .mnav>.mb:nth-child(2){color:var(--g)}.mnav>.mb:nth-child(3){color:#0a6c8f}
-.mnav>.mb:nth-child(n+2).on .ic{filter:drop-shadow(0 0 3px rgba(93,180,214,.9))}
-.mnav>.mb.loggedin,.mnav>.mb.loggedin:hover{color:#0a6c8f;background:transparent;border:0;box-shadow:none}.mnav>.mb.loggedin .ic,.mnav>.mb.loggedin.on .ic,.mnav>.mb:nth-child(n+2).loggedin.on .ic{filter:drop-shadow(0 0 3px rgba(125,85,10,.75))}
+.mnav>.mb:nth-child(n+2).on .ic{filter:none}
+.mnav>.mb.loggedin,.mnav>.mb.loggedin:hover{color:#0a6c8f;background:transparent;border:0;box-shadow:none}.mnav>.mb.loggedin .ic,.mnav>.mb.loggedin.on .ic,.mnav>.mb:nth-child(n+2).loggedin.on .ic{filter:drop-shadow(0 2px 2px rgba(13,74,58,.35))}
 #rsSave{display:block;margin:16px auto 0}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
 @media(max-width:620px){
