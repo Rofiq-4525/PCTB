@@ -379,6 +379,7 @@ html body .pcap .cs:only-child .cs-btn{border-radius:7px}
 #a4view .a4-scroll{flex:1 1 auto;overflow:auto;padding:8px;-webkit-overflow-scrolling:touch}
 #a4view .a4-stage{position:relative;margin:0 auto;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.4)}
 #a4view .a4-frame{display:block;border:0;max-width:none;transform-origin:0 0;background:#e9eeeb}
+.result-certificate .cert-signatures{align-items:flex-end}.cert-seal-bottom{flex:0 0 auto;align-self:flex-end;width:96px;height:96px;object-fit:contain;mix-blend-mode:multiply;background:transparent}@media(max-width:700px){.cert-seal-bottom{width:60px;height:60px}}
 #rsSave{display:block;margin:16px auto 0}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
 @media(max-width:620px){
@@ -832,7 +833,7 @@ const RESULT_CERT_CSS=`.registration-certificate.result-certificate{background:r
 .cert-summary{width:100%;max-width:640px;margin:12px auto 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;padding:10px 14px;border:1px solid #b8923a;background:rgba(255,255,255,.62);color:#0d4a3a;font-weight:600}
 .cert-legend{width:100%;max-width:640px;margin:8px auto 0;font-size:.78rem;color:#604b25}
 @media(max-width:600px){.registration-certificate.result-certificate{min-height:0;padding:30px 12px;border-width:8px}.cert-rtable{table-layout:fixed;font-size:.62rem;line-height:1.3}.cert-rtable th,.cert-rtable td{padding:4px 1px;overflow-wrap:anywhere;word-break:normal}.cert-rtable th{white-space:nowrap}.cert-rtable th:nth-child(1){width:9%}.cert-rtable th:nth-child(2){width:17%}.cert-rtable th:nth-child(3){width:11%}.cert-rtable th:nth-child(4){width:14%}.cert-rtable th:nth-child(5){width:12%}.cert-rtable th:nth-child(6){width:9%}.cert-rtable th:nth-child(7){width:11%}.cert-rtable th:nth-child(8){width:17%}.cert-summary{gap:4px 14px;font-size:.82rem;padding:8px 10px}}@media(max-width:340px){.cert-rtable{font-size:.56rem}}
-`;
+.result-certificate .cert-signatures{align-items:flex-end}.cert-seal-bottom{flex:0 0 auto;align-self:flex-end;width:96px;height:96px;object-fit:contain;mix-blend-mode:multiply;background:transparent}@media(max-width:700px){.cert-seal-bottom{width:60px;height:60px}}`;
 function registrationCertificate(student,id='registrationCertificate'){
   const issued=new Date().toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});
   const detail=(label,value)=>`<div class="cert-info-row"><span class="cert-info-label">${label}</span><span class="cert-info-value">${esc(value||'—')}</span></div>`;
@@ -875,7 +876,6 @@ function resultCertificate(r,instName,id='resultCertificate'){
       <p class="cert-board-ar" lang="ar" dir="rtl">مجلس المناهج النبوية والكتب المدرسية</p>
       <h2 class="cert-board">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</h2>
       <p class="cert-board-en" lang="en">Prophetic Curriculum and Textbook Board</p>
-      <img class="cert-seal-top" src="${cloudImage('seal')}" alt="PCTB সিল">
     </header>
     <h1 class="cert-title">ফলাফল সনদ</h1>
     <div class="cert-reg">রেজিস্ট্রেশন নম্বর: ${esc(r.reg||'')}</div>
@@ -890,7 +890,7 @@ function resultCertificate(r,instName,id='resultCertificate'){
     <table class="cert-rtable"><thead><tr><th>ক্রম</th><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]}<br>(${bnum(p[2])})</th>`).join('')}<th>মোট<br>(১০০)</th><th>মন্তব্য</th></tr></thead><tbody>${subs.map((x,i)=>`<tr><td>${bnum(i+1)}</td><td>${esc(x.n)}</td>${PARTS.map(p=>`<td>${v(x[p[0]])}</td>`).join('')}<td><b>${x.m}</b></td><td${x.m<50?' style="color:#a3281f;font-weight:600"':''}>${remark(x.m)}</td></tr>`).join('')}</tbody></table>
     <div class="cert-summary"><span>সর্বমোট: ${bnum(total)} / ${bnum(n*100)}</span><span>গড় নম্বর: ${bnum(avg.toFixed(1))}</span><span>সার্বিক মন্তব্য: ${remark(avg)}</span>${fail?`<span style="color:#a3281f">অকৃতকার্য বিষয়: ${bnum(fail)}টি</span>`:''}</div>
     <p class="cert-legend">৯০–১০০ সর্বোত্তম · ৮০–৯০ উত্তম · ৭০–৮০ মধ্যমান · ৫০–৭০ উন্নতি প্রয়োজন · ৫০-এর নিচে অকৃতকার্য · সনদ প্রদানের তারিখ: ${issued}</p>
-    <footer class="cert-footer"><div class="cert-signatures"><div class="cert-sign">প্রতিষ্ঠান প্রধানের স্বাক্ষর</div><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div></footer>
+    <footer class="cert-footer"><div class="cert-signatures"><div class="cert-sign">প্রতিষ্ঠান প্রধানের স্বাক্ষর</div><img class="cert-seal-bottom" src="${cloudImage('seal')}" alt="PCTB সিল"><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div></footer>
   </article>`;
 }
 function certificateDate(value){
