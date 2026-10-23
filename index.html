@@ -667,7 +667,12 @@ button:not([class]):not(.chips *):not(.adm-bar *):not(.adm-gp *):not(.tabs *):no
 .adm-gp{flex-direction:column;flex-wrap:nowrap;gap:0;margin:0 0 14px;padding:6px;border:1px solid var(--line);border-top:0;border-radius:0 0 10px 10px;background:#fff;box-shadow:0 8px 20px rgba(13,74,58,.08)}
 .adm-gp button,.adm-gp button.alt{display:flex;align-items:center;width:100%;margin:0;padding:9px 12px;text-align:left;background:transparent;color:var(--ink);font-weight:500;border:0;border-radius:8px;box-shadow:none}
 .adm-gp button:hover{background:#f1f6f3;color:var(--g)}
-.adm-gp button.on{background:#e8f0eb;color:var(--g);font-weight:600;border:0;box-shadow:inset 3px 0 0 var(--gold)}
+.adm-gp button.on,.adm-gp button.on:hover{background:var(--g);color:#fff;font-weight:600;border:0;box-shadow:0 0 7px rgba(201,168,92,.45)}
+.adm-bar>button[aria-expanded="true"]:not(.on){background:#d1e9d5;color:var(--g)}
+/* সিলেক্ট করা আইটেমে রঙ: অন্য ড্রপডাউন মেনুতেও একই */
+.dd a.cur,.md a.cur,.dd a.cur:hover,.md a.cur:hover{background:var(--g);color:#fff;box-shadow:0 0 7px rgba(201,168,92,.45)}
+.dd a.cur .ic,.md a.cur .ic,.dd a.cur:hover .ic,.md a.cur:hover .ic{background:rgba(255,255,255,.18);color:#fff;transform:none}
+.dd a.cur::after,.md a.cur::after{color:#fff}
 @media(max-width:760px){.adm-gp button,.adm-gp button.alt{padding:9px 10px;font-size:.88rem;border-radius:7px}}
 </style>
 <style id="div-img-clean">
