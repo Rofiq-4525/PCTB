@@ -388,6 +388,10 @@ html body .pcap .cs:only-child .cs-btn{border-radius:7px}
 .dtbl thead th{height:30px;box-sizing:border-box;line-height:1.2}
 .dtbl thead tr:nth-child(2) th{top:30px}
 .dtbl tbody tr:nth-child(even) td{background:#f7faf8}
+.mnav>.mb:nth-child(2),.mnav>.mb:nth-child(3){background:transparent;border:0;box-shadow:none;width:34px;padding:0}
+.mnav>.mb:nth-child(2){color:var(--g)}.mnav>.mb:nth-child(3){color:#0a6c8f}
+.mnav>.mb:nth-child(n+2).on .ic{filter:drop-shadow(0 0 3px rgba(93,180,214,.9))}
+.mnav>.mb.loggedin,.mnav>.mb.loggedin:hover{color:#b8923a;background:transparent;border:0;box-shadow:none}.mnav>.mb.loggedin .ic{filter:drop-shadow(0 0 3px rgba(184,146,58,.8))}
 #rsSave{display:block;margin:16px auto 0}
 table.mk td input{width:68px;padding:5px 6px}.mk .grp{background:#f3ead0;color:#6b5314}.mk .tt{font-weight:600;text-align:center}
 @media(max-width:620px){
@@ -1413,7 +1417,8 @@ async function bindTeacher(){
         const insNames=[...new Set(rows.map(r=>r._inst))].sort((a,b)=>a.localeCompare(b,'bn'));
         const termOf=r=>String(r.term||String(r.reg||'')[3]||'');
         body.className='';
-        body.innerHTML=`<div class="rsf"><div><label for="shInst">প্রতিষ্ঠান *</label><select id="shInst"><option value="" selected disabled>প্রতিষ্ঠান নির্বাচন করুন</option>${insNames.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div><div class="row"><div><label for="shDiv">বিভাগ</label><select id="shDiv"><option value="">সকল বিভাগ</option></select></div><div><label for="shTerm">পর্ব</label><select id="shTerm"><option value="">সকল পর্ব</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div><div><label for="shExam">পরীক্ষা</label><select id="shExam"><option value="">সকল পরীক্ষা</option></select></div></div><div id="shBar" style="margin:12px 0 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"></div><div id="shTbl"></div>`;
+        body.innerHTML=`<div class="rsf"><div><label for="shInst">প্রতিষ্ঠান *</label><select id="shInst"><option value="" selected disabled>প্রতিষ্ঠান নির্বাচন করুন</option>${insNames.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div><div class="row"><div><label for="shDiv">বিভাগ</label><select id="shDiv"><option value="">সকল বিভাগ</option></select></div><div><label for="shTerm">পর্ব</label><select id="shTerm"><option value="">সকল পর্ব</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div><div><label for="shExam">পরীক্ষা</label><select id="shExam"><option value="">সকল পরীক্ষা</option></select></div></div><div class="chips" id="shMode" style="margin-top:12px"><button type="button" class="on" data-m="d">বিস্তারিত নম্বরসহ শিট</button><button type="button" data-m="m">মূল নম্বরসহ শিট</button></div><div id="shBar" style="margin:10px 0 8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"></div><div id="shTbl"></div>`;
+        let mode='d';
         const fill=()=>{
           const base=rows.filter(r=>r._inst===$('#shInst').value);
           const dv=[...new Set(base.map(r=>bdiv(r)).filter(Boolean))],ex=[...new Set(base.map(r=>examTitle(r)).filter(Boolean))];
@@ -1427,16 +1432,19 @@ async function bindTeacher(){
           const fd=$('#shDiv').value,ft=$('#shTerm').value,fe=$('#shExam').value;
           const f=rows.filter(r=>r._inst===fi&&(!fd||bdiv(r)===fd)&&(!ft||termOf(r)===ft)&&(!fe||examTitle(r)===fe)).sort((a,b)=>String(bdiv(a)).localeCompare(String(bdiv(b)),'bn')||termOf(a).localeCompare(termOf(b))||(Number(rollOf(a))||0)-(Number(rollOf(b))||0)||String(a.name||'').localeCompare(String(b.name||''),'bn'));
           const subj=[];f.forEach(r=>(r.subjects||[]).forEach(x=>{if(!subj.includes(x.n))subj.push(x.n)}));
-          const base=['ক্রম','রেজিস্ট্রেশন','রোল','নাম','পিতার নাম','বিভাগ','পর্ব','পরীক্ষা','তারিখ'],tail=['সর্বমোট','গড়','মন্তব্য'],sub2=[...PARTS.map(x=>x[1]),'মোট'];
-          const head=[...base,...subj.flatMap(n=>sub2.map(t=>n+' – '+t)),...tail];
-          const data=f.map((r,i)=>{const s=r.subjects||[],total=r.total??s.reduce((a,x)=>a+x.m,0),avg=r.avg??(s.length?total/s.length:0),m=new Map(s.map(x=>[x.n,x]));return [i+1,r.reg||'',rollOf(r)||'',r.name||'',r._father,bdiv(r)||'',termOf(r),examTitle(r),r.date||'',...subj.flatMap(n=>{const x=m.get(n);return [...PARTS.map(q=>x&&x[q[0]]!=null?x[q[0]]:''),x?x.m:'']}),total,Number(avg).toFixed(1),remark(avg)]});
+          const dt=mode==='d',base=['ক্রম','রেজিস্ট্রেশন','রোল','নাম','পিতার নাম','বিভাগ','পর্ব','পরীক্ষা','তারিখ'],tail=['সর্বমোট','গড়','মন্তব্য'],sub2=dt?[...PARTS.map(x=>x[1]),'মোট']:['মোট'];
+          const head=[...base,...(dt?subj.flatMap(n=>sub2.map(t=>n+' – '+t)):subj),...tail];
+          const data=f.map((r,i)=>{const s=r.subjects||[],total=r.total??s.reduce((a,x)=>a+x.m,0),avg=r.avg??(s.length?total/s.length:0),m=new Map(s.map(x=>[x.n,x]));return [i+1,r.reg||'',rollOf(r)||'',r.name||'',r._father,bdiv(r)||'',termOf(r),examTitle(r),r.date||'',...subj.flatMap(n=>{const x=m.get(n);return dt?[...PARTS.map(q=>x&&x[q[0]]!=null?x[q[0]]:''),x?x.m:'']:[x?x.m:'']}),total,Number(avg).toFixed(1),remark(avg)]});
           const numCol=i=>i==0||i==2||i==6||(i>=9&&i<head.length-1);
           const cell=(v,i)=>i==8?(v?esc(fmtDate(v)):''):numCol(i)||i==1?bnum(esc(v)):esc(v);
+          const mkThead=act=>{const rs=dt?' rowspan="2"':'',aTh=act?`<th${rs}>শিট</th>`:'';
+            if(!dt)return `<thead><tr>${[...base,...subj,...tail].map(h=>`<th>${esc(h)}</th>`).join('')}${aTh}</tr></thead>`;
+            return `<thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}" style="text-align:center">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${aTh}</tr><tr>${subj.map(()=>sub2.map(t=>`<th class="n">${esc(t)}</th>`).join('')).join('')}</tr></thead>`};
           $('#shBar').innerHTML=`<span>মোট ${bnum(f.length)} জন শিক্ষার্থীর ফলাফল</span><button type="button" class="alt" id="shCsv" style="margin:0"${f.length?'':' disabled'}>CSV ডাউনলোড</button><button type="button" class="alt" id="shPdf" style="margin:0"${f.length?'':' disabled'}>PDF ডাউনলোড</button>`;
-          $('#shTbl').innerHTML=f.length?`<div class="dtwrap"><table class="dtbl" data-rt="1"><thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}" style="text-align:center">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}<th rowspan="2">শিট</th></tr><tr>${subj.map(()=>sub2.map(t=>`<th class="n">${esc(t)}</th>`).join('')).join('')}</tr></thead><tbody>${data.map((r,k)=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}<td><button type="button" class="alt" data-sv="${esc(f[k].id)}" style="margin:0;padding:3px 9px;font-size:.75rem">দেখুন</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>';
+          $('#shTbl').innerHTML=f.length?`<div class="dtwrap"><table class="dtbl" data-rt="1">${mkThead(true)}<tbody>${data.map((r,k)=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}<td><button type="button" class="alt" data-sv="${esc(f[k].id)}" style="margin:0;padding:3px 9px;font-size:.75rem">দেখুন</button></td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>';
           $('#shTbl').querySelectorAll('[data-sv]').forEach(b=>b.onclick=()=>{const r=f.find(x=>x.id===b.dataset.sv);if(r)viewCertificateA4(resultCertificate({...r,father:r.father||r._father},r._inst),'PCTB ফলাফল সনদ - '+(r.reg||''))});
-          const meta=[fd,ft?'পর্ব '+bnum(ft):'',fe].filter(Boolean).join(' · ');
-          const thead=`<thead><tr>${base.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}${subj.map(n=>`<th colspan="${sub2.length}">${esc(n)}</th>`).join('')}${tail.map(h=>`<th rowspan="2">${esc(h)}</th>`).join('')}</tr><tr>${subj.map(()=>sub2.map(t=>`<th>${esc(t)}</th>`).join('')).join('')}</tr></thead>`;
+          const meta=[fd,ft?'পর্ব '+bnum(ft):'',fe,dt?'বিস্তারিত নম্বর':'মূল নম্বর'].filter(Boolean).join(' · ');
+          const thead=mkThead(false);
           const pdfBtn=$('#shPdf');
           const printSheet=()=>{
             const cols=head.length,fs=cols>60?4.5:cols>45?5.5:cols>32?6.5:cols>22?7.5:8.5;
@@ -1446,7 +1454,7 @@ async function bindTeacher(){
           if(pdfBtn)pdfBtn.onclick=async()=>{
             pdfBtn.disabled=true;const t0=pdfBtn.textContent;pdfBtn.textContent='PDF তৈরি হচ্ছে…';
             try{
-              await sheetPdf({inst:fi,meta,thead,rows:data.map(r=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}</tr>`),cols:head.length,count:f.length,fileName:'result-sheet-'+((f[0]&&f[0]._code)||'institution')+'-'+new Date().toISOString().slice(0,10)+'.pdf'});
+              await sheetPdf({inst:fi,meta,thead,rows:data.map(r=>`<tr>${r.map((v,i)=>`<td${numCol(i)?' class="n"':''}>${cell(v,i)}</td>`).join('')}</tr>`),cols:head.length,count:f.length,fileName:'result-sheet-'+(dt?'detail':'main')+'-'+((f[0]&&f[0]._code)||'institution')+'-'+new Date().toISOString().slice(0,10)+'.pdf'});
             }catch(e){console.error(e);printSheet()}
             finally{pdfBtn.disabled=false;pdfBtn.textContent=t0}
           };
@@ -1455,10 +1463,11 @@ async function bindTeacher(){
             const q=v=>{let t=String(v);if(typeof v==='string'&&/^[=+\-@]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"'};
             const csv='\ufeff'+[head,...data].map(r=>r.map(q).join(',')).join('\r\n');
             const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-            a.download='result-sheet-'+((f[0]&&f[0]._code)||'institution')+'-'+new Date().toISOString().slice(0,10)+'.csv';
+            a.download='result-sheet-'+(dt?'detail':'main')+'-'+((f[0]&&f[0]._code)||'institution')+'-'+new Date().toISOString().slice(0,10)+'.csv';
             document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
           };
         };
+        $('#shMode').querySelectorAll('button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$('#shMode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));draw()});
         $('#shInst').onchange=()=>{fill();draw()};$('#shDiv').onchange=draw;$('#shTerm').onchange=draw;$('#shExam').onchange=draw;draw();
       }catch(e){say(body,'ফলাফল আনা যায়নি: '+e.message)}
     })();
@@ -2045,7 +2054,7 @@ const mdd=(l,k,ico,lbl)=>`<div class="mi"><button class="mb${l.some(c=>c.p==k)?'
 const loginBtn=k=>{const d=tstat==='admin'?'admin':'teacher';
   const items=[user?{p:d,t:tstat==='admin'?'অ্যাডমিন প্যানেল':'শিক্ষক প্যানেল',i:'shield'}:{p:'admin',t:'অ্যাডমিন লগইন',i:'shield'},{p:'dashboard',t:'প্রতিষ্ঠান ড্যাশবোর্ড',i:'school'}];
   const h=mdd(items,k,'login','লগইন');return (user||instUser)?h.replace('class="mb','class="mb loggedin'):h};
-const mnavHTML=k=>`<a class="mb${k=='notice'?' on':''}" href="#/notice" aria-label="নোটিশ">${ic('bell')}</a>`+mdd(MP,k,'logo','পিসিটিবি')+loginBtn(k);
+const mnavHTML=k=>{const d=tstat==='admin'?'admin':'teacher';return `<a class="mb${k=='notice'?' on':''}" href="#/notice" aria-label="নোটিশ">${ic('bell')}</a><a class="mb${k=='dashboard'?' on':''}${instUser?' loggedin':''}" href="#/dashboard" aria-label="প্রতিষ্ঠান লগইন">${ic('school')}</a><a class="mb${(k=='admin'||k=='teacher')?' on':''}${user?' loggedin':''}" href="#/${user?d:'admin'}" aria-label="${user?(tstat==='admin'?'অ্যাডমিন প্যানেল':'শিক্ষক প্যানেল'):'অ্যাডমিন লগইন'}">${ic('login')}</a>`};
 $('#mnav').onclick=e=>{const b=e.target.closest('.mb[aria-haspopup]');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.mi.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
 $('#nav').onclick=e=>{const b=e.target.closest('.nb');if(!b)return;const li=b.parentElement,was=li.classList.contains('open');document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));if(!was)li.classList.add('open')};
 document.addEventListener('click',e=>{if(!e.target.closest('.ni'))document.querySelectorAll('.ni.open').forEach(x=>x.classList.remove('open'));if(!e.target.closest('.mi'))document.querySelectorAll('.mi.open').forEach(x=>x.classList.remove('open'))});
