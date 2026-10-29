@@ -932,11 +932,11 @@ function registrationCertificate(student,id='registrationCertificate'){
   const dob=student.dob&& !Number.isNaN(Date.parse(student.dob))?new Date(`${student.dob}T00:00:00`).toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'}):'—';
   return `<article id="${esc(id)}" class="registration-certificate" style="--cert-watermark:url('${cloudImage('logo')}')">
     <header class="cert-heading">
-      <img class="cert-logo" src="${cloudImage('logo-short-web')}" alt="PCTB লোগো">
+      <img class="cert-logo" src="${certImg('logo-short-web')}" alt="PCTB লোগো">
       <p class="cert-board-ar" lang="ar" dir="rtl">مجلس المناهج النبوية والكتب المدرسية</p>
       <h2 class="cert-board">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</h2>
       <p class="cert-board-en" lang="en">Prophetic Curriculum and Textbook Board</p>
-      <img class="cert-seal-top" src="${cloudImage('seal')}" alt="PCTB সিল">
+      <img class="cert-seal-top" src="${certImg('seal')}" alt="PCTB সিল">
     </header>
     <h1 class="cert-title">শিক্ষার্থী নিবন্ধন সনদ</h1>
     <div class="cert-reg">রেজিস্ট্রেশন নম্বর: ${esc(student.reg||'')}</div>
@@ -964,7 +964,7 @@ function resultCertificate(r,instName,id='resultCertificate'){
   const subs=r.subjects||[],n=subs.length,total=r.total??subs.reduce((a,x)=>a+x.m,0),avg=r.avg??(n?total/n:0),fail=subs.filter(x=>x.m<50).length,v=x=>x??'–';
   return `<article id="${esc(id)}" class="registration-certificate result-certificate" style="--cert-watermark:url('${cloudImage('logo')}')">
     <header class="cert-heading">
-      <img class="cert-logo" src="${cloudImage('logo-short-web')}" alt="PCTB লোগো">
+      <img class="cert-logo" src="${certImg('logo-short-web')}" alt="PCTB লোগো">
       <p class="cert-board-ar" lang="ar" dir="rtl">مجلس المناهج النبوية والكتب المدرسية</p>
       <h2 class="cert-board">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</h2>
       <p class="cert-board-en" lang="en">Prophetic Curriculum and Textbook Board</p>
@@ -982,7 +982,7 @@ function resultCertificate(r,instName,id='resultCertificate'){
     <table class="cert-rtable"><thead><tr><th>ক্রম</th><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]}&nbsp;(${bnum(p[2])})</th>`).join('')}<th>মোট&nbsp;(১০০)</th><th>মন্তব্য</th></tr></thead><tbody>${subs.map((x,i)=>`<tr><td>${bnum(i+1)}</td><td>${esc(x.n)}</td>${PARTS.map(p=>`<td>${v(x[p[0]])}</td>`).join('')}<td><b>${x.m}</b></td><td${x.m<50?' style="color:#a3281f;font-weight:600"':''}>${remark(x.m)}</td></tr>`).join('')}</tbody></table>
     <div class="cert-summary"><span>সর্বমোট: ${bnum(total)} / ${bnum(n*100)}</span><span>গড় নম্বর: ${bnum(avg.toFixed(1))}</span><span>সার্বিক মন্তব্য: ${remark(avg)}</span>${fail?`<span style="color:#a3281f">অকৃতকার্য বিষয়: ${bnum(fail)}টি</span>`:''}</div>
     <p class="cert-legend">৯০–১০০ সর্বোত্তম · ৮০–৯০ উত্তম · ৭০–৮০ মধ্যমান · ৫০–৭০ উন্নতি প্রয়োজন · ৫০-এর নিচে অকৃতকার্য · সনদ প্রদানের তারিখ: ${issued}</p>
-    <footer class="cert-footer"><div class="cert-signatures"><div class="cert-sign">প্রতিষ্ঠান প্রধানের স্বাক্ষর</div><img class="cert-seal-bottom" src="${cloudImage('seal')}" alt="PCTB সিল"><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div></footer>
+    <footer class="cert-footer"><div class="cert-signatures"><div class="cert-sign">প্রতিষ্ঠান প্রধানের স্বাক্ষর</div><img class="cert-seal-bottom" src="${certImg('seal')}" alt="PCTB সিল"><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div></footer>
   </article>`;
 }
 function certificateDate(value){
@@ -994,11 +994,11 @@ function institutionCertificate(institution,id='institutionCertificate'){
   const detail=(label,value)=>`<div class="cert-info-row"><span class="cert-info-label">${label}</span><span class="cert-info-value">${esc(value||'—')}</span></div>`;
   return `<article id="${esc(id)}" class="registration-certificate" style="--cert-watermark:url('${cloudImage('logo')}')">
     <header class="cert-heading">
-      <img class="cert-logo" src="${cloudImage('logo-short-web')}" alt="PCTB লোগো">
+      <img class="cert-logo" src="${certImg('logo-short-web')}" alt="PCTB লোগো">
       <p class="cert-board-ar" lang="ar" dir="rtl">مجلس المناهج النبوية والكتب المدرسية</p>
       <h2 class="cert-board">নববী শিক্ষাক্রম ও পাঠ্যপুস্তক বোর্ড</h2>
       <p class="cert-board-en" lang="en">Prophetic Curriculum and Textbook Board</p>
-      <img class="cert-seal-top" src="${cloudImage('seal')}" alt="PCTB সিল">
+      <img class="cert-seal-top" src="${certImg('seal')}" alt="PCTB সিল">
     </header>
     <h1 class="cert-title">প্রতিষ্ঠান নিবন্ধন সনদ</h1>
     <div class="cert-reg">প্রতিষ্ঠান নিবন্ধন নম্বর: ${esc(institution.code||institution.id||'')}</div>
@@ -1096,9 +1096,58 @@ function certFitInIframe(){
   }
 }
 /* লোগো ও সিলের সাদা ব্যাকগ্রাউন্ড সত্যিকারের স্বচ্ছ করা (color-to-alpha): সাদার ওপর যেমন দেখায় ঠিক তেমনই থাকে, কিন্তু যেকোনো রঙের জমিতে সাদা বাক্স দেখা যায় না। এই ফাংশনও iframe-এর ভেতরে চলে */
+/* জমির রঙ (কোণের পিক্সেল থেকে) বাদ দিয়ে সত্যিকারের alpha বানানো (color-to-alpha)। সফল হলে PNG data URL ফেরত দেয়; ছবি আগে থেকেই স্বচ্ছ হলে, জমি ধরা না গেলে বা CORS-এ আটকালে null। এই ফাংশন পুরোপুরি স্বয়ংসম্পূর্ণ (iframe-এ toString করে বসানো হয়) */
+function certAlphaCore(im){
+  try{
+    var w=im.naturalWidth,h=im.naturalHeight;if(!w||!h)return null;
+    var s=Math.min(1,1400/Math.max(w,h)),cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));
+    var c=document.createElement('canvas');c.width=cw;c.height=ch;
+    var x=c.getContext('2d');x.drawImage(im,0,0,cw,ch);
+    var d=x.getImageData(0,0,cw,ch),p=d.data,i,j,k,q,v,a,m,B=[0,0,0];
+    var corners=[0,(cw-1)*4,(ch-1)*cw*4,((ch-1)*cw+cw-1)*4];
+    for(j=0;j<4;j++){if(p[corners[j]+3]<250)return null}
+    for(q=0;q<3;q++){
+      var mn=255,mx=0,sum=0;
+      for(j=0;j<4;j++){v=p[corners[j]+q];if(v<mn)mn=v;if(v>mx)mx=v;sum+=v}
+      if(mx-mn>28)return null;
+      B[q]=sum/4;
+    }
+    if(Math.min(B[0],B[1],B[2])<150)return null;
+    for(i=0;i<p.length;i+=4){
+      var al=p[i+3]/255;
+      if(al===0)continue;
+      m=0;
+      for(q=0;q<3;q++){
+        v=p[i+q];if(al<1)v=B[q]+(v-B[q])*al;
+        var b=B[q],ac=v>b?(b>=255?0:(v-b)/(255-b)):(b<=0?0:(b-v)/b);
+        if(ac>m)m=ac;
+      }
+      a=m;
+      if(a<.04){p[i]=p[i+1]=p[i+2]=0;p[i+3]=0;continue}
+      for(q=0;q<3;q++){
+        v=p[i+q];if(al<1)v=B[q]+(v-B[q])*al;
+        p[i+q]=Math.max(0,Math.min(255,Math.round(B[q]+(v-B[q])/a)));
+      }
+      p[i+3]=Math.round(Math.min(1,a)*255);
+    }
+    x.putImageData(d,0,0);
+    return c.toDataURL('image/png');
+  }catch(e){return null}
+}
+/* আগে থেকে (পেজ খোলার পরেই) লোগো ও সিল স্বচ্ছ করে রাখা: সনদ খুললে ছবি আবার নামাতে বা প্রসেস করতে হয় না, তাই সঙ্গে সঙ্গে স্বচ্ছ দেখায় */
+const CERT_TR={};
+function certImg(n){return CERT_TR[n]||cloudImage(n)}
+function certWarm(){
+  ['logo-short-web','seal'].forEach(function(n){
+    if(CERT_TR[n]||CERT_TR['_'+n])return;CERT_TR['_'+n]=1;
+    var im=new Image();im.crossOrigin='anonymous';
+    im.onload=function(){var u=certAlphaCore(im);if(u)CERT_TR[n]=u};
+    im.src=cloudImage(n);
+  });
+}
+addEventListener('load',function(){setTimeout(certWarm,300)});
 function certTransparentInIframe(){
-  /* জমির রঙ (কোণের পিক্সেল থেকে) বাদ দিয়ে সত্যিকারের alpha বানানো (color-to-alpha); সাদা, অফ-হোয়াইট বা হালকা রঙের জমি — সবেই কাজ করে।
-     সফল হলে mix-blend বন্ধ হয়; শেষ হলে window.__certTrans promise পূরণ হয়, যাতে প্রিন্ট/PDF তার আগে না চলে। */
+  /* ফলব্যাক: আগে থেকে তৈরি স্বচ্ছ ছবি না পেলে (দ্রুত খুললে) এখানে রূপান্তর হয়। শেষ হলে window.__certTrans পূরণ হয়, যাতে প্রিন্ট/PDF তার আগে না চলে */
   var imgs=[].slice.call(document.querySelectorAll('img.cert-logo,img.cert-seal-top,img.cert-seal-bottom,img.cert-seal'));
   window.__certTrans=Promise.all(imgs.map(function(img){
     return new Promise(function(done){
@@ -1108,44 +1157,11 @@ function certTransparentInIframe(){
       var im=new Image();im.crossOrigin='anonymous';
       im.onerror=fin;
       im.onload=function(){
-        try{
-          var w=im.naturalWidth,h=im.naturalHeight;if(!w||!h){fin();return}
-          var s=Math.min(1,1400/Math.max(w,h)),cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));
-          var c=document.createElement('canvas');c.width=cw;c.height=ch;
-          var x=c.getContext('2d');x.drawImage(im,0,0,cw,ch);
-          var d=x.getImageData(0,0,cw,ch),p=d.data,i,j,k,ch3,v,a,m,B=[0,0,0];
-          /* কোণের ৪টি পিক্সেল: কোনোটি আগে থেকেই স্বচ্ছ হলে ছবি অক্ষত থাকবে; চার কোণের রঙ কাছাকাছি না হলে জমি ধরা যায় না */
-          var corners=[0,(cw-1)*4,(ch-1)*cw*4,((ch-1)*cw+cw-1)*4];
-          for(j=0;j<4;j++){k=corners[j];if(p[k+3]<250){fin();return}}
-          for(ch3=0;ch3<3;ch3++){
-            var mn=255,mx=0,sum=0;
-            for(j=0;j<4;j++){v=p[corners[j]+ch3];if(v<mn)mn=v;if(v>mx)mx=v;sum+=v}
-            if(mx-mn>28){fin();return}
-            B[ch3]=sum/4;
-          }
-          if(Math.min(B[0],B[1],B[2])<150){fin();return}
-          for(i=0;i<p.length;i+=4){
-            var al=p[i+3]/255;
-            if(al===0)continue;
-            m=0;
-            for(ch3=0;ch3<3;ch3++){
-              v=p[i+ch3];if(al<1)v=B[ch3]+(v-B[ch3])*al;
-              var b=B[ch3],ac=v>b?(b>=255?0:(v-b)/(255-b)):(b<=0?0:(b-v)/b);
-              if(ac>m)m=ac;
-            }
-            a=m;
-            if(a<.04){p[i]=p[i+1]=p[i+2]=0;p[i+3]=0;continue}
-            for(ch3=0;ch3<3;ch3++){
-              v=p[i+ch3];if(al<1)v=B[ch3]+(v-B[ch3])*al;
-              p[i+ch3]=Math.max(0,Math.min(255,Math.round(B[ch3]+(v-B[ch3])/a)));
-            }
-            p[i+3]=Math.round(Math.min(1,a)*255);
-          }
-          x.putImageData(d,0,0);
-          img.onload=fin;img.onerror=fin;
-          img.style.mixBlendMode='normal';img.style.background='transparent';
-          img.src=c.toDataURL('image/png');
-        }catch(e){fin()}
+        var u=certAlphaCore(im);
+        if(!u){fin();return}
+        img.onload=fin;img.onerror=fin;
+        img.style.mixBlendMode='normal';img.style.background='transparent';
+        img.src=u;
       };
       im.src=src;
     });
@@ -1192,7 +1208,7 @@ function certificateDocHtml(certificate,title){
     .registration-certificate .cert-sign,.cert-sign{white-space:normal!important;font-size:.72rem!important;height:auto!important;min-height:46px;padding:20px 2px 0!important}
     }
   </style>`;
-  const fitScript='<script>('+certTransparentInIframe.toString()+')()<'+'/script><script>('+certFitInIframe.toString()+')()<'+'/script>';
+  const fitScript='<script>'+certAlphaCore.toString()+'<'+'/script><script>('+certTransparentInIframe.toString()+')()<'+'/script><script>('+certFitInIframe.toString()+')()<'+'/script>';
   return html.replace('</head>',()=>`${certificateStyles}<style>${RESULT_CERT_CSS}</style><style>${CERT_FIT_CSS}</style><style>.certificate-actions{display:none!important}</style></head>`).replace('</body>',()=>fitScript+'</body>');
 }
 function downloadCertificate(certificate,title,fileName){
