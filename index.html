@@ -1097,36 +1097,59 @@ function certFitInIframe(){
 }
 /* লোগো ও সিলের সাদা ব্যাকগ্রাউন্ড সত্যিকারের স্বচ্ছ করা (color-to-alpha): সাদার ওপর যেমন দেখায় ঠিক তেমনই থাকে, কিন্তু যেকোনো রঙের জমিতে সাদা বাক্স দেখা যায় না। এই ফাংশনও iframe-এর ভেতরে চলে */
 function certTransparentInIframe(){
+  /* জমির রঙ (কোণের পিক্সেল থেকে) বাদ দিয়ে সত্যিকারের alpha বানানো (color-to-alpha); সাদা, অফ-হোয়াইট বা হালকা রঙের জমি — সবেই কাজ করে।
+     সফল হলে mix-blend বন্ধ হয়; শেষ হলে window.__certTrans promise পূরণ হয়, যাতে প্রিন্ট/PDF তার আগে না চলে। */
   var imgs=[].slice.call(document.querySelectorAll('img.cert-logo,img.cert-seal-top,img.cert-seal-bottom,img.cert-seal'));
-  imgs.forEach(function(img){
-    var src=img.getAttribute('src');if(!src||src.indexOf('data:')===0)return;
-    var im=new Image();im.crossOrigin='anonymous';
-    im.onload=function(){
-      try{
-        var w=im.naturalWidth,h=im.naturalHeight;if(!w||!h)return;
-        var s=Math.min(1,1400/Math.max(w,h)),cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));
-        var c=document.createElement('canvas');c.width=cw;c.height=ch;
-        var x=c.getContext('2d');x.drawImage(im,0,0,cw,ch);
-        var d=x.getImageData(0,0,cw,ch),p=d.data,i,j,r,g,b,al,a,m,k;
-        /* কোণের চার পিক্সেল: ছবি আগে থেকেই স্বচ্ছ বা সাদা-জমি ছাড়া হলে কিছু করা হবে না */
-        var corners=[0,(cw-1)*4,(ch-1)*cw*4,((ch-1)*cw+cw-1)*4];
-        for(j=0;j<4;j++){k=corners[j];if(p[k+3]<250||Math.min(p[k],p[k+1],p[k+2])<235)return}
-        for(i=0;i<p.length;i+=4){
-          al=p[i+3]/255;if(al===0)continue;
-          r=255-(255-p[i])*al;g=255-(255-p[i+1])*al;b=255-(255-p[i+2])*al;
-          m=Math.max(255-r,255-g,255-b);a=m/255;
-          if(a<.02){p[i]=p[i+1]=p[i+2]=0;p[i+3]=0;continue}
-          p[i]=Math.max(0,Math.min(255,Math.round(255-(255-r)/a)));
-          p[i+1]=Math.max(0,Math.min(255,Math.round(255-(255-g)/a)));
-          p[i+2]=Math.max(0,Math.min(255,Math.round(255-(255-b)/a)));
-          p[i+3]=Math.round(a*255);
-        }
-        x.putImageData(d,0,0);
-        img.src=c.toDataURL('image/png');
-      }catch(e){}
-    };
-    im.src=src;
-  });
+  window.__certTrans=Promise.all(imgs.map(function(img){
+    return new Promise(function(done){
+      var src=img.getAttribute('src');if(!src||src.indexOf('data:')===0){done();return}
+      var tm=setTimeout(done,9000);
+      var fin=function(){clearTimeout(tm);done()};
+      var im=new Image();im.crossOrigin='anonymous';
+      im.onerror=fin;
+      im.onload=function(){
+        try{
+          var w=im.naturalWidth,h=im.naturalHeight;if(!w||!h){fin();return}
+          var s=Math.min(1,1400/Math.max(w,h)),cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));
+          var c=document.createElement('canvas');c.width=cw;c.height=ch;
+          var x=c.getContext('2d');x.drawImage(im,0,0,cw,ch);
+          var d=x.getImageData(0,0,cw,ch),p=d.data,i,j,k,ch3,v,a,m,B=[0,0,0];
+          /* কোণের ৪টি পিক্সেল: কোনোটি আগে থেকেই স্বচ্ছ হলে ছবি অক্ষত থাকবে; চার কোণের রঙ কাছাকাছি না হলে জমি ধরা যায় না */
+          var corners=[0,(cw-1)*4,(ch-1)*cw*4,((ch-1)*cw+cw-1)*4];
+          for(j=0;j<4;j++){k=corners[j];if(p[k+3]<250){fin();return}}
+          for(ch3=0;ch3<3;ch3++){
+            var mn=255,mx=0,sum=0;
+            for(j=0;j<4;j++){v=p[corners[j]+ch3];if(v<mn)mn=v;if(v>mx)mx=v;sum+=v}
+            if(mx-mn>28){fin();return}
+            B[ch3]=sum/4;
+          }
+          if(Math.min(B[0],B[1],B[2])<150){fin();return}
+          for(i=0;i<p.length;i+=4){
+            var al=p[i+3]/255;
+            if(al===0)continue;
+            m=0;
+            for(ch3=0;ch3<3;ch3++){
+              v=p[i+ch3];if(al<1)v=B[ch3]+(v-B[ch3])*al;
+              var b=B[ch3],ac=v>b?(b>=255?0:(v-b)/(255-b)):(b<=0?0:(b-v)/b);
+              if(ac>m)m=ac;
+            }
+            a=m;
+            if(a<.04){p[i]=p[i+1]=p[i+2]=0;p[i+3]=0;continue}
+            for(ch3=0;ch3<3;ch3++){
+              v=p[i+ch3];if(al<1)v=B[ch3]+(v-B[ch3])*al;
+              p[i+ch3]=Math.max(0,Math.min(255,Math.round(B[ch3]+(v-B[ch3])/a)));
+            }
+            p[i+3]=Math.round(Math.min(1,a)*255);
+          }
+          x.putImageData(d,0,0);
+          img.onload=fin;img.onerror=fin;
+          img.style.mixBlendMode='normal';img.style.background='transparent';
+          img.src=c.toDataURL('image/png');
+        }catch(e){fin()}
+      };
+      im.src=src;
+    });
+  }));
 }
 function certificateDocHtml(certificate,title){
   const html=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Naskh+Arabic:wght@500;600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&text=%E0%A7%A6%E0%A7%A7%E0%A7%A8%E0%A7%A9%E0%A7%AA%E0%A7%AB%E0%A7%AC%E0%A7%AD%E0%A7%AE%E0%A7%AF&display=swap" rel="stylesheet"><style>
@@ -1181,7 +1204,7 @@ function downloadCertificate(certificate,title,fileName){
   frame.onload=()=>{
     const w=frame.contentWindow;
     const go=()=>{try{w.focus();w.addEventListener('afterprint',cleanup,{once:true});w.print()}catch(e){frame.remove();const p=window.open('','_blank');if(p){p.document.write(styledHtml);p.document.close();p.onload=()=>p.print()}}};
-    (w.document.fonts&&w.document.fonts.ready?w.document.fonts.ready:Promise.resolve()).then(()=>setTimeout(go,250),()=>setTimeout(go,250));
+    Promise.all([(w.document.fonts&&w.document.fonts.ready?w.document.fonts.ready:Promise.resolve()).catch(()=>{}),Promise.resolve(w.__certTrans).catch(()=>{})]).then(()=>setTimeout(go,250));
   };
   frame.srcdoc=styledHtml;
   document.body.append(frame);
@@ -1235,10 +1258,10 @@ function viewCertificateA4(certificate,title,opt={}){
   const close=()=>{finish();if(a4Hist){a4Hist=false;try{history.back()}catch(e){}}};
   const esc2=e=>{if(e.key==='Escape')close()};
   fr.style.width=W+'px';fr.style.height=MH+'px';
-  fr.onload=()=>{size();const d=fr.contentDocument;if(d&&d.fonts&&d.fonts.ready)d.fonts.ready.then(size,()=>{});if(opt.print)setTimeout(()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}},450)};
+  fr.onload=()=>{size();const d=fr.contentDocument;if(d&&d.fonts&&d.fonts.ready)d.fonts.ready.then(size,()=>{});if(opt.print)Promise.resolve(fr.contentWindow.__certTrans).catch(()=>{}).then(()=>setTimeout(()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}},450))};
   fr.srcdoc=(opt.html||certificateDocHtml(certificate,title)).replace('</head>','<style>@page{size:'+(opt.page||'A4')+';margin:'+(opt.margin||'0')+'}html,body{background:#e9eeeb!important;overflow:hidden}</style></head>');
   o.querySelector('.a4-cl').onclick=close;
-  o.querySelector('.a4-pr').onclick=()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}};
+  o.querySelector('.a4-pr').onclick=()=>{const w=fr.contentWindow;Promise.resolve(w&&w.__certTrans).catch(()=>{}).then(()=>{try{w.focus();w.print()}catch(e){}})};
   addEventListener('resize',fit);addEventListener('keydown',esc2);
   document.body.style.overflow='hidden';document.body.appendChild(o);fit();
   a4Finish=finish;if(!a4Hist){try{history.pushState({pctbA4:1},'');a4Hist=true}catch(e){}}
