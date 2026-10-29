@@ -1,5 +1,5 @@
 /* PCTB – সার্ভিস ওয়ার্কার */
-const V='pctb-v5';
+const V='pctb-v6';
 const CORE=['./'];
 /* এই হোস্টগুলোর ফাইল ক্যাশ হবে (ফন্ট, Firebase SDK, ছবি) */
 const OK_HOSTS=['fonts.googleapis.com','fonts.gstatic.com','www.gstatic.com','res.cloudinary.com'];
@@ -7,7 +7,7 @@ const OK_HOSTS=['fonts.googleapis.com','fonts.gstatic.com','www.gstatic.com','re
 const NAV_WAIT=3500;
 
 self.addEventListener('install',e=>{
-  e.waitUntil(caches.open(V).then(c=>Promise.all(CORE.map(u=>c.add(u).catch(()=>{})))).then(()=>self.skipWaiting()));
+  e.waitUntil(caches.open(V).then(c=>Promise.all(CORE.map(u=>c.add(new Request(u,{cache:'reload'})).catch(()=>{})))).then(()=>self.skipWaiting()));
 });
 self.addEventListener('activate',e=>{
   e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
@@ -18,15 +18,17 @@ self.addEventListener('fetch',e=>{
   const u=new URL(r.url);
   /* APK ফাইল কখনও ক্যাশ হবে না */
   if(u.pathname.toLowerCase().endsWith('.apk'))return;
+  /* নতুন সংস্করণ যাচাইয়ের অনুরোধ সবসময় সরাসরি নেটওয়ার্কে যাবে, ক্যাশে নয় */
+  if(u.searchParams.has('__chk'))return;
   /* ডেটাবেস/লগইন/ফাইল আপলোডের অনুরোধ কখনও ক্যাশ হবে না */
   if(u.origin!==location.origin&&!OK_HOSTS.includes(u.hostname))return;
 
-  /* পেজ: আগে নেটওয়ার্ক (সবসময় নতুন সংস্করণ); ধীর বা অফলাইন হলে ক্যাশ */
+  /* পেজ: আগে নেটওয়ার্ক (সবসময় নতুন সংস্করণ, ব্রাউজারের HTTP ক্যাশ এড়িয়ে); ধীর বা অফলাইন হলে ক্যাশ */
   if(r.mode==='navigate'){
     e.respondWith((async()=>{
       const c=await caches.open(V);
       const cached=await c.match('./');
-      const net=fetch(r).then(res=>{
+      const net=fetch(r,{cache:'no-cache'}).then(res=>{
         if(res&&res.ok){c.put('./',res.clone());return res}
         throw new Error('bad response');
       });
