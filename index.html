@@ -659,6 +659,12 @@ button:not([class]):not(.chips *):not(.adm-bar *):not(.adm-gp *):not(.tabs *):no
 .card.rlk button{box-shadow:0 8px 18px rgba(13,74,58,.22),0 0 7px rgba(201,168,92,.45)}
 .card.rlk button:hover{box-shadow:0 12px 24px rgba(13,74,58,.28),0 0 9px rgba(201,168,92,.6)}
 .card.rlk button:active{box-shadow:0 4px 10px rgba(13,74,58,.2),0 0 7px rgba(201,168,92,.45)}
+.card.rlk .rmode{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 8px;padding:4px;border:1px solid #d6e2db;border-radius:12px;background:#f2f6f3}
+.card.rlk .rmode button,.card.rlk .rmode button:hover,.card.rlk .rmode button:active{height:40px;margin:0;padding:0 10px;border:0;border-radius:9px;background:transparent;color:var(--g);font:600 .92rem 'Noto Sans Bengali','Hind Siliguri',sans-serif;letter-spacing:0;box-shadow:none;transform:none;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
+.card.rlk .rmode button:hover{background:rgba(255,255,255,.75)}
+.card.rlk .rmode button.on,.card.rlk .rmode button.on:hover,.card.rlk .rmode button.on:active{background:linear-gradient(135deg,#0d4a3a,#145c49);color:#fff;box-shadow:0 4px 10px rgba(13,74,58,.22)}
+.card.rlk .rmode button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:520px){.card.rlk .rmode button,.card.rlk .rmode button:hover,.card.rlk .rmode button:active{font-size:.84rem;padding:0 4px}}
 .adm-bar>button.on,.adm-gp button.on,.tabs button.on,.chips button.on,.tbar .chips button.on,#cchips button.on,#hchips button.on{box-shadow:0 0 7px rgba(201,168,92,.45)}
 </style>
 <style id="adm-minimal">
@@ -809,7 +815,23 @@ const bindPeriod=(pf,exId)=>{
   };
   ex.addEventListener('change',render);render();
 };
-const examSel=id=>`<select id="${id}"><option value="">পরীক্ষা নির্বাচন</option>${EXAMS.map(e=>`<option value="${e[0]}">${e[1]}</option>`).join('')}</select>`;
+const examSel=(id,list=EXAMS)=>`<select id="${id}"><option value="">পরীক্ষা নির্বাচন</option>${list.map(e=>`<option value="${e[0]}">${e[1]}</option>`).join('')}</select>`;
+/* ফলাফল: দুই ধরন — প্রতিষ্ঠানের ফলাফল (সাপ্তাহিক/মাসিক/অর্ধবার্ষিক/বার্ষিক) ও বোর্ডের ফলাফল (শুধু বিভাগ উন্নয়ন) */
+const BOARD_EXAM='বিভাগ উন্নয়ন',INST_EXAMS=EXAMS.filter(e=>e[0]!==BOARD_EXAM);
+const rmodeHtml=pf=>`<div class="rmode" id="${pf}mode" data-m="i" role="tablist" aria-label="ফলাফলের ধরন"><button type="button" role="tab" class="on" data-m="i" aria-selected="true">প্রতিষ্ঠানের ফলাফল</button><button type="button" role="tab" data-m="b" aria-selected="false">বোর্ডের ফলাফল</button></div>`;
+const modeOf=pf=>{const b=document.getElementById(pf+'mode');return (b&&b.dataset.m)||'i'};
+const bindMode=(pf,exId)=>{
+  const box=document.getElementById(pf+'mode'),ex=document.getElementById(exId);if(!box||!ex)return null;
+  const opts=m=>m==='b'?`<option value="${BOARD_EXAM}">${BOARD_EXAM}</option>`:`<option value="">পরীক্ষা নির্বাচন</option>${INST_EXAMS.map(e=>`<option value="${e[0]}">${e[1]}</option>`).join('')}`;
+  const set=m=>{
+    box.dataset.m=m;
+    box.querySelectorAll('button').forEach(b=>{const on=b.dataset.m===m;b.classList.toggle('on',on);b.setAttribute('aria-selected',on?'true':'false')});
+    ex.innerHTML=opts(m);ex.value=m==='b'?BOARD_EXAM:'';
+    ex.dispatchEvent(new Event('change'));
+  };
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(box.dataset.m!==b.dataset.m)set(b.dataset.m)});
+  return set;
+};
 const DIV_CODES={আদব:'233',তলিব:'333',লাজিম:'433',খিদমাহ:'533'};
 const WORLD_AREAS=[
   ['Asia','এশিয়া','AF:Afghanistan|AM:Armenia|AZ:Azerbaijan|BH:Bahrain|BD:Bangladesh|BT:Bhutan|BN:Brunei|KH:Cambodia|CN:China|CY:Cyprus|GE:Georgia|IN:India|ID:Indonesia|IR:Iran|IQ:Iraq|IL:Israel|JP:Japan|JO:Jordan|KZ:Kazakhstan|KW:Kuwait|KG:Kyrgyzstan|LA:Laos|LB:Lebanon|MY:Malaysia|MV:Maldives|MN:Mongolia|MM:Myanmar|NP:Nepal|KP:North Korea|OM:Oman|PK:Pakistan|PS:Palestine|PH:Philippines|QA:Qatar|SA:Saudi Arabia|SG:Singapore|KR:South Korea|LK:Sri Lanka|SY:Syria|TW:Taiwan|TJ:Tajikistan|TH:Thailand|TL:Timor-Leste|TR:Türkiye|TM:Turkmenistan|AE:United Arab Emirates|UZ:Uzbekistan|VN:Vietnam|YE:Yemen'],
@@ -1124,14 +1146,14 @@ function downloadResult(result){
   const url=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'})),link=document.createElement('a');
   link.href=url;link.download=`PCTB-result-${result.reg||'result'}-${String(result.exam||'').replace(/[^\w-]/g,'_')}.html`;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-async function showResults(reg,out,dv,roll,exam,per){
+async function showResults(reg,out,dv,roll,exam,per,mode){
   reg=norm(reg);roll=norm(roll||'');
   if(!reg){out.innerHTML='';return}
   out.innerHTML='<p class="muted">খোঁজা হচ্ছে…</p>';
   try{
     let rs=(await getDocs(query(collection(db,'results'),where('reg','==',reg)))).docs.map(d=>d.data()).sort((a,b)=>b.t-a.t).filter(r=>!r.draft);
     if(dv)rs=rs.filter(r=>r.div==dv);
-    if(exam)rs=rs.filter(r=>r.exam==exam);
+    if(exam)rs=rs.filter(r=>r.exam==exam);else if(mode==='i')rs=rs.filter(r=>r.exam!==BOARD_EXAM);
     if(per){/* ডিফল্টে চলতি সময় নির্বাচিত থাকে; যে ফলাফলে বছর/মাস/সপ্তাহ সংরক্ষিতই নেই সেটা বাদ যাবে না */if(per.y)rs=rs.filter(r=>!r.year||String(r.year)===String(per.y));if(per.m)rs=rs.filter(r=>!r.month||String(r.month)===String(per.m));if(per.w)rs=rs.filter(r=>!r.week||String(r.week)===String(per.w))}
     if(roll)rs=rs.filter(r=>rollMatches(r,roll));
     if(!rs.length){out.innerHTML=`<div class="card"><span class="msg bad">${roll?'এই রেজিস্ট্রেশন ও রোল নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বর দুটি আবার দেখুন।':exam?`এই রেজিস্ট্রেশন নম্বরে ${esc(examTitle({exam,year:per&&per.y,month:per&&per.m,week:per&&per.w}))}-এর কোনো ফলাফল পাওয়া যায়নি।`:dv?`এই রেজিস্ট্রেশন নম্বরে ${esc(dv)} বিভাগের কোনো ফলাফল পাওয়া যায়নি।`:'এই রেজিস্ট্রেশন নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বরটি আবার দেখুন।'}</span></div>`;return}
@@ -1212,7 +1234,7 @@ home(routeToken){
     const stages=[
       ()=>`<hr class="dv">${head('শিক্ষাক্রম (কারিকুলাম)','')}<div class="chips" id="cchips" style="margin-bottom:4px">${DIVS.map((d,i)=>`<button data-d="${d[0]}"${i?'':' class="on"'}>${d[0]}</button>`).join('')}</div>${DIVS.map((d,i)=>`<div class="cvw" data-d="${d[0]}"${i?' hidden':''}>${curBody(d[0])}</div>`).join('')}`,
       ()=>`<hr class="dv">${head('পাঠ্যপুস্তক','textbook')}${bkTabs('hchips',matchMedia('(min-width:900px)').matches?6:4)}`,
-      ()=>`<hr class="dv">${head('পরীক্ষার ফলাফল','result')}<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="hd">বিভাগ</label><select id="hd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="hex">পরীক্ষা</label>${examSel('hex')}</div></div><div id="hper" style="display:none"></div><div class="row"><div><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"></div><div><label for="hrl">রোল নম্বর</label><input id="hrl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="hcap">নিরাপত্তা যাচাই: <b id="hcapq"></b></label><input id="hcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="hcapmsg" aria-live="polite"></div><button id="hb">ফলাফল দেখুন</button></div></div><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
+      ()=>`<hr class="dv">${head('পরীক্ষার ফলাফল','result')}<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3>${rmodeHtml('h')}<div class="row rsel"><div><label for="hd">বিভাগ</label><select id="hd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="hex">পরীক্ষা</label>${examSel('hex',INST_EXAMS)}</div></div><div id="hper" style="display:none"></div><div class="row"><div><label for="hr">রেজিস্ট্রেশন নম্বর</label><input id="hr" inputmode="numeric" placeholder="2331001"></div><div><label for="hrl">রোল নম্বর</label><input id="hrl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="hcap">নিরাপত্তা যাচাই: <b id="hcapq"></b></label><input id="hcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="hcapmsg" aria-live="polite"></div><button id="hb">ফলাফল দেখুন</button></div></div><hr class="dv">${head('সর্বশেষ নোটিশ','notice')}${ns.length?ns.slice(0,4).map(n=>`<div class="card"><b>${esc(n.title)}</b><div class="muted">${esc(n.body)}</div></div>`).join(''):empty('এখনও কোনো নোটিশ নেই।')}`
     ];
     const appendStage=i=>{
       if(i>=stages.length||routeToken!==routeVersion||!rest.isConnected)return;
@@ -1302,7 +1324,7 @@ async institutions(){
   return pageHead('নিবন্ধিত প্রতিষ্ঠান তালিকা','বোর্ডভুক্ত প্রতিষ্ঠানের তালিকা','school')
   +(r.err?errBox(r.err):l.length?`<div class="tbar"><div class="muted" id="icnt">মোট ${bnum(l.length)} টি প্রতিষ্ঠান</div><div class="srch"><span>${ic('search')}</span><input id="iq" placeholder="নাম, দেশ বা ঠিকানা দিয়ে খুঁজুন…" aria-label="প্রতিষ্ঠান খুঁজুন"></div></div><div class="grid" id="ilist">${l.map(i=>`<div class="card cc ins" data-s="${esc((i.name+' '+(i.address||'')+' '+(i.code||'')+' '+(i.country||'')+' '+(i.area||'')+' '+(i.divisions||[]).join(' ')+' '+(i.division||'')+' '+(i.language||'')).toLowerCase())}"><span class="bvn">${ic('school')}</span><h3>${esc(i.name)}</h3>${i.address?`<div class="muted adr">${ic('pin')}<span>${esc(i.address)}</span></div>`:''}${i.country?`<span class="pill">${esc(WORLD_AREAS.find(a=>a[0]===i.area)?.[1]||i.area)} · ${esc(i.country)}</span>`:''}${(i.divisions||[]).length?`<span class="pill">${esc(i.divisions.join(', '))} বিভাগ</span>`:i.division?`<span class="pill">${esc(i.division)} বিভাগ</span>`:''}${i.language?`<div class="muted">স্থানীয় ভাষা: ${esc(i.language)}</div>`:''}${i.code?`<span class="pill">কোড: ${esc(i.code)}</span>`:''}</div>`).join('')}</div><div class="card cc emp" id="inone" hidden>কোনো প্রতিষ্ঠান পাওয়া যায়নি।</div>`:emptyBox('school','এখনও কোনো প্রতিষ্ঠান যুক্ত হয়নি।','প্রতিষ্ঠান যুক্ত হলে এখানে তালিকা দেখা যাবে।'))},
 result:()=>pageHead('ফলাফল','রেজিস্ট্রেশন নম্বর দিয়ে আপনার ফলাফল দেখুন','result')
-  +`<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3><div class="row rsel"><div><label for="rd">বিভাগ</label><select id="rd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="rex">পরীক্ষা</label>${examSel('rex')}</div></div><div id="rper" style="display:none"></div><div class="row"><div><label for="rr">রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"></div><div><label for="rl">রোল নম্বর</label><input id="rl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="rcap">নিরাপত্তা যাচাই: <b id="rcapq"></b></label><input id="rcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="rcapmsg" aria-live="polite"></div><button id="rb">ফলাফল দেখুন</button></div></div>`
+  +`<div class="rgrid" style="grid-template-columns:1fr"><div class="card cc lookup rlk"><h3>ফলাফল অনুসন্ধান</h3>${rmodeHtml('r')}<div class="row rsel"><div><label for="rd">বিভাগ</label><select id="rd"><option value="">বিভাগ নির্বাচন</option>${DIVS.map(d=>`<option>${d[0]}</option>`).join('')}</select></div><div><label for="rex">পরীক্ষা</label>${examSel('rex',INST_EXAMS)}</div></div><div id="rper" style="display:none"></div><div class="row"><div><label for="rr">রেজিস্ট্রেশন নম্বর</label><input id="rr" inputmode="numeric" placeholder="2331001"></div><div><label for="rl">রোল নম্বর</label><input id="rl" inputmode="numeric" placeholder="১১১" autocomplete="off"></div></div><label for="rcap">নিরাপত্তা যাচাই: <b id="rcapq"></b></label><input id="rcap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="rcapmsg" aria-live="polite"></div><button id="rb">ফলাফল দেখুন</button></div></div>`
   +`<div id="rout"></div>`,
 student:()=>pageHead('শিক্ষার্থী ফলাফল','শিক্ষার্থীরা এখানে শুধু ফলাফল দেখতে ও ডাউনলোড করতে পারবে','student')
   +`<div class="card cc lookup rlk" style="max-width:620px"><h3>ফলাফল দেখুন</h3><label for="sr">রেজিস্ট্রেশন নম্বর</label><input id="sr" inputmode="numeric" placeholder="2331001"><label for="sex">পরীক্ষা</label>${examSel('sex')}<div id="sper" style="display:none"></div><label for="scap">নিরাপত্তা যাচাই: <b id="scapq"></b></label><input id="scap" inputmode="numeric" autocomplete="off" placeholder="উত্তর লিখুন"><div id="scapmsg" aria-live="polite"></div><button id="svb">ফলাফল দেখুন</button></div><div id="srout"></div>`,
@@ -1318,16 +1340,16 @@ teacher(){return `${pageHead('শিক্ষক নিবন্ধন আবে
 };
 
 /* ---------- ইভেন্ট বাইন্ডিং ---------- */
-function bindHome(){bindPeriod('h','hex');const hb=$('#hb'),hr=$('#hr'),hd=$('#hd'),hrl=$('#hrl');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'')+(hrl&&hrl.value.trim()?'&r='+encodeURIComponent(hrl.value.trim()):'')+($('#hex')&&$('#hex').value?'&e='+encodeURIComponent($('#hex').value):'')+(()=>{const p=getPeriod('h');return $('#hex')&&$('#hex').value&&(p.y||p.m||p.w)?'&p='+encodeURIComponent([p.y,p.m,p.w].join(',')):''})();{const c=$('#hcap');if(c&&!c.dataset.ans)capNew('hcap')}const tryGo=()=>{if(capOk('hcap'))go()};hb.onclick=tryGo;hr.onkeydown=e=>{if(e.key==='Enter')return tryGo()};if(hrl)hrl.onkeydown=e=>{if(e.key==='Enter')return tryGo()};const hcp=$('#hcap');if(hcp)hcp.onkeydown=e=>{if(e.key==='Enter')return tryGo()}}
+function bindHome(){bindPeriod('h','hex');bindMode('h','hex');const hb=$('#hb'),hr=$('#hr'),hd=$('#hd'),hrl=$('#hrl');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'')+(hrl&&hrl.value.trim()?'&r='+encodeURIComponent(hrl.value.trim()):'')+($('#hex')&&$('#hex').value?'&e='+encodeURIComponent($('#hex').value):'')+(()=>{const p=getPeriod('h');return $('#hex')&&$('#hex').value&&(p.y||p.m||p.w)?'&p='+encodeURIComponent([p.y,p.m,p.w].join(',')):''})();{const c=$('#hcap');if(c&&!c.dataset.ans)capNew('hcap')}const tryGo=()=>{if(capOk('hcap'))go()};hb.onclick=tryGo;hr.onkeydown=e=>{if(e.key==='Enter')return tryGo()};if(hrl)hrl.onkeydown=e=>{if(e.key==='Enter')return tryGo()};const hcp=$('#hcap');if(hcp)hcp.onkeydown=e=>{if(e.key==='Enter')return tryGo()}}
   const cb=document.querySelectorAll('#cchips button');cb.forEach(b=>b.onclick=()=>{cb.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.cvw').forEach(w=>w.hidden=w.dataset.d!=b.dataset.d)});
   const hc=document.querySelectorAll('#hchips button');hc.forEach(b=>b.onclick=()=>{hc.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('#hchipsb .dvs').forEach(w=>w.hidden=w.dataset.div!=b.dataset.d)})}
 function capNew(id){const a=2+Math.floor(Math.random()*8),b=1+Math.floor(Math.random()*8),sub=Math.random()<.5&&a>b,e=document.getElementById(id),q=document.getElementById(id+'q');if(!e||!q)return;e.dataset.ans=String(sub?a-b:a+b);e.value='';q.textContent=bnum(a)+(sub?' − ':' + ')+bnum(b)+' = ?'}
 function capOk(id){const e=document.getElementById(id),m=document.getElementById(id+'msg');if(!e)return true;if(norm(e.value)===e.dataset.ans){m.className='';m.textContent='';return true}say(m,e.value.trim()?'উত্তর সঠিক হয়নি। নতুন প্রশ্নের উত্তর দিন।':'নিরাপত্তা যাচাইয়ের উত্তর লিখুন।');capNew(id);return false}
 function bindResult(){
-  bindPeriod('r','rex');
+  bindPeriod('r','rex');const setMode=bindMode('r','rex');
   const [qr,e0]=(location.hash.split('?')[1]||'').split('&e='),[qd,r0]=qr.split('&r='),[q0,d0]=qd.split('&d='),q=decodeURIComponent(q0||''),dv=d0?decodeURIComponent(d0):'',rv=r0?decodeURIComponent(r0):'',[e1,p1]=(e0||'').split('&p='),ev=e1?decodeURIComponent(e1):'',pv=p1?decodeURIComponent(p1).split(','):[],i=$('#rr'),o=$('#rout'),rd=$('#rd');
-  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value,$('#rex').value,getPeriod('r'));capNew('rcap');const tryGo=()=>{if(capOk('rcap')){go();capNew('rcap')}};$('#rb').onclick=tryGo;i.onkeydown=e=>{if(e.key==='Enter')return tryGo()};rl.onkeydown=e=>{if(e.key==='Enter')return tryGo()};$('#rcap').onkeydown=e=>{if(e.key==='Enter')return tryGo()};
-  if(q){i.value=q;if(dv)rd.value=dv;if(rv)rl.value=rv;if(ev){$('#rex').value=ev;$('#rex').dispatchEvent(new Event('change'));['y','m','w'].forEach((k,x)=>{const el=$('#r'+k);if(el&&pv[x])el.value=pv[x]})}go(dv)}
+  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value,$('#rex').value,getPeriod('r'),modeOf('r'));capNew('rcap');const tryGo=()=>{if(capOk('rcap')){go();capNew('rcap')}};$('#rb').onclick=tryGo;i.onkeydown=e=>{if(e.key==='Enter')return tryGo()};rl.onkeydown=e=>{if(e.key==='Enter')return tryGo()};$('#rcap').onkeydown=e=>{if(e.key==='Enter')return tryGo()};
+  if(q){i.value=q;if(dv)rd.value=dv;if(rv)rl.value=rv;if(ev){if(ev===BOARD_EXAM&&setMode)setMode('b');$('#rex').value=ev;$('#rex').dispatchEvent(new Event('change'));['y','m','w'].forEach((k,x)=>{const el=$('#r'+k);if(el&&pv[x])el.value=pv[x]})}go(dv)}
 }
 function bindStudent(){bindPeriod('s','sex');const go=()=>{if(capOk('scap')){showResults($('#sr').value,$('#srout'),'','',$('#sex').value,getPeriod('s'));capNew('scap')}};capNew('scap');$('#svb').onclick=go;$('#sr').onkeydown=e=>{if(e.key==='Enter')return go()};$('#scap').onkeydown=e=>{if(e.key==='Enter')return go()}}
 function csEnhance(root){
