@@ -1099,20 +1099,20 @@ function certFitInIframe(){
 /* জমির রঙ (কোণের পিক্সেল থেকে) বাদ দিয়ে সত্যিকারের alpha বানানো (color-to-alpha)। সফল হলে PNG data URL ফেরত দেয়; ছবি আগে থেকেই স্বচ্ছ হলে, জমি ধরা না গেলে বা CORS-এ আটকালে null। এই ফাংশন পুরোপুরি স্বয়ংসম্পূর্ণ (iframe-এ toString করে বসানো হয়) */
 function certAlphaCore(im){
   try{
-    var w=im.naturalWidth,h=im.naturalHeight;if(!w||!h)return null;
+    var w=im.naturalWidth,h=im.naturalHeight;if(!w||!h)return '';
     var s=Math.min(1,1400/Math.max(w,h)),cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));
     var c=document.createElement('canvas');c.width=cw;c.height=ch;
     var x=c.getContext('2d');x.drawImage(im,0,0,cw,ch);
     var d=x.getImageData(0,0,cw,ch),p=d.data,i,j,k,q,v,a,m,B=[0,0,0];
     var corners=[0,(cw-1)*4,(ch-1)*cw*4,((ch-1)*cw+cw-1)*4];
-    for(j=0;j<4;j++){if(p[corners[j]+3]<250)return null}
+    for(j=0;j<4;j++){if(p[corners[j]+3]<250)return ''}
     for(q=0;q<3;q++){
       var mn=255,mx=0,sum=0;
       for(j=0;j<4;j++){v=p[corners[j]+q];if(v<mn)mn=v;if(v>mx)mx=v;sum+=v}
-      if(mx-mn>28)return null;
+      if(mx-mn>28)return '';
       B[q]=sum/4;
     }
-    if(Math.min(B[0],B[1],B[2])<150)return null;
+    if(Math.min(B[0],B[1],B[2])<150)return '';
     for(i=0;i<p.length;i+=4){
       var al=p[i+3]/255;
       if(al===0)continue;
@@ -1137,12 +1137,16 @@ function certAlphaCore(im){
 /* আগে থেকে (পেজ খোলার পরেই) লোগো ও সিল স্বচ্ছ করে রাখা: সনদ খুললে ছবি আবার নামাতে বা প্রসেস করতে হয় না, তাই সঙ্গে সঙ্গে স্বচ্ছ দেখায় */
 const CERT_TR={};
 function certImg(n){return CERT_TR[n]||cloudImage(n)}
+/* শেষ ভরসা: ব্রাউজারে canvas আটকালে (CORS) Cloudinary-র নিজের স্বচ্ছ করার ফিল্টার */
+function certServerAlpha(u){return u.replace('f_auto,q_auto','f_png,q_auto,e_make_transparent:10')}
 function certWarm(){
   ['logo-short-web','seal'].forEach(function(n){
     if(CERT_TR[n]||CERT_TR['_'+n])return;CERT_TR['_'+n]=1;
+    var u0=cloudImage(n),fb=function(){var f=certServerAlpha(u0),pre=new Image();pre.onload=function(){CERT_TR[n]=f};pre.src=f};
     var im=new Image();im.crossOrigin='anonymous';
-    im.onload=function(){var u=certAlphaCore(im);if(u)CERT_TR[n]=u};
-    im.src=cloudImage(n);
+    im.onload=function(){var u=certAlphaCore(im);if(u)CERT_TR[n]=u;else if(u===null)fb()};
+    im.onerror=fb;
+    im.src=u0;
   });
 }
 addEventListener('load',function(){setTimeout(certWarm,300)});
@@ -1155,9 +1159,16 @@ function certTransparentInIframe(){
       var tm=setTimeout(done,9000);
       var fin=function(){clearTimeout(tm);done()};
       var im=new Image();im.crossOrigin='anonymous';
-      im.onerror=fin;
+      var srv=function(){
+        if(src.indexOf('res.cloudinary.com')<0||src.indexOf('f_auto,q_auto')<0){fin();return}
+        img.onload=fin;img.onerror=fin;
+        img.style.mixBlendMode='normal';img.style.background='transparent';
+        img.src=src.replace('f_auto,q_auto','f_png,q_auto,e_make_transparent:10');
+      };
+      im.onerror=srv;
       im.onload=function(){
         var u=certAlphaCore(im);
+        if(u===null){srv();return}
         if(!u){fin();return}
         img.onload=fin;img.onerror=fin;
         img.style.mixBlendMode='normal';img.style.background='transparent';
