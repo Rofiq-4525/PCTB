@@ -1059,13 +1059,13 @@ function certFitInIframe(){
     gaps.forEach(function(g){g.style.removeProperty('margin-top')});
   }
   function dims(){var c=getComputedStyle(A);return {w:A.clientWidth-parseFloat(c.paddingLeft)-parseFloat(c.paddingRight),h:A.clientHeight-parseFloat(c.paddingTop)-parseFloat(c.paddingBottom)}}
-  /* সবচেয়ে বড় যে scale-এ কনটেন্ট পাতায় ধরে (১ = ছোট করতে হবে না) */
+  /* পাতায় ঠিক ধরে এমন সবচেয়ে বড় scale: বিষয় কম হলে ১-এর বেশি (কনটেন্ট বড়), বেশি হলে ১-এর কম (ছোট) */
   function best(){
-    var d=dims();
+    var d=dims(),KMAX=1.35;
     function H(k){W.style.width=(d.w/k)+'px';return W.offsetHeight*k}
-    if(H(1)<=d.h+1.5)return 1;
-    var lo=.25,hi=1,i,m;
-    for(i=0;i<14;i++){m=(lo+hi)/2;if(H(m)<=d.h)lo=m;else hi=m}
+    if(H(KMAX)<=d.h)return KMAX;
+    var lo=.25,hi=KMAX,i,m;
+    for(i=0;i<16;i++){m=(lo+hi)/2;if(H(m)<=d.h)lo=m;else hi=m}
     return lo;
   }
   /* পাতায় ফাঁকা জায়গা থাকলে সারির উচ্চতা ও অংশগুলোর মাঝের ফাঁক সমানভাবে বাড়িয়ে পুরো পাতা ভরানো */
@@ -1088,7 +1088,7 @@ function certFitInIframe(){
     var k=best();
     if(k<.9){A.classList.add('compact');k=best()}
     var d=dims();
-    if(k<1){W.style.width=(d.w/k)+'px';W.style.transform='scale('+k+')'}else{W.style.width=''}
+    if(Math.abs(k-1)>.005){W.style.width=(d.w/k)+'px';W.style.transform='scale('+k+')'}else{W.style.width=''}
     spread(d.h/k);
   }
   fit();
