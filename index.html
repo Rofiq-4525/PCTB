@@ -1939,7 +1939,13 @@ async function renderInstitutionAllResults(box,institution,database){
     const regs=new Set(ss.docs.map(d=>d.id)),stMap=new Map(ss.docs.map(d=>[d.id,d.data()]));
     rows=rs.docs.map(d=>({...d.data(),id:d.id})).filter(r=>String(r.institutionCode||'')===String(institution.code)||regs.has(r.reg)).map(r=>({...r,_div:bdiv(r)||bdiv(stMap.get(r.reg)||{})}));
   }catch(error){box.innerHTML=`<p class="msg bad">ফলাফল আনা যায়নি: ${esc(error.message)}</p>`;return}
-  const exams=[...new Set(rows.map(r=>r.exam).filter(Boolean))],dvs=DIVS.map(d=>d[0]).filter(d=>rows.some(r=>r._div===d));
+  /* মেনুতে সব পরীক্ষা ও প্রতিষ্ঠানের সব বিভাগ সবসময় থাকবে, ফলাফল না থাকলেও */
+  const EXAM_LIST=['সাপ্তাহিক মূল্যায়ন','মাসিক মূল্যায়ন','অর্ধবার্ষিক মূল্যায়ন','বার্ষিক মূল্যায়ন','পর্ব উন্নয়ন','বিভাগ উন্নয়ন'];
+  const exams=[...EXAM_LIST,...new Set(rows.map(r=>r.exam).filter(x=>x&&!EXAM_LIST.includes(x)))];
+  const instDivs=Array.isArray(institution.divisions)&&institution.divisions.length?institution.divisions:DIVS.map(d=>d[0]);
+  const dvs=DIVS.map(d=>d[0]).filter(d=>instDivs.includes(d)||rows.some(r=>r._div===d));
+  /* তারিখ: পরীক্ষার তারিখ থাকলে সেটা, না থাকলে (অ্যাডমিন/শিক্ষকের তৈরি ফলাফল) তৈরির দিন */
+  const effDate=r=>{if(r.date)return r.date;const t=+r.t;if(!t)return '';const d=new Date(t);return isNaN(d)?'':d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
   const printCard=el=>{el.classList.add('print-target');addEventListener('afterprint',()=>el.classList.remove('print-target'),{once:true});print()};
   box.innerHTML=`<h4>সকল শিক্ষার্থীর ফলাফল</h4><div id="irBody"></div>`;
   const body=$('#irBody');
@@ -1949,15 +1955,15 @@ async function renderInstitutionAllResults(box,institution,database){
     /* নির্বাচিত পরীক্ষার ফলাফল যেসব তারিখে আছে, শুধু সেই তারিখগুলোই তালিকায় আসে (নতুন তারিখ আগে) */
     const fillDates=()=>{
       const fe=$('#irExam').value,sel=$('#irDate'),keep=sel.value,m=new Map();
-      done.filter(r=>r.date&&(!fe||r.exam===fe)).forEach(r=>m.set(r.date,(m.get(r.date)||0)+1));
+      done.filter(r=>effDate(r)&&(!fe||r.exam===fe)).forEach(r=>m.set(effDate(r),(m.get(effDate(r))||0)+1));
       const ds=[...m.keys()].sort().reverse();
       sel.innerHTML='<option value="">সকল তারিখ</option>'+ds.map(d=>`<option value="${esc(d)}">${esc(fmtDate(d))} (${bnum(m.get(d))} টি)</option>`).join('');
       sel.value=ds.includes(keep)?keep:'';
     };
     const draw=()=>{
       const fd=$('#irDiv').value,ft=$('#irTerm').value,fe=$('#irExam').value,fdt=$('#irDate').value,fr=norm($('#irRoll').value),q=norm($('#irQ').value);
-      const f=done.filter(r=>(!fd||r._div===fd)&&(!ft||String(r.term||String(r.reg||'')[3]||'')===ft)&&(!fe||r.exam===fe)&&(!fdt||r.date===fdt)&&(!fr||rollOf(r)===fr)&&(!q||String(r.reg||'').includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
-      $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি ফলাফল</p>${f.length?`<div class="irgrid">${f.map(r=>`<div class="ircard"><div class="ir-name">নামঃ ${esc(r.name)}</div><div class="ir-meta"><div><small>বিভাগ</small>${esc(r._div)}</div><div><small>পর্ব</small>${bnum(r.term||String(r.reg||'')[3]||'')}</div><div><small>পরীক্ষা</small>${esc(examTitle(r))}</div><div><small>তারিখ</small>${r.date?esc(fmtDate(r.date)):'—'}</div></div><button class="alt" data-ir-view="${esc(r.id)}">সনদ দেখুন</button></div>`).join('')}</div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>'}`:'<p class="muted">এখনও কোনো ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
+      const f=done.filter(r=>(!fd||r._div===fd)&&(!ft||String(r.term||String(r.reg||'')[3]||'')===ft)&&(!fe||r.exam===fe)&&(!fdt||effDate(r)===fdt)&&(!fr||rollOf(r)===fr)&&(!q||String(r.reg||'').includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
+      $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি ফলাফল</p>${f.length?`<div class="irgrid">${f.map(r=>`<div class="ircard"><div class="ir-name">নামঃ ${esc(r.name)}</div><div class="ir-meta"><div><small>বিভাগ</small>${esc(r._div)}</div><div><small>পর্ব</small>${bnum(r.term||String(r.reg||'')[3]||'')}</div><div><small>পরীক্ষা</small>${esc(examTitle(r))}</div><div><small>তারিখ</small>${effDate(r)?esc(fmtDate(effDate(r))):'—'}</div></div><button class="alt" data-ir-view="${esc(r.id)}">সনদ দেখুন</button></div>`).join('')}</div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>'}`:'<p class="muted">এখনও কোনো ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
       $('#irList').querySelectorAll('[data-ir-view]').forEach(b=>b.onclick=()=>{
         const r=done.find(x=>x.id===b.dataset.irView),out=$('#irSheet');
         viewCertificateA4(resultCertificate(r,institution.name),'PCTB ফলাফল সনদ - '+(r.reg||''));
