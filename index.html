@@ -1945,17 +1945,25 @@ async function renderInstitutionAllResults(box,institution,database){
   const body=$('#irBody');
   const drawAll=()=>{
     const done=rows.filter(r=>!r.draft);
-    body.innerHTML=`<div class="rsf"><div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irTerm">পর্ব</label><select id="irTerm"><option value="">সকল পর্ব</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div><div class="row"><div><label for="irRoll">রোল</label><input id="irRoll" inputmode="numeric" autocomplete="off" placeholder="রোল নম্বর"></div><div><label for="irQ">রেজিস্ট্রেশন</label><input id="irQ" inputmode="numeric" autocomplete="off" placeholder="রেজিস্ট্রেশন নম্বর"></div></div></div><div id="irList"></div><div id="irSheet"></div>`;
+    body.innerHTML=`<div class="rsf"><div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irTerm">পর্ব</label><select id="irTerm"><option value="">সকল পর্ব</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div><div><label for="irDate">পরীক্ষার তারিখ</label><select id="irDate"><option value="">সকল তারিখ</option></select></div><div class="row"><div><label for="irRoll">রোল</label><input id="irRoll" inputmode="numeric" autocomplete="off" placeholder="রোল নম্বর"></div><div><label for="irQ">রেজিস্ট্রেশন</label><input id="irQ" inputmode="numeric" autocomplete="off" placeholder="রেজিস্ট্রেশন নম্বর"></div></div></div><div id="irList"></div><div id="irSheet"></div>`;
+    /* নির্বাচিত পরীক্ষার ফলাফল যেসব তারিখে আছে, শুধু সেই তারিখগুলোই তালিকায় আসে (নতুন তারিখ আগে) */
+    const fillDates=()=>{
+      const fe=$('#irExam').value,sel=$('#irDate'),keep=sel.value,m=new Map();
+      done.filter(r=>r.date&&(!fe||r.exam===fe)).forEach(r=>m.set(r.date,(m.get(r.date)||0)+1));
+      const ds=[...m.keys()].sort().reverse();
+      sel.innerHTML='<option value="">সকল তারিখ</option>'+ds.map(d=>`<option value="${esc(d)}">${esc(fmtDate(d))} (${bnum(m.get(d))} টি)</option>`).join('');
+      sel.value=ds.includes(keep)?keep:'';
+    };
     const draw=()=>{
-      const fd=$('#irDiv').value,ft=$('#irTerm').value,fe=$('#irExam').value,fr=norm($('#irRoll').value),q=norm($('#irQ').value);
-      const f=done.filter(r=>(!fd||r._div===fd)&&(!ft||String(r.term||String(r.reg||'')[3]||'')===ft)&&(!fe||r.exam===fe)&&(!fr||rollOf(r)===fr)&&(!q||String(r.reg||'').includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
+      const fd=$('#irDiv').value,ft=$('#irTerm').value,fe=$('#irExam').value,fdt=$('#irDate').value,fr=norm($('#irRoll').value),q=norm($('#irQ').value);
+      const f=done.filter(r=>(!fd||r._div===fd)&&(!ft||String(r.term||String(r.reg||'')[3]||'')===ft)&&(!fe||r.exam===fe)&&(!fdt||r.date===fdt)&&(!fr||rollOf(r)===fr)&&(!q||String(r.reg||'').includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
       $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি ফলাফল</p>${f.length?`<div class="irgrid">${f.map(r=>`<div class="ircard"><div class="ir-name">নামঃ ${esc(r.name)}</div><div class="ir-meta"><div><small>বিভাগ</small>${esc(r._div)}</div><div><small>পর্ব</small>${bnum(r.term||String(r.reg||'')[3]||'')}</div><div><small>পরীক্ষা</small>${esc(examTitle(r))}</div><div><small>তারিখ</small>${r.date?esc(fmtDate(r.date)):'—'}</div></div><button class="alt" data-ir-view="${esc(r.id)}">সনদ দেখুন</button></div>`).join('')}</div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>'}`:'<p class="muted">এখনও কোনো ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
       $('#irList').querySelectorAll('[data-ir-view]').forEach(b=>b.onclick=()=>{
         const r=done.find(x=>x.id===b.dataset.irView),out=$('#irSheet');
         viewCertificateA4(resultCertificate(r,institution.name),'PCTB ফলাফল সনদ - '+(r.reg||''));
       });
     };
-    $('#irDiv').onchange=draw;$('#irTerm').onchange=draw;$('#irExam').onchange=draw;$('#irRoll').oninput=draw;$('#irQ').oninput=draw;draw();
+    $('#irDiv').onchange=draw;$('#irTerm').onchange=draw;$('#irExam').onchange=()=>{fillDates();draw()};$('#irDate').onchange=draw;$('#irRoll').oninput=draw;$('#irQ').oninput=draw;fillDates();draw();
   };
   drawAll();
 }
