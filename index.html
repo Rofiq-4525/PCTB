@@ -1949,20 +1949,23 @@ async function renderInstitutionAllResults(box,institution,database){
   const body=$('#irBody');
   const drawAll=()=>{
     const done=rows.filter(r=>!r.draft);
-    body.innerHTML=`<div class="rsf"><div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irTerm">পর্ব</label><select id="irTerm"><option value="">সকল পর্ব</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div><div id="irPeriod" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px"></div><div class="row"><div><label for="irRoll">রোল</label><input id="irRoll" inputmode="numeric" autocomplete="off" placeholder="রোল নম্বর"></div><div><label for="irQ">রেজিস্ট্রেশন</label><input id="irQ" inputmode="numeric" autocomplete="off" placeholder="রেজিস্ট্রেশন নম্বর"></div></div></div><div id="irList"></div><div id="irSheet"></div>`;
+    body.innerHTML=`<div class="rsf"><div class="row"><div><label for="irDiv">বিভাগ</label><select id="irDiv"><option value="">সকল বিভাগ</option>${dvs.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div><div><label for="irTerm">পর্ব</label><select id="irTerm"><option value="">সকল পর্ব</option><option value="1">পর্ব ১</option><option value="2">পর্ব ২</option><option value="3">পর্ব ৩</option></select></div></div><div><label for="irExam">পরীক্ষা</label><select id="irExam"><option value="">সকল পরীক্ষা</option>${exams.map(n=>`<option>${esc(n)}</option>`).join('')}</select></div><div id="irPeriod"></div><div class="row"><div><label for="irRoll">রোল</label><input id="irRoll" inputmode="numeric" autocomplete="off" placeholder="রোল নম্বর"></div><div><label for="irQ">রেজিস্ট্রেশন</label><input id="irQ" inputmode="numeric" autocomplete="off" placeholder="রেজিস্ট্রেশন নম্বর"></div></div></div><div id="irList"></div><div id="irSheet"></div>`;
     /* পরীক্ষা অনুযায়ী সময়কালের ফিল্টার: সাপ্তাহিক = বছর+মাস+সপ্তাহ, মাসিক = বছর+মাস, বাকি = বছর (ফলাফল তৈরির ফর্মের মতোই) */
     const cy=new Date().getFullYear(),yrs=[...new Set([...Array.from({length:6},(_,i)=>cy+1-i),...rows.map(r=>+r.year).filter(Boolean)])].sort((x,y)=>y-x);
     const pv=id=>($('#'+id)||{}).value||'';
     const fillPeriod=()=>{
       const fe=$('#irExam').value,ks=fe?periodOf(fe):['y'],prev={y:pv('irYear'),m:pv('irMonth'),w:pv('irWeek')};
-      const one=(id,label,all,opts)=>`<div><label for="${id}">${label}</label><select id="${id}"><option value="">${all}</option>${opts}</select></div>`;
+      const one=(id,label,all,opts)=>`<select id="${id}" aria-label="${label}"><option value="">${all}</option>${opts}</select>`;
       const f={
         y:one('irYear','বছর','সকল বছর',yrs.map(v=>`<option value="${v}">${bnum(v)}</option>`).join('')),
         m:one('irMonth','মাস','সকল মাস',MONTHS_BN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('')),
         w:one('irWeek','সপ্তাহ','সকল সপ্তাহ',WEEKS_BN.map((n,i)=>`<option value="${i+1}">${n} সপ্তাহ</option>`).join(''))
       };
-      $('#irPeriod').innerHTML=ks.map(k=>f[k]).join('');
-      [['y','irYear'],['m','irMonth'],['w','irWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el){el.value=prev[k]||'';el.onchange=draw}});
+      /* বছর · মাস · সপ্তাহ এক লাইনে, ফলাফল তৈরির ফর্মের মতো */
+      $('#irPeriod').innerHTML=`<label>পরীক্ষার সময়</label><div class="pcap">${ks.map(k=>f[k]).join('')}</div>`;
+      [['y','irYear'],['m','irMonth'],['w','irWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el)el.value=prev[k]||''});
+      csEnhance($('#irPeriod'));
+      [['y','irYear'],['m','irMonth'],['w','irWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el)el.onchange=draw});
     };
     const draw=()=>{
       const fd=$('#irDiv').value,ft=$('#irTerm').value,fe=$('#irExam').value,fy=pv('irYear'),fmo=pv('irMonth'),fw=pv('irWeek'),fr=norm($('#irRoll').value),q=norm($('#irQ').value);
