@@ -1021,7 +1021,7 @@ function institutionCertificate(institution,id='institutionCertificate'){
 }
 
 /* ফলাফল সনদ এক A4 পাতায় বসানো: বিষয় বেশি হলে আগে লেআউট ঘন করা হয়, তারপরও না ধরলে পুরো কনটেন্ট ছোট (scale) করা হয় */
-const CERT_FIT_CSS=`.cert-fit{display:flex;flex-direction:column;align-items:center;width:100%;flex:1 1 auto;transform-origin:50% 0}
+const CERT_FIT_CSS=`.cert-fit{display:flex;flex-direction:column;align-items:center;width:100%;flex:none;transform-origin:50% 0}
 @media(min-width:701px){.registration-certificate.result-certificate{height:297mm!important;min-height:0!important;overflow:hidden!important}}
 .result-certificate.compact{padding:9mm 11mm!important}
 .result-certificate.compact .cert-heading{padding:0 72px 6px!important}
@@ -1050,8 +1050,16 @@ function certFitInIframe(){
   var W=document.createElement('div');W.className='cert-fit';
   while(A.firstChild)W.appendChild(A.firstChild);A.appendChild(W);
   var PAGE=297*96/25.4;
-  function reset(){W.style.transform='';W.style.width='';A.classList.remove('compact')}
+  var info=W.querySelector('.cert-info-group'),tbl=W.querySelector('.cert-rtable'),foot=W.querySelector('.cert-footer');
+  var rows=[].slice.call(W.querySelectorAll('.cert-rtable tbody tr'));
+  var gaps=[info,tbl,foot].filter(Boolean);
+  function reset(){
+    W.style.transform='';W.style.width='';A.classList.remove('compact');
+    rows.forEach(function(r){r.style.height=''});
+    gaps.forEach(function(g){g.style.removeProperty('margin-top')});
+  }
   function dims(){var c=getComputedStyle(A);return {w:A.clientWidth-parseFloat(c.paddingLeft)-parseFloat(c.paddingRight),h:A.clientHeight-parseFloat(c.paddingTop)-parseFloat(c.paddingBottom)}}
+  /* সবচেয়ে বড় যে scale-এ কনটেন্ট পাতায় ধরে (১ = ছোট করতে হবে না) */
   function best(){
     var d=dims();
     function H(k){W.style.width=(d.w/k)+'px';return W.offsetHeight*k}
@@ -1060,18 +1068,35 @@ function certFitInIframe(){
     for(i=0;i<14;i++){m=(lo+hi)/2;if(H(m)<=d.h)lo=m;else hi=m}
     return lo;
   }
+  /* পাতায় ফাঁকা জায়গা থাকলে সারির উচ্চতা ও অংশগুলোর মাঝের ফাঁক সমানভাবে বাড়িয়ে পুরো পাতা ভরানো */
+  function spread(avail){
+    var free=avail-W.offsetHeight-2;
+    if(free<=0)return;
+    if(rows.length){
+      var e=Math.min(free*.55/rows.length,24),hs=rows.map(function(r){return r.offsetHeight});
+      rows.forEach(function(r,i){r.style.height=(hs[i]+e)+'px'});
+      if(W.offsetHeight>avail){rows.forEach(function(r){r.style.height=''})}
+      free=avail-W.offsetHeight-2;
+    }
+    if(free<=0||!gaps.length)return;
+    var g=free/gaps.length;
+    gaps.forEach(function(el){var mt=parseFloat(getComputedStyle(el).marginTop)||0;el.style.setProperty('margin-top',(mt+g)+'px','important')});
+  }
   function fit(){
     reset();
     if(window.innerWidth<701||Math.abs(A.getBoundingClientRect().height-PAGE)>6)return;
     var k=best();
     if(k<.9){A.classList.add('compact');k=best()}
     var d=dims();
-    if(k>=1){W.style.width='';return}
-    W.style.width=(d.w/k)+'px';W.style.transform='scale('+k+')';
+    if(k<1){W.style.width=(d.w/k)+'px';W.style.transform='scale('+k+')'}else{W.style.width=''}
+    spread(d.h/k);
   }
   fit();
   window.addEventListener('load',fit);
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+  if(document.fonts){
+    if(document.fonts.ready)document.fonts.ready.then(fit);
+    if(document.fonts.addEventListener)document.fonts.addEventListener('loadingdone',fit);
+  }
 }
 function certificateDocHtml(certificate,title){
   const html=`<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Naskh+Arabic:wght@500;600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&text=%E0%A7%A6%E0%A7%A7%E0%A7%A8%E0%A7%A9%E0%A7%AA%E0%A7%AB%E0%A7%AC%E0%A7%AD%E0%A7%AE%E0%A7%AF&display=swap" rel="stylesheet"><style>
