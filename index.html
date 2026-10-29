@@ -793,14 +793,19 @@ const periodOf=exam=>EXAM_PERIOD[exam]||['y'];
 const periodKey=(exam,y,m,w)=>exam?periodOf(exam).map(k=>k==='y'?y:k==='m'?m:w).join('-'):'';
 const examTitle=r=>{const bits=[];if(r.week)bits.push(WEEKS_BN[r.week-1]+' সপ্তাহ');const ym=[r.month?MONTHS_BN[r.month-1]:'',r.year?bnum(r.year):''].filter(Boolean).join(' ');if(ym)bits.push(ym);return (r.exam||'')+(bits.length?` (${bits.join(', ')})`:'')};
 const fmtDate=d=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');return m?`${bnum(+m[3])} ${MONTHS_BN[+m[2]-1]} ${bnum(m[1])}`:(d||'')};
+/* চলতি বছর/মাস/সপ্তাহ (১–৭ তারিখ = ১ম সপ্তাহ, … ২৯+ = ৫ম) ও আজকের তারিখ: সব সময়কাল/তারিখ বাছাইয়ে ডিফল্ট */
+const curPeriod=()=>{const n=new Date();return {y:String(n.getFullYear()),m:String(n.getMonth()+1),w:String(Math.min(5,Math.ceil(n.getDate()/7)))}};
+const todayStr=()=>{const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')};
 const getPeriod=pf=>{const g=k=>{const el=document.getElementById(pf+k);return el?el.value:''};return {y:g('y'),m:g('m'),w:g('w')}};
 const bindPeriod=(pf,exId)=>{
   const ex=document.getElementById(exId),box=document.getElementById(pf+'per');if(!ex||!box)return;
+  const pst=curPeriod();
   const render=()=>{
     const ks=ex.value?periodOf(ex.value):[],cy=new Date().getFullYear();
     const mk=(k,label,opts)=>`<select id="${pf}${k}" aria-label="${label}"><option value="">${label}</option>${opts}</select>`;
     const f={y:mk('y','বছর',Array.from({length:7},(_,i)=>cy+1-i).map(v=>`<option value="${v}">${bnum(v)}</option>`).join('')),m:mk('m','মাস',MONTHS_BN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('')),w:mk('w','সপ্তাহ',WEEKS_BN.map((n,i)=>`<option value="${i+1}">${n} সপ্তাহ</option>`).join(''))};
     box.innerHTML=ks.length?`<label>পরীক্ষার সময় নির্বাচন</label><div class="pcap">${ks.map(k=>f[k]).join('')}</div>`:'';box.style.display=ks.length?'':'none';
+    ks.forEach(k=>{const el=document.getElementById(pf+k);if(el){el.value=pst[k];el.addEventListener('change',()=>{pst[k]=el.value})}});
   };
   ex.addEventListener('change',render);render();
 };
@@ -1127,7 +1132,7 @@ async function showResults(reg,out,dv,roll,exam,per){
     let rs=(await getDocs(query(collection(db,'results'),where('reg','==',reg)))).docs.map(d=>d.data()).sort((a,b)=>b.t-a.t).filter(r=>!r.draft);
     if(dv)rs=rs.filter(r=>r.div==dv);
     if(exam)rs=rs.filter(r=>r.exam==exam);
-    if(per){if(per.y)rs=rs.filter(r=>String(r.year||'')===String(per.y));if(per.m)rs=rs.filter(r=>String(r.month||'')===String(per.m));if(per.w)rs=rs.filter(r=>String(r.week||'')===String(per.w))}
+    if(per){/* ডিফল্টে চলতি সময় নির্বাচিত থাকে; যে ফলাফলে বছর/মাস/সপ্তাহ সংরক্ষিতই নেই সেটা বাদ যাবে না */if(per.y)rs=rs.filter(r=>!r.year||String(r.year)===String(per.y));if(per.m)rs=rs.filter(r=>!r.month||String(r.month)===String(per.m));if(per.w)rs=rs.filter(r=>!r.week||String(r.week)===String(per.w))}
     if(roll)rs=rs.filter(r=>rollMatches(r,roll));
     if(!rs.length){out.innerHTML=`<div class="card"><span class="msg bad">${roll?'এই রেজিস্ট্রেশন ও রোল নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বর দুটি আবার দেখুন।':exam?`এই রেজিস্ট্রেশন নম্বরে ${esc(examTitle({exam,year:per&&per.y,month:per&&per.m,week:per&&per.w}))}-এর কোনো ফলাফল পাওয়া যায়নি।`:dv?`এই রেজিস্ট্রেশন নম্বরে ${esc(dv)} বিভাগের কোনো ফলাফল পাওয়া যায়নি।`:'এই রেজিস্ট্রেশন নম্বরে কোনো ফলাফল পাওয়া যায়নি। নম্বরটি আবার দেখুন।'}</span></div>`;return}
     out.innerHTML=rs.map(card).join('');
@@ -1313,7 +1318,7 @@ teacher(){return `${pageHead('শিক্ষক নিবন্ধন আবে
 };
 
 /* ---------- ইভেন্ট বাইন্ডিং ---------- */
-function bindHome(){bindPeriod('h','hex');const hb=$('#hb'),hr=$('#hr'),hd=$('#hd'),hrl=$('#hrl');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'')+(hrl&&hrl.value.trim()?'&r='+encodeURIComponent(hrl.value.trim()):'')+($('#hex')&&$('#hex').value?'&e='+encodeURIComponent($('#hex').value):'')+(()=>{const p=getPeriod('h');return $('#hex')&&$('#hex').value&&(p.y||p.m||p.w)?'&p='+encodeURIComponent([p.y,p.m,p.w].join(',')):''})();{const c=$('#hcap');if(c&&!c.dataset.ans)capNew('hcap')}const tryGo=()=>{if(capOk('hcap'))go()};hb.onclick=tryGo;hr.onkeydown=e=>e.key=='Enter'&&tryGo();if(hrl)hrl.onkeydown=e=>e.key=='Enter'&&tryGo();const hcp=$('#hcap');if(hcp)hcp.onkeydown=e=>e.key=='Enter'&&tryGo()}
+function bindHome(){bindPeriod('h','hex');const hb=$('#hb'),hr=$('#hr'),hd=$('#hd'),hrl=$('#hrl');if(hb&&hr&&hd){const go=()=>location.hash='#/result?'+encodeURIComponent(hr.value.trim())+(hd.value?'&d='+encodeURIComponent(hd.value):'')+(hrl&&hrl.value.trim()?'&r='+encodeURIComponent(hrl.value.trim()):'')+($('#hex')&&$('#hex').value?'&e='+encodeURIComponent($('#hex').value):'')+(()=>{const p=getPeriod('h');return $('#hex')&&$('#hex').value&&(p.y||p.m||p.w)?'&p='+encodeURIComponent([p.y,p.m,p.w].join(',')):''})();{const c=$('#hcap');if(c&&!c.dataset.ans)capNew('hcap')}const tryGo=()=>{if(capOk('hcap'))go()};hb.onclick=tryGo;hr.onkeydown=e=>{if(e.key==='Enter')return tryGo()};if(hrl)hrl.onkeydown=e=>{if(e.key==='Enter')return tryGo()};const hcp=$('#hcap');if(hcp)hcp.onkeydown=e=>{if(e.key==='Enter')return tryGo()}}
   const cb=document.querySelectorAll('#cchips button');cb.forEach(b=>b.onclick=()=>{cb.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('.cvw').forEach(w=>w.hidden=w.dataset.d!=b.dataset.d)});
   const hc=document.querySelectorAll('#hchips button');hc.forEach(b=>b.onclick=()=>{hc.forEach(x=>x.classList.toggle('on',x==b));document.querySelectorAll('#hchipsb .dvs').forEach(w=>w.hidden=w.dataset.div!=b.dataset.d)})}
 function capNew(id){const a=2+Math.floor(Math.random()*8),b=1+Math.floor(Math.random()*8),sub=Math.random()<.5&&a>b,e=document.getElementById(id),q=document.getElementById(id+'q');if(!e||!q)return;e.dataset.ans=String(sub?a-b:a+b);e.value='';q.textContent=bnum(a)+(sub?' − ':' + ')+bnum(b)+' = ?'}
@@ -1321,10 +1326,10 @@ function capOk(id){const e=document.getElementById(id),m=document.getElementById
 function bindResult(){
   bindPeriod('r','rex');
   const [qr,e0]=(location.hash.split('?')[1]||'').split('&e='),[qd,r0]=qr.split('&r='),[q0,d0]=qd.split('&d='),q=decodeURIComponent(q0||''),dv=d0?decodeURIComponent(d0):'',rv=r0?decodeURIComponent(r0):'',[e1,p1]=(e0||'').split('&p='),ev=e1?decodeURIComponent(e1):'',pv=p1?decodeURIComponent(p1).split(','):[],i=$('#rr'),o=$('#rout'),rd=$('#rd');
-  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value,$('#rex').value,getPeriod('r'));capNew('rcap');const tryGo=()=>{if(capOk('rcap')){go();capNew('rcap')}};$('#rb').onclick=tryGo;i.onkeydown=e=>e.key=='Enter'&&tryGo();rl.onkeydown=e=>e.key=='Enter'&&tryGo();$('#rcap').onkeydown=e=>e.key=='Enter'&&tryGo();
+  const rl=$('#rl'),go=d=>showResults(i.value,o,d===undefined?rd.value:d,rl.value,$('#rex').value,getPeriod('r'));capNew('rcap');const tryGo=()=>{if(capOk('rcap')){go();capNew('rcap')}};$('#rb').onclick=tryGo;i.onkeydown=e=>{if(e.key==='Enter')return tryGo()};rl.onkeydown=e=>{if(e.key==='Enter')return tryGo()};$('#rcap').onkeydown=e=>{if(e.key==='Enter')return tryGo()};
   if(q){i.value=q;if(dv)rd.value=dv;if(rv)rl.value=rv;if(ev){$('#rex').value=ev;$('#rex').dispatchEvent(new Event('change'));['y','m','w'].forEach((k,x)=>{const el=$('#r'+k);if(el&&pv[x])el.value=pv[x]})}go(dv)}
 }
-function bindStudent(){bindPeriod('s','sex');const go=()=>{if(capOk('scap')){showResults($('#sr').value,$('#srout'),'','',$('#sex').value,getPeriod('s'));capNew('scap')}};capNew('scap');$('#svb').onclick=go;$('#sr').onkeydown=e=>e.key==='Enter'&&go();$('#scap').onkeydown=e=>e.key==='Enter'&&go()}
+function bindStudent(){bindPeriod('s','sex');const go=()=>{if(capOk('scap')){showResults($('#sr').value,$('#srout'),'','',$('#sex').value,getPeriod('s'));capNew('scap')}};capNew('scap');$('#svb').onclick=go;$('#sr').onkeydown=e=>{if(e.key==='Enter')return go()};$('#scap').onkeydown=e=>{if(e.key==='Enter')return go()}}
 function csEnhance(root){
   if(!root)return;
   const closeAll=()=>document.querySelectorAll('.cs-list:not([hidden])').forEach(x=>{x.hidden=true;x.previousElementSibling.setAttribute('aria-expanded','false')});
@@ -1798,14 +1803,17 @@ async function renderInstitutionResultEntry(box,institution,database){
   <div id="rsStatus" class="muted" aria-live="polite">বিভাগ, পর্ব, পরীক্ষা (বছর/মাস/সপ্তাহসহ) ও বিষয় নির্বাচন করলে শিক্ষার্থীদের নম্বর দেওয়ার ঘর আসবে।</div>
   <div id="rsTable"></div><div id="rsMsg" aria-live="polite"></div>`;
   csEnhance(box.querySelector('.rsf'));
+  {const dEl=$('#rsDate');if(dEl){dEl.value=todayStr();dEl.addEventListener('input',()=>{dEl.dataset.touched='1'})}}
   let results=new Map(),list=[],loadVersion=0;
   const sel=()=>{const exam=$('#rsExam').value,g=id=>$('#'+id)?$('#'+id).value:'',y=g('rsYear'),m=g('rsMonth'),w=g('rsWeek');return {d:$('#rsDiv').value,t:$('#rsTerm').value,exam,sub:$('#rsSub').value,y,m,w,pk:periodKey(exam,y,m,w),pOk:!!exam&&periodOf(exam).every(k=>k==='y'?y:k==='m'?m:w)}};
+  const rsP=curPeriod();
   const renderPeriod=()=>{
     const exam=$('#rsExam').value,ks=exam?periodOf(exam):[],cy=new Date().getFullYear();
     const sel1=(id,label,opts)=>`<select id="${id}" aria-label="${label}"><option value="" selected disabled>${label}</option>${opts}</select>`;
     const f={y:sel1('rsYear','বছর',Array.from({length:6},(_,i)=>cy+1-i).map(v=>`<option value="${v}">${bnum(v)}</option>`).join('')),m:sel1('rsMonth','মাস',MONTHS_BN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('')),w:sel1('rsWeek','সপ্তাহ',WEEKS_BN.map((n,i)=>`<option value="${i+1}">${n} সপ্তাহ</option>`).join(''))};
     $('#rsPeriod').innerHTML=ks.length?`<label>পরীক্ষার সময় নির্বাচন *</label><div class="pcap">${ks.map(k=>f[k]).join('')}</div>`:'';$('#rsPeriod').style.display=ks.length?'':'none';
-    csEnhance($('#rsPeriod'));['rsYear','rsMonth','rsWeek'].forEach(id=>{const el=$('#'+id);if(el)el.onchange=load});
+    [['y','rsYear'],['m','rsMonth'],['w','rsWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el)el.value=rsP[k]});
+    csEnhance($('#rsPeriod'));[['y','rsYear'],['m','rsMonth'],['w','rsWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el)el.onchange=()=>{rsP[k]=el.value;load()}});
   };
   const resRef=(s,exam,pk)=>doc(database,'results',s.reg+'__'+exam+(pk?'__'+pk:''));
   const fetchResults=async (exam,pk)=>{
@@ -1833,7 +1841,7 @@ async function renderInstitutionResultEntry(box,institution,database){
     list=students.filter(s=>s.div===d&&String(s.term)===t).sort((a,b)=>String(a.reg).localeCompare(String(b.reg)));
     if(!list.length){$('#rsTable').innerHTML='';$('#rsStatus').textContent='এই বিভাগ ও পর্বে কোনো নিবন্ধিত শিক্ষার্থী নেই।';return}
     const version=++loadVersion;$('#rsStatus').textContent='সংরক্ষিত নম্বর দেখা হচ্ছে…';
-    try{await fetchResults(exam,pk);if(version!==loadVersion)return;const dEl=$('#rsDate');if(dEl&&!dEl.value){const f=[...results.values()].find(r=>r.date);if(f)dEl.value=f.date}$('#rsStatus').textContent=`${bnum(list.length)} জন শিক্ষার্থী।`;draw()}
+    try{await fetchResults(exam,pk);if(version!==loadVersion)return;const dEl=$('#rsDate');if(dEl&&!dEl.dataset.touched){const f=[...results.values()].find(r=>r.date);dEl.value=f?f.date:todayStr()}$('#rsStatus').textContent=`${bnum(list.length)} জন শিক্ষার্থী।`;draw()}
     catch(error){if(version!==loadVersion)return;list=[];$('#rsTable').innerHTML='';say($('#rsStatus'),'সংরক্ষিত নম্বর আনা যায়নি: '+error.message)}
   };
   const save=async()=>{
@@ -1953,8 +1961,13 @@ async function renderInstitutionAllResults(box,institution,database){
     /* পরীক্ষা অনুযায়ী সময়কালের ফিল্টার: সাপ্তাহিক = বছর+মাস+সপ্তাহ, মাসিক = বছর+মাস, বাকি = বছর (ফলাফল তৈরির ফর্মের মতোই) */
     const cy=new Date().getFullYear(),yrs=[...new Set([...Array.from({length:6},(_,i)=>cy+1-i),...rows.map(r=>+r.year).filter(Boolean)])].sort((x,y)=>y-x);
     const pv=id=>($('#'+id)||{}).value||'';
+    /* ডিফল্টে চলতি বছর, চলতি মাস ও চলতি সপ্তাহ (১–৭ তারিখ = ১ম সপ্তাহ, … ২৯+ = ৫ম) নির্বাচিত থাকে; পুরনো দেখতে বদলে নিতে হবে */
+    const now=new Date(),pst={y:String(now.getFullYear()),m:String(now.getMonth()+1),w:String(Math.min(5,Math.ceil(now.getDate()/7)))};
+    /* বছর/মাস/সপ্তাহ সংরক্ষিত না থাকলে (অ্যাডমিন/শিক্ষকের তৈরি ফলাফল) পরীক্ষার তারিখ বা তৈরির দিন থেকে ধরা হয় */
+    const pbase=r=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(r.date||''));if(m)return {y:+m[1],m:+m[2],d:+m[3]};const t=+r.t;if(t){const d=new Date(t);if(!isNaN(d))return {y:d.getFullYear(),m:d.getMonth()+1,d:d.getDate()}}return {}};
+    const effY=r=>r.year||pbase(r).y||'',effM=r=>r.month||pbase(r).m||'',effW=r=>r.week||(pbase(r).d?Math.min(5,Math.ceil(pbase(r).d/7)):'');
     const fillPeriod=()=>{
-      const fe=$('#irExam').value,ks=fe?periodOf(fe):['y'],prev={y:pv('irYear'),m:pv('irMonth'),w:pv('irWeek')};
+      const fe=$('#irExam').value,ks=fe?periodOf(fe):['y'];
       const one=(id,label,all,opts)=>`<select id="${id}" aria-label="${label}"><option value="">${all}</option>${opts}</select>`;
       const f={
         y:one('irYear','বছর','সকল বছর',yrs.map(v=>`<option value="${v}">${bnum(v)}</option>`).join('')),
@@ -1963,13 +1976,13 @@ async function renderInstitutionAllResults(box,institution,database){
       };
       /* বছর · মাস · সপ্তাহ এক লাইনে, ফলাফল তৈরির ফর্মের মতো */
       $('#irPeriod').innerHTML=`<label>পরীক্ষার সময়</label><div class="pcap">${ks.map(k=>f[k]).join('')}</div>`;
-      [['y','irYear'],['m','irMonth'],['w','irWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el)el.value=prev[k]||''});
+      [['y','irYear'],['m','irMonth'],['w','irWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el)el.value=pst[k]});
       csEnhance($('#irPeriod'));
-      [['y','irYear'],['m','irMonth'],['w','irWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el)el.onchange=draw});
+      [['y','irYear'],['m','irMonth'],['w','irWeek']].forEach(([k,id])=>{const el=$('#'+id);if(el)el.onchange=()=>{pst[k]=el.value;draw()}});
     };
     const draw=()=>{
       const fd=$('#irDiv').value,ft=$('#irTerm').value,fe=$('#irExam').value,fy=pv('irYear'),fmo=pv('irMonth'),fw=pv('irWeek'),fr=norm($('#irRoll').value),q=norm($('#irQ').value);
-      const f=done.filter(r=>(!fd||r._div===fd)&&(!ft||String(r.term||String(r.reg||'')[3]||'')===ft)&&(!fe||r.exam===fe)&&(!fy||String(r.year)===fy)&&(!fmo||String(r.month)===fmo)&&(!fw||String(r.week)===fw)&&(!fr||rollOf(r)===fr)&&(!q||String(r.reg||'').includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
+      const f=done.filter(r=>(!fd||r._div===fd)&&(!ft||String(r.term||String(r.reg||'')[3]||'')===ft)&&(!fe||r.exam===fe)&&(!fy||String(effY(r))===fy)&&(!fmo||String(effM(r))===fmo)&&(!fw||String(effW(r))===fw)&&(!fr||rollOf(r)===fr)&&(!q||String(r.reg||'').includes(q))).sort((a,b)=>DIVS.findIndex(d=>d[0]===a._div)-DIVS.findIndex(d=>d[0]===b._div)||String(a.exam||'').localeCompare(String(b.exam||''),'bn')||String(a.reg||'').localeCompare(String(b.reg||'')));
       $('#irList').innerHTML=done.length?`<p>মোট ${bnum(f.length)} টি ফলাফল</p>${f.length?`<div class="irgrid">${f.map(r=>`<div class="ircard"><div class="ir-name">নামঃ ${esc(r.name)}</div><div class="ir-meta"><div><small>বিভাগ</small>${esc(r._div)}</div><div><small>পর্ব</small>${bnum(r.term||String(r.reg||'')[3]||'')}</div><div><small>পরীক্ষা</small>${esc(examTitle(r))}</div><div><small>তারিখ</small>${r.date?esc(fmtDate(r.date)):'—'}</div></div><button class="alt" data-ir-view="${esc(r.id)}">সনদ দেখুন</button></div>`).join('')}</div>`:'<p class="muted">এই ফিল্টারে কোনো ফলাফল পাওয়া যায়নি।</p>'}`:'<p class="muted">এখনও কোনো ফলাফল প্রস্তুত হয়নি। শিক্ষার্থীর কমপক্ষে ৫টি বিষয়ের নম্বর জমা হলে এখানে আসবে।</p>';
       $('#irList').querySelectorAll('[data-ir-view]').forEach(b=>b.onclick=()=>{
         const r=done.find(x=>x.id===b.dataset.irView),out=$('#irSheet');
