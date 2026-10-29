@@ -615,7 +615,7 @@ table.rtable td input{width:110px;min-width:0!important;text-align:right}
 .result-certificate .cert-info-row:nth-of-type(odd){background:rgba(13,74,58,.055)}
 .result-certificate .cert-sign::before{border-top-color:#0d4a3a}
 .cert-rtable{width:100%;max-width:640px;margin:14px auto 0;border-collapse:collapse;font-size:.9rem;text-align:center;background:rgba(255,255,255,.6)}
-.cert-rtable th{background:#0d4a3a;color:#fff;padding:7px 5px;border:1px solid #b8923a;font-weight:600;line-height:1.35}
+.cert-rtable th{background:#0d4a3a;color:#fff;padding:7px 4px;border:1px solid #b8923a;font-weight:600;line-height:1.35;white-space:nowrap;font-size:.82rem}
 .cert-rtable td{padding:6px 5px;border:1px solid rgba(184,146,58,.6);color:#17261f}
 .cert-rtable td:nth-child(2){text-align:left}
 .cert-rtable tbody tr:nth-child(even) td{background:rgba(13,74,58,.055)}
@@ -918,7 +918,7 @@ const RESULT_CERT_CSS=`.registration-certificate.result-certificate{background:r
 .result-certificate .cert-info-row:nth-of-type(odd){background:rgba(13,74,58,.055)}
 .result-certificate .cert-sign::before{border-top-color:#0d4a3a}
 .cert-rtable{width:100%;max-width:640px;margin:14px auto 0;border-collapse:collapse;font-size:.9rem;text-align:center;background:rgba(255,255,255,.6)}
-.cert-rtable th{background:#0d4a3a;color:#fff;padding:7px 5px;border:1px solid #b8923a;font-weight:600;line-height:1.35}
+.cert-rtable th{background:#0d4a3a;color:#fff;padding:7px 4px;border:1px solid #b8923a;font-weight:600;line-height:1.35;white-space:nowrap;font-size:.82rem}
 .cert-rtable td{padding:6px 5px;border:1px solid rgba(184,146,58,.6);color:#17261f}
 .cert-rtable td:nth-child(2){text-align:left}
 .cert-rtable tbody tr:nth-child(even) td{background:rgba(13,74,58,.055)}
@@ -979,7 +979,7 @@ function resultCertificate(r,instName,id='resultCertificate'){
       ${detail('প্রতিষ্ঠান',instName)}
       ${detail('পরীক্ষা',examTitle(r))}${r.date?detail('পরীক্ষার তারিখ',fmtDate(r.date)):''}
     </section>
-    <table class="cert-rtable"><thead><tr><th>ক্রম</th><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]}<br>(${bnum(p[2])})</th>`).join('')}<th>মোট<br>(১০০)</th><th>মন্তব্য</th></tr></thead><tbody>${subs.map((x,i)=>`<tr><td>${bnum(i+1)}</td><td>${esc(x.n)}</td>${PARTS.map(p=>`<td>${v(x[p[0]])}</td>`).join('')}<td><b>${x.m}</b></td><td${x.m<50?' style="color:#a3281f;font-weight:600"':''}>${remark(x.m)}</td></tr>`).join('')}</tbody></table>
+    <table class="cert-rtable"><thead><tr><th>ক্রম</th><th>বিষয়</th>${PARTS.map(p=>`<th>${p[1]}&nbsp;(${bnum(p[2])})</th>`).join('')}<th>মোট&nbsp;(১০০)</th><th>মন্তব্য</th></tr></thead><tbody>${subs.map((x,i)=>`<tr><td>${bnum(i+1)}</td><td>${esc(x.n)}</td>${PARTS.map(p=>`<td>${v(x[p[0]])}</td>`).join('')}<td><b>${x.m}</b></td><td${x.m<50?' style="color:#a3281f;font-weight:600"':''}>${remark(x.m)}</td></tr>`).join('')}</tbody></table>
     <div class="cert-summary"><span>সর্বমোট: ${bnum(total)} / ${bnum(n*100)}</span><span>গড় নম্বর: ${bnum(avg.toFixed(1))}</span><span>সার্বিক মন্তব্য: ${remark(avg)}</span>${fail?`<span style="color:#a3281f">অকৃতকার্য বিষয়: ${bnum(fail)}টি</span>`:''}</div>
     <p class="cert-legend">৯০–১০০ সর্বোত্তম · ৮০–৯০ উত্তম · ৭০–৮০ মধ্যমান · ৫০–৭০ উন্নতি প্রয়োজন · ৫০-এর নিচে অকৃতকার্য · সনদ প্রদানের তারিখ: ${issued}</p>
     <footer class="cert-footer"><div class="cert-signatures"><div class="cert-sign">প্রতিষ্ঠান প্রধানের স্বাক্ষর</div><img class="cert-seal-bottom" src="${cloudImage('seal')}" alt="PCTB সিল"><div class="cert-sign">অনুমোদিত স্বাক্ষর<br>PCTB</div></div></footer>
