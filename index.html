@@ -1183,13 +1183,19 @@ home(routeToken){
   ${head('পরিচিতি','about','বিস্তারিত').replace('class="shd"','class="shd ln"')}<div class="card" id="homeAbout">${aboutHTML()}</div>
   <hr class="dv">${head('আমাদের লক্ষ্য ও উদ্দেশ্য','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>আমাদের লক্ষ্য</h3><p style="margin:0">${esc(SITE_TEXT.goal).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>আমাদের উদ্দেশ্য</h3>${objHTML()}</div></div><div id="homeRest"></div>`;
   const staticStage=()=>`<hr class="dv">${head('আমাদের শিক্ষা পদ্ধতি ও নীতিমালা','')}<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card cc"><h3>শিক্ষা পদ্ধতি</h3><p style="margin:0">${esc(SITE_TEXT.method).replace(/\n/g,'<br>')}</p></div><div class="card cc"><h3>নীতিমালা</h3><p style="margin:0">${esc(SITE_TEXT.policy).replace(/\n/g,'<br>')}</p></div></div><hr class="dv">${head('বিভাগ পরিচিতি','')}${divCards()}`;
-  const staticReady=new Promise(resolve=>requestAnimationFrame(()=>{
-    const rest=document.getElementById('homeRest');
-    if(routeToken!==routeVersion||!rest){resolve(false);return}
-    rest.insertAdjacentHTML('beforeend',cloudMarkup(staticStage()));
-    bindHome();
-    resolve(true);
-  }));
+  const staticReady=new Promise(resolve=>{
+    /* route() সিল-লোডিংয়ের জন্য অপেক্ষা করলে #homeRest একটু পরে পেজে আসে; তাই না পাওয়া পর্যন্ত প্রতি ফ্রেমে আবার চেষ্টা (সর্বোচ্চ ১৫ সেকেন্ড) */
+    const t0=performance.now();
+    const attempt=()=>requestAnimationFrame(()=>{
+      if(routeToken!==routeVersion){resolve(false);return}
+      const rest=document.getElementById('homeRest');
+      if(!rest){if(performance.now()-t0>15000){resolve(false);return}attempt();return}
+      rest.insertAdjacentHTML('beforeend',cloudMarkup(staticStage()));
+      bindHome();
+      resolve(true);
+    });
+    attempt();
+  });
   staticReady.then(ready=>{
     if(!ready)return;
     return homeData.then(([ab,bk,ns])=>requestAnimationFrame(()=>{
